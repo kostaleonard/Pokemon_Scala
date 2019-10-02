@@ -1,4 +1,4 @@
-package model.characters
+package model.character
 
 class PlayerCharacter extends Trainer {
 

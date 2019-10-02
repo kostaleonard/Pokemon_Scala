@@ -1,5 +1,0 @@
-package model
-
-class Pokemon {
-
-}
