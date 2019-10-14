@@ -9,8 +9,15 @@ object PrintController {
   def main(args: Array[String]): Unit = {
     println("Hello world!")
 
-    val p1 = new Charmander
-    println(p1.getBaseStats)
-    println(p1.getIVStats)
+    val p1 = new Charmander(5)
+    println(p1.getBaseStats.getStatsMap)
+    println(p1.getIVStats.getStatsMap)
+    p1.getIVStats.setStat("HP", 1)
+    println(p1.getIVStats.getStatsMap)
+    p1.getIVStats.incrementStat("HP")
+    println(p1.getIVStats.getStatsMap)
+    p1.getIVStats.decrementStat("HP")
+    println(p1.getIVStats.getStatsMap)
+    println(p1.getTypeArray.head.toString)
   }
 }

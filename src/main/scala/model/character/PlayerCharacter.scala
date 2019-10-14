@@ -1,5 +1,7 @@
 package model.character
 
-class PlayerCharacter extends Trainer {
+import model.party.Party
+
+class PlayerCharacter(party: Party) extends Trainer(party) {
 
 }
