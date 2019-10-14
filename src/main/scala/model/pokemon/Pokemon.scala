@@ -14,15 +14,16 @@ object Pokemon {
     new IVStats(getRandomIV, getRandomIV, getRandomIV, getRandomIV, getRandomIV, getRandomIV)
   }
 
-  /** Returns the standard stats of this Pokemon. */
-  def getStandardStats(baseStats: PokemonStats, IVStats: IVStats, level: Int): PokemonStats = {
-
-
-
-
+  /** Returns the standard stats of this Pokemon. This is Leo's modified version, without EV stats. I don't like EVs. */
+  def getStandardStats(baseStats: PokemonStats, ivStats: IVStats, level: Int): PokemonStats = {
+    //TODO is this working how I want it? Can I clean this up?
+    new PokemonStats(
+      PokemonStats.SORTED_KEYS.map(key =>
+        if (key == PokemonStats.HP_KEY) key -> (((baseStats.getHP + ivStats.getHP) * 2 * level) / 100 + level + 10)
+        else key -> (((baseStats.getStat(key) + ivStats.getStat(key)) * 2 * level) / 100 + 5)
+      ).toMap
+    )
   }
-
-
 }
 
 abstract class Pokemon(private var level: Int) {
