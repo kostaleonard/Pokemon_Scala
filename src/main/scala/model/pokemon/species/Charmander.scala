@@ -2,6 +2,7 @@ package model.pokemon.species
 
 import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.Pokemon
+import model.pokemon.exp.LevelTracker
 import model.pokemon.move.MoveList
 import model.pokemon.stat.PokemonStats
 
@@ -16,7 +17,7 @@ object Charmander {
   val TYPE_ARRAY: Array[ElementalType] = Array(FireType)
 }
 
-class Charmander(private var level: Int) extends Pokemon(level) {
+class Charmander(override val levelTracker: LevelTracker) extends Pokemon(levelTracker) {
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
     PokemonStats.HP_KEY -> Charmander.BASE_HP,

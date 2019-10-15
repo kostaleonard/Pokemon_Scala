@@ -14,8 +14,8 @@ object Move {
 }
 
 abstract class Move {
-  private var currentPP = getMaxPP
-  private var maxPP = getMaxPP
+  protected var currentPP = getMaxPP
+  protected var maxPP = getMaxPP
 
   /** Returns the current move PP. */
   def getCurrentPP: Int = currentPP

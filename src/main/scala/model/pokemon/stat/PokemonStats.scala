@@ -9,29 +9,14 @@ object PokemonStats {
   val SPD_KEY = "SPD"
   val KEYS = Set(HP_KEY, ATK_KEY, DEF_KEY, SPATK_KEY, SPDEF_KEY, SPD_KEY)
   val SORTED_KEYS = Array(HP_KEY, ATK_KEY, DEF_KEY, SPATK_KEY, SPDEF_KEY, SPD_KEY)
-  val STAT_STAGE_MULTIPLIERS: scala.collection.immutable.Map[Int, Double] = scala.collection.immutable.Map[Int, Double](
-    -6 -> 2.0 / 8.0,
-    -5 -> 2.0 / 7.0,
-    -4 -> 2.0 / 6.0,
-    -3 -> 2.0 / 5.0,
-    -2 -> 2.0 / 4.0,
-    -1 -> 2.0 / 3.0,
-    0 -> 2.0 / 2.0,
-    1 -> 3.0 / 2.0,
-    2 -> 4.0 / 2.0,
-    3 -> 5.0 / 2.0,
-    4 -> 6.0 / 2.0,
-    5 -> 7.0 / 2.0,
-    6 -> 8.0 / 2.0
-  )
 }
 
-class PokemonStats(private var hp: Int,
-                   private var attack: Int,
-                   private var defense: Int,
-                   private var specialAttack: Int,
-                   private var specialDefense: Int,
-                   private var speed: Int) {
+class PokemonStats(protected var hp: Int,
+                   protected var attack: Int,
+                   protected var defense: Int,
+                   protected var specialAttack: Int,
+                   protected var specialDefense: Int,
+                   protected var speed: Int) {
   /** Private Array constructor used by the Map constructor. Doesn't perform error checks, because the first line in the
     * constructor must be a call to another constructor. Use with extreme caution. */
   private def this(statsArray: Array[Int]) {
@@ -77,14 +62,16 @@ class PokemonStats(private var hp: Int,
   def getSpeed: Int = getStat(PokemonStats.SPD_KEY)
 
   /** Sets the given stat to a new value. */
-  def setStat(statKey: String, newVal: Int): Unit = statKey match{
-    case PokemonStats.HP_KEY => hp = newVal
-    case PokemonStats.ATK_KEY => attack = newVal
-    case PokemonStats.DEF_KEY => defense = newVal
-    case PokemonStats.SPATK_KEY => specialAttack = newVal
-    case PokemonStats.SPDEF_KEY => specialDefense = newVal
-    case PokemonStats.SPD_KEY => speed = newVal
-    case _ => throw new UnsupportedOperationException("Stat not found: %s".format(statKey))
+  def setStat(statKey: String, newVal: Int): Unit =
+    if(newVal <= 0) throw new UnsupportedOperationException("Cannot set stat below 0.")
+    else statKey match{
+      case PokemonStats.HP_KEY => hp = newVal
+      case PokemonStats.ATK_KEY => attack = newVal
+      case PokemonStats.DEF_KEY => defense = newVal
+      case PokemonStats.SPATK_KEY => specialAttack = newVal
+      case PokemonStats.SPDEF_KEY => specialDefense = newVal
+      case PokemonStats.SPD_KEY => speed = newVal
+      case _ => throw new UnsupportedOperationException("Stat not found: %s".format(statKey))
   }
 
   /** Sets the HP to a new value. */
@@ -104,11 +91,4 @@ class PokemonStats(private var hp: Int,
 
   /** Sets the Speed to a new value. */
   def setSpeed(newVal: Int): Unit = setStat(PokemonStats.SPD_KEY, newVal)
-
-  //TODO these need to go in a subclass because they don't apply to IV stats.
-  /** Lowers HP by the given amount. */
-  def takeDamage(amount: Int): Unit = setStat(PokemonStats.HP_KEY, (getStat(PokemonStats.HP_KEY) - amount) max 0)
-
-  /** Changes the stage of the stat by the given increment, which can be negative. Returns the success of the action. */
-  def changeStage(statKey: String, stageInc: Int): Int = ???
 }

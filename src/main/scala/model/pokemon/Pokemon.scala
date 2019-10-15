@@ -1,10 +1,11 @@
 package model.pokemon
 
 import model.elementaltype.ElementalType
-import model.pokemon.exp.ExpTracker
+import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
-import model.pokemon.stat.{IVStats, PokemonStats}
+import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
 
+import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 object Pokemon {
@@ -26,12 +27,14 @@ object Pokemon {
   }
 }
 
-abstract class Pokemon(private var level: Int) {
-  private val ivStats = Pokemon.getRandomIVStats
-  private var standardStats = Pokemon.getStandardStats(getBaseStats, ivStats, level)
-  private var currentStats = standardStats.clone().asInstanceOf[PokemonStats] //TODO is this making a deep copy?
-  private val expTracker = new ExpTracker(level)
-  private var moves = List.empty[Move]
+abstract class Pokemon(protected val levelTracker: LevelTracker) {
+  protected val ivStats = Pokemon.getRandomIVStats
+  protected var standardStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
+  protected var currentStats = new BattleStats(standardStats)
+  protected val moves = ListBuffer.empty[Move]
+
+  /** Returns the Pokemon's current level. */
+  def getLevel: Int = levelTracker.getLevel
 
   /** Returns the IV stats for this pokemon. */
   def getIVStats: IVStats = ivStats

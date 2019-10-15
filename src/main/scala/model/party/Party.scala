@@ -8,7 +8,7 @@ object Party {
   val MAX_SIZE = 6
 }
 
-class Party(private val pokemonList: ListBuffer[Pokemon]) {
+class Party(protected val pokemonList: ListBuffer[Pokemon]) {
   if(pokemonList.isEmpty) throw new UnsupportedOperationException("Cannot initialize Party object with no Pokemon.")
   else if(pokemonList.length > Party.MAX_SIZE) throw new UnsupportedOperationException(
     "Cannot initialize Party object with more than %d Pokemon.".format(Party.MAX_SIZE))

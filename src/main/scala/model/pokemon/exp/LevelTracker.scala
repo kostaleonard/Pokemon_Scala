@@ -1,14 +1,17 @@
 package model.pokemon.exp
 
-object ExpTracker {
+object LevelTracker {
   val MIN_LEVEL = 1
   val MAX_LEVEL = 100
+
+  /** Factory method. Returns a new instance of the class. */
+  def create(level: Int): LevelTracker = new LevelTracker(level)
 }
 
-class ExpTracker(private var level: Int) {
-  if(level < ExpTracker.MIN_LEVEL || level > ExpTracker.MAX_LEVEL)
+class LevelTracker(protected var level: Int) {
+  if(level < LevelTracker.MIN_LEVEL || level > LevelTracker.MAX_LEVEL)
     throw new UnsupportedOperationException("Invalid level: %d".format(level))
-  private var currentExp = getExperienceForLevel(level)
+  protected var currentExp = getExperienceForLevel(level)
 
   /** Returns the current level. */
   def getLevel: Int = level
@@ -23,7 +26,7 @@ class ExpTracker(private var level: Int) {
   def gainExp(exp: Int): Unit = currentExp += exp
 
   /** Returns true if this object can level up. */
-  def canLevelUp: Boolean = level < ExpTracker.MAX_LEVEL && currentExp >= getExperienceForLevel(level + 1)
+  def canLevelUp: Boolean = level < LevelTracker.MAX_LEVEL && currentExp >= getExperienceForLevel(level + 1)
 
   /** Increments the level. */
   def levelUp: Unit = level += 1

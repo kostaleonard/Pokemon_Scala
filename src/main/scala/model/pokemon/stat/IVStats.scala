@@ -5,12 +5,12 @@ object IVStats {
   val MAX_VALUE = 15
 }
 
-class IVStats(private var hp: Int,
-              private var attack: Int,
-              private var defense: Int,
-              private var specialAttack: Int,
-              private var specialDefense: Int,
-              private var speed: Int)
+class IVStats(override protected var hp: Int,
+              override protected var attack: Int,
+              override protected var defense: Int,
+              override protected var specialAttack: Int,
+              override protected var specialDefense: Int,
+              override protected var speed: Int)
   extends PokemonStats(hp, attack, defense, specialAttack, specialDefense, speed) {
 
   /** Returns true if the given stat can be incremented by 1. */
