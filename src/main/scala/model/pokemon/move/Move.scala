@@ -11,11 +11,16 @@ object Move {
   val ENEMY_FAINT = 3
   val SELF_FAINT = 4
   val MUST_RECHARGE = 5
+  //TODO [stat] won't go higher/lower?
+  //TODO [pokemon] was poisoned/paralyzed/etc.
+
+  /** Returns standard max max PP for a given max PP. These are more like PP guidelines than laws. */
+  def getMaxMaxPP(maxPP: Int): Int = maxPP * 8 / 5
 }
 
 abstract class Move {
+  protected var maxPP = getInitialMaxPP
   protected var currentPP = getMaxPP
-  protected var maxPP = getMaxPP
 
   /** Returns the current move PP. */
   def getCurrentPP: Int = currentPP
@@ -35,11 +40,22 @@ abstract class Move {
       currentPP = currentPP min maxPP
     }
 
+  /** Does the move and returns the set of result codes from the Move object. */
+  def doActions(thisPokemon: Pokemon, enemyPokemon: Pokemon): Set[Int] = {
+
+    //TODO more complicated stuff for getting return codes.
+    getMoveActions.foreach(_.doAction(thisPokemon, enemyPokemon))
+    ???
+  }
+
   /** Lowers the current PP. */
   def decrementPP: Unit = currentPP -= 1
 
   /** Returns true if the current move has enough PP to be used. */
   def canUse: Boolean = currentPP > 0
+
+  /** Returns the initial value for the move's max PP. */
+  def getInitialMaxPP: Int
 
   /** Returns the maximum value for the move's max PP. */
   def getMaxMaxPP: Int
@@ -53,15 +69,12 @@ abstract class Move {
   /** Returns the move's description. */
   def getDescription: String
 
-  /** Returns the move's MoveEffects. */
-  def getMoveEffectsArray: Array[MoveAction]
-
   /** Returns the move's type. */
   def getType: ElementalType
 
   /** Returns true if the move makes contact. */
   def makesContact: Boolean
 
-  /** Does the move and returns the set of result codes from the Move object. */
-  def doAction(enemyPokemon: Pokemon): Set[Int]
+  /** Returns the move's MoveActions. */
+  def getMoveActions: Array[MoveAction]
 }

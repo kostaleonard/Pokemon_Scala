@@ -1,5 +1,6 @@
 package controller
 
+import model.pokemon.exp.LevelTracker
 import model.pokemon.species.Charmander
 
 /** Runs the program and handles user input. Only displays information via stdout. */
@@ -9,7 +10,7 @@ object PrintController {
   def main(args: Array[String]): Unit = {
     println("Hello world!")
 
-    val p1 = new Charmander(5)
+    val p1 = new Charmander(LevelTracker.create(5))
     println(p1.getBaseStats.getStatsMap)
     println(p1.getIVStats.getStatsMap)
     p1.getIVStats.setStat("HP", 1)

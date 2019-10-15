@@ -2,10 +2,9 @@ package model.pokemon
 
 import model.elementaltype.ElementalType
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.{Move, MoveList}
+import model.pokemon.move.MoveList
 import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
 
-import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 object Pokemon {
@@ -28,10 +27,10 @@ object Pokemon {
 }
 
 abstract class Pokemon(protected val levelTracker: LevelTracker) {
-  protected val ivStats = Pokemon.getRandomIVStats
-  protected var standardStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
+  protected val ivStats: IVStats = Pokemon.getRandomIVStats
+  protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
-  protected val moves = ListBuffer.empty[Move]
+  protected val moves: MoveList = getInitialMoveList(getLevel)
 
   /** Returns the Pokemon's current level. */
   def getLevel: Int = levelTracker.getLevel

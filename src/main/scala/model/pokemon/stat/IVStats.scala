@@ -5,13 +5,13 @@ object IVStats {
   val MAX_VALUE = 15
 }
 
-class IVStats(override protected var hp: Int,
-              override protected var attack: Int,
-              override protected var defense: Int,
-              override protected var specialAttack: Int,
-              override protected var specialDefense: Int,
-              override protected var speed: Int)
-  extends PokemonStats(hp, attack, defense, specialAttack, specialDefense, speed) {
+class IVStats(ivHp: Int,
+              ivAttack: Int,
+              ivDefense: Int,
+              ivSpecialAttack: Int,
+              ivSpecialDefense: Int,
+              ivSpeed: Int)
+  extends PokemonStats(ivHp, ivAttack, ivDefense, ivSpecialAttack, ivSpecialDefense, ivSpeed) {
 
   /** Returns true if the given stat can be incremented by 1. */
   def canIncrementStat(statKey: String): Boolean = IVStats.MAX_VALUE > getStatsMap.getOrElse(statKey,
