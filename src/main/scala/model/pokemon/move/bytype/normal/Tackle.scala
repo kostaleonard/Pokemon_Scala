@@ -1,7 +1,6 @@
 package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
-import model.pokemon.Pokemon
 import model.pokemon.move.{Damage, Move, MoveAction}
 
 class Tackle extends Move {
@@ -26,6 +25,6 @@ class Tackle extends Move {
   /** Returns true if the move makes contact. */
   def makesContact: Boolean = true
 
-  /** Returns the move's MoveEffects. */
+  /** Returns the move's MoveActions in the order that they will be done. */
   def getMoveActions: Array[MoveAction] = Array(Damage(getPower.get, getType))
 }

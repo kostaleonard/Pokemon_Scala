@@ -40,13 +40,9 @@ abstract class Move {
       currentPP = currentPP min maxPP
     }
 
-  /** Does the move and returns the set of result codes from the Move object. */
-  def doActions(thisPokemon: Pokemon, enemyPokemon: Pokemon): Set[Int] = {
-
-    //TODO more complicated stuff for getting return codes.
-    getMoveActions.foreach(_.doAction(thisPokemon, enemyPokemon))
-    ???
-  }
+  /** Does the move and returns the Array of MoveEvents that result from the actions. */
+  def calculateMoveResults(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
+    getMoveActions.flatMap(_.calculateResults(thisPokemon, otherPokemon))
 
   /** Lowers the current PP. */
   def decrementPP: Unit = currentPP -= 1
@@ -75,6 +71,6 @@ abstract class Move {
   /** Returns true if the move makes contact. */
   def makesContact: Boolean
 
-  /** Returns the move's MoveActions. */
+  /** Returns the move's MoveActions in the order that they will be done. */
   def getMoveActions: Array[MoveAction]
 }
