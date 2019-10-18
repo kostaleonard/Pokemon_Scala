@@ -31,6 +31,10 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) {
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
   protected val moves: MoveList = getInitialMoveList(getLevel)
+  protected val name: String = ??? //TODO get the species name.
+
+  /** Returns the Pokemon's name. By default, this is the species name. */
+  def getName: String = name
 
   /** Returns the Pokemon's current level. */
   def getLevel: Int = levelTracker.getLevel

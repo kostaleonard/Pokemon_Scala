@@ -15,6 +15,13 @@ case class DisplayMessage(message: String) extends MoveEvent {
 
 case object DisplayCriticalHit extends DisplayMessage("Critical hit!")
 
+case object DisplayNotVeryEffective extends DisplayMessage("It's not very effective...")
+
+case object DisplaySuperEffective extends DisplayMessage("It's super effective!")
+
+case class DisplayMoveDoesNotAffect(moveName: String, otherPokemonName: String)
+  extends DisplayMessage("%s does not affect foe %s".format(moveName, otherPokemonName))
+
 //TODO animations--how to show which animation to play?
 case class PlayAnimation(path: String) extends MoveEvent {
   /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent

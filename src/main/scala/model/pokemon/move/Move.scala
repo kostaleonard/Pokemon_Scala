@@ -3,6 +3,8 @@ package model.pokemon.move
 import model.elementaltype.ElementalType
 import model.pokemon.Pokemon
 
+import scala.util.Random
+
 object Move {
   /** Move result codes. */
   val HIT = 0
@@ -13,6 +15,8 @@ object Move {
   val MUST_RECHARGE = 5
   //TODO [stat] won't go higher/lower?
   //TODO [pokemon] was poisoned/paralyzed/etc.
+
+  val BASE_CRITICAL_HIT_CHANCE = 0.0625
 
   /** Returns standard max max PP for a given max PP. These are more like PP guidelines than laws. */
   def getMaxMaxPP(maxPP: Int): Int = maxPP * 8 / 5
@@ -50,6 +54,12 @@ abstract class Move {
   /** Returns true if the current move has enough PP to be used. */
   def canUse: Boolean = currentPP > 0
 
+  /** Returns the chance of a critical hit. Subclasses may override. */
+  def getCriticalHitChance: Double = Move.BASE_CRITICAL_HIT_CHANCE
+
+  /** Returns the name of the move, in all caps. */
+  def getName: String
+
   /** Returns the initial value for the move's max PP. */
   def getInitialMaxPP: Int
 
@@ -70,6 +80,10 @@ abstract class Move {
 
   /** Returns true if the move makes contact. */
   def makesContact: Boolean
+
+  /** Returns true if the move is physical. This influences whether the regular or special stats are used in the damage
+    * calculation. */
+  def isPhysical: Boolean
 
   /** Returns the move's MoveActions in the order that they will be done. */
   def getMoveActions: Array[MoveAction]

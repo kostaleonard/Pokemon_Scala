@@ -4,6 +4,9 @@ import model.elementaltype.{ElementalType, NormalType}
 import model.pokemon.move.{Damage, Move, MoveAction}
 
 class Tackle extends Move {
+  /** Returns the name of the move, in all caps. */
+  override def getName: String = "TACKLE"
+
   /** Returns the initial value for the move's max PP. */
   override def getInitialMaxPP: Int = 35
 
@@ -14,17 +17,21 @@ class Tackle extends Move {
   override def getPower: Option[Int] = Some(35)
 
   /** Returns the move's accuracy. */
-  def getAccuracy: Double = 0.95
+  override def getAccuracy: Double = 0.95
 
   /** Returns the move's description. */
-  def getDescription: String = "Charges the foe with a full-body tackle."
+  override def getDescription: String = "Charges the foe with a full-body tackle."
 
   /** Returns the move's type. */
-  def getType: ElementalType = NormalType
+  override def getType: ElementalType = NormalType
 
   /** Returns true if the move makes contact. */
-  def makesContact: Boolean = true
+  override def makesContact: Boolean = true
+
+  /** Returns true if the move is physical. This influences whether the regular or special stats are used in the damage
+    * calculation. */
+  override def isPhysical: Boolean = true
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  def getMoveActions: Array[MoveAction] = Array(Damage(getPower.get, getType))
+  override def getMoveActions: Array[MoveAction] = Array(Damage(this))
 }
