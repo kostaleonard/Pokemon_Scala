@@ -8,6 +8,9 @@ import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
 import scala.util.Random
 
 object Pokemon {
+  val NAME_MIN_LENGTH = 1
+  val NAME_MAX_LENGTH = 15
+
   /** Returns a stats object representing a new Pokemon's IVs. */
   def getRandomIVStats: IVStats = {
     def getRandomIV: Int = Random.nextInt(IVStats.MAX_VALUE) + IVStats.MIN_VALUE
@@ -31,25 +34,22 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) {
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
   protected val moves: MoveList = getInitialMoveList(getLevel)
-  protected val name: String = ??? //TODO get the species name.
+  protected var name: String = getSpeciesName
 
   /** Returns the Pokemon's name. By default, this is the species name. */
   def getName: String = name
+
+  /** Changes the name to the new value. */
+  def setName(newName: String): Unit =
+    if(newName.length < Pokemon.NAME_MIN_LENGTH) throw new UnsupportedOperationException("Name too short.")
+    else if(newName.length > Pokemon.NAME_MAX_LENGTH) throw new UnsupportedOperationException("Name too long.")
+    else name = newName
 
   /** Returns the Pokemon's current level. */
   def getLevel: Int = levelTracker.getLevel
 
   /** Returns the IV stats for this pokemon. */
   def getIVStats: IVStats = ivStats
-
-  /** Returns the base stats for the species. */
-  def getBaseStats: PokemonStats
-
-  /** Returns the Pokemon's types. */
-  def getTypeArray: Array[ElementalType]
-
-  /** Returns the Pokemon's moves at a given level. */
-  def getInitialMoveList(level: Int): MoveList
 
   /** Returns the stats the Pokemon would have after healing. */
   def getStandardStats: PokemonStats = standardStats
@@ -59,4 +59,16 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) {
 
   /** Decrements the current HP by the given amount. */
   def takeDamage(amount: Int): Unit = currentStats.takeDamage(amount)
+
+  /** Returns the name of the Pokemon species. */
+  def getSpeciesName: String
+
+  /** Returns the base stats for the species. */
+  def getBaseStats: PokemonStats
+
+  /** Returns the Pokemon's types. */
+  def getTypeArray: Array[ElementalType]
+
+  /** Returns the Pokemon's moves at a given level. */
+  def getInitialMoveList(level: Int): MoveList
 }

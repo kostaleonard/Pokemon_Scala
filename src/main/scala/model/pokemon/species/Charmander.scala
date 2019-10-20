@@ -18,6 +18,9 @@ object Charmander {
 }
 
 class Charmander(override val levelTracker: LevelTracker) extends Pokemon(levelTracker) {
+  /** Returns the name of the Pokemon species. */
+  override def getSpeciesName: String = "CHARMANDER"
+
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
     PokemonStats.HP_KEY -> Charmander.BASE_HP,

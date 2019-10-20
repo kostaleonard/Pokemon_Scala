@@ -2,6 +2,20 @@ package model.pokemon.move
 
 import model.pokemon.Pokemon
 
+object MoveEvent {
+  val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
+  val DISPLAY_NOT_VERY_EFFECTIVE = DisplayMessage("It's not very effective...")
+  val DISPLAY_SUPER_EFFECTIVE = DisplayMessage("It's super effective!")
+
+  /** Returns the DisplayMessage used when a move misses. */
+  def getDisplayMessageMoveMissed(thisPokemonName: String): DisplayMessage =
+    DisplayMessage("%s missed.".format(thisPokemonName))
+
+  /** Returns the DisplayMessage used when a move misses. */
+  def getDisplayMessageMoveNoEffect(moveName: String, otherPokemonName: String): DisplayMessage =
+    DisplayMessage("%s does not affect %s.".format(moveName, otherPokemonName))
+}
+
 sealed trait MoveEvent {
   /** Executes the results of the various MoveAction objects. */
   def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit
@@ -12,15 +26,6 @@ case class DisplayMessage(message: String) extends MoveEvent {
     * to the user. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
-
-case object DisplayCriticalHit extends DisplayMessage("Critical hit!")
-
-case object DisplayNotVeryEffective extends DisplayMessage("It's not very effective...")
-
-case object DisplaySuperEffective extends DisplayMessage("It's super effective!")
-
-case class DisplayMoveDoesNotAffect(moveName: String, otherPokemonName: String)
-  extends DisplayMessage("%s does not affect foe %s".format(moveName, otherPokemonName))
 
 //TODO animations--how to show which animation to play?
 case class PlayAnimation(path: String) extends MoveEvent {

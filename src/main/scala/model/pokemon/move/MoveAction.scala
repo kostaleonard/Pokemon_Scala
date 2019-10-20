@@ -14,6 +14,8 @@ sealed trait MoveAction {
 case class Damage(move: Move) extends MoveAction {
   /** Deals damage to the other pokemon. */
   override def calculateResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    if(Random.nextDouble() > move.getAccuracy) return List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName))
+
     var result = ListBuffer.empty[MoveEvent]
 
     val targets = 1 //TODO if multiple targets, this is 0.75.
@@ -22,7 +24,8 @@ case class Damage(move: Move) extends MoveAction {
     var critical = if(isCriticalHit) 2 else 1
     val randomFactor = Random.nextDouble() * 0.15 + 0.85
     val stab = if(thisPokemon.getTypeArray.contains(move.getType)) 1.5 else 1
-    val typeEffectiveness = 1 //TODO type effectiveness
+    val typeEffectiveness = otherPokemon.getTypeArray.foldRight(1.0)((otherType, accum) =>
+      accum * move.getType.getTypeEffectiveness(otherType))
     val burned = 1 //TODO if burned and move is physical, this is 0.5.
     val other = 1 //TODO used in some moves.
 
@@ -37,11 +40,12 @@ case class Damage(move: Move) extends MoveAction {
       ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
       ) * modifier).toInt
 
-    if(isCriticalHit) result.append(DisplayCriticalHit)
+    if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
     result.append(DealDamageToOpponent(damage))
-    if(typeEffectiveness == 0) result.append(DisplayMoveDoesNotAffect(move.getName, otherPokemon.getName))
-    else if(typeEffectiveness < 1) result.append(DisplayNotVeryEffective)
-    else if(typeEffectiveness > 1) result.append(DisplaySuperEffective)
+    if(typeEffectiveness == 0) result.append(
+      MoveEvent.getDisplayMessageMoveNoEffect(move.getName, otherPokemon.getName))
+    else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
+    else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
     result.toList
   }
 }
