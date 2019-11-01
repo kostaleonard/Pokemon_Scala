@@ -3,19 +3,7 @@ package model.pokemon.move
 import model.elementaltype.ElementalType
 import model.pokemon.Pokemon
 
-import scala.util.Random
-
 object Move {
-  /** Move result codes. */
-  val HIT = 0
-  val MISS = 1
-  val FAILED = 2
-  val ENEMY_FAINT = 3
-  val SELF_FAINT = 4
-  val MUST_RECHARGE = 5
-  //TODO [stat] won't go higher/lower?
-  //TODO [pokemon] was poisoned/paralyzed/etc.
-
   val BASE_CRITICAL_HIT_CHANCE = 0.0625
 
   /** Returns standard max max PP for a given max PP. These are more like PP guidelines than laws. */
@@ -46,7 +34,7 @@ abstract class Move {
 
   /** Does the move and returns the Array of MoveEvents that result from the actions. */
   def calculateMoveResults(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
-    getMoveActions.flatMap(_.calculateResults(thisPokemon, otherPokemon))
+    getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
 
   /** Lowers the current PP. */
   def decrementPP: Unit = currentPP -= 1
@@ -74,6 +62,9 @@ abstract class Move {
 
   /** Returns the move's description. */
   def getDescription: String
+
+  /** Returns the path to the move's animation. */
+  def getAnimationPath: String
 
   /** Returns the move's type. */
   def getType: ElementalType
