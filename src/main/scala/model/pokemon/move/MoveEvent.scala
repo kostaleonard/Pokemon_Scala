@@ -1,7 +1,7 @@
 package model.pokemon.move
 
 import model.pokemon.Pokemon
-import model.statuseffect.StatusEffect
+import model.statuseffect.{Burn, StatusEffect}
 
 object MoveEvent {
   val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
@@ -51,5 +51,6 @@ case class DealDamageToSelf(amount: Int) extends MoveEvent {
 
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = ???
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
+    otherPokemon.getEffectTracker.addEffect(Burn)
 }

@@ -27,7 +27,7 @@ case class Damage(move: Move) extends MoveAction {
       accum * move.getType.getTypeEffectiveness(otherType))
     val isCriticalHit = (Random.nextDouble() < move.getCriticalHitChance) && typeEffectiveness > 0
     var critical = if(isCriticalHit) 2 else 1
-    val burned = 1 //TODO if burned and move is physical, this is 0.5.
+    val burned = if(thisPokemon.getEffectTracker.contains(Burn) && move.isPhysical) 0.5 else 1
     val other = 1 //TODO used in some moves.
 
     val modifier = targets * weather * critical * randomFactor * stab * typeEffectiveness * burned
@@ -66,7 +66,7 @@ case object TurnlyBurnDamage extends MoveAction {
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
     //TODO get burn animation.
     result.append(PlayAnimation("TODO"))
-    val damage = (thisPokemon.getStandardStats.getHP / 8.).toInt
+    val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt
     result.append(DealDamageToSelf(damage))
     result.toList
   }
