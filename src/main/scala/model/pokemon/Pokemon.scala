@@ -30,11 +30,11 @@ object Pokemon {
   }
 }
 
-abstract class Pokemon(protected val levelTracker: LevelTracker) {
+abstract class Pokemon(protected val levelTracker: LevelTracker, protected val wild: Boolean) {
   protected val ivStats: IVStats = Pokemon.getRandomIVStats
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
-  protected val moves: MoveList = getInitialMoveList(getLevel)
+  protected val moveList: MoveList = getInitialMoveList(getLevel)
   protected var name: String = getSpeciesName
   protected val effectTracker: EffectTracker = new EffectTracker
 
@@ -62,9 +62,15 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) {
   /** Decrements the current HP by the given amount. */
   def takeDamage(amount: Int): Unit = currentStats.takeDamage(amount)
 
-  /** Returns the EffectTracker.
-    * TODO this should honestly not be accessible, and the methods from EffectTracker should be abstracted one level up. Don't want people to see the secret sauce beneath. But I don't really feel like rewriting those methods right now, in case things change significantly. */
+  //TODO this should honestly not be accessible, and the methods from EffectTracker should be abstracted one level up. Don't want people to see the secret sauce beneath. But I don't really feel like rewriting those methods right now, in case things change significantly.
+  /** Returns the EffectTracker. */
   def getEffectTracker: EffectTracker = effectTracker
+
+  /** Returns the MoveList. */
+  def getMoveList: MoveList = moveList
+
+  /** Returns true if the Pokemon is wild. */
+  def isWild: Boolean = wild
 
   /** Returns the name of the Pokemon species. */
   def getSpeciesName: String

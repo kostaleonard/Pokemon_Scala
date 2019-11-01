@@ -17,7 +17,8 @@ object Charmander {
   val TYPE_ARRAY: Array[ElementalType] = Array(FireType)
 }
 
-class Charmander(override val levelTracker: LevelTracker) extends Pokemon(levelTracker) {
+class Charmander(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
+  extends Pokemon(levelTracker, wild) {
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "CHARMANDER"
 

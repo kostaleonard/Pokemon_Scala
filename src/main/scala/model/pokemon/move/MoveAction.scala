@@ -55,7 +55,8 @@ case class Damage(move: Move) extends MoveAction {
 case class TryBurn(probability: Double) extends MoveAction {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(Random.nextDouble() < probability) List(InflictEffectOnOpponent(Burn))
+    if(otherPokemon.getEffectTracker.getPersistentEffects.isEmpty && Random.nextDouble() < probability)
+      List(MoveEvent.getDisplayMessageBurned(otherPokemon.getName), InflictEffectOnOpponent(Burn))
     else List.empty
 }
 
@@ -68,6 +69,20 @@ case object TurnlyBurnDamage extends MoveAction {
     result.append(PlayAnimation("TODO"))
     val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt
     result.append(DealDamageToSelf(damage))
+    result.toList
+  }
+}
+
+case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveAction {
+  /** Deals a portion of the current Pokemon's max HP. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+    result.append(MoveEvent.getDisplayMessageHurtByPoison(thisPokemon.getName))
+    //TODO get poison animation.
+    result.append(PlayAnimation("TODO"))
+    val damage = (thisPokemon.getStandardStats.getHP * portionMaxHP).toInt
+    result.append(DealDamageToSelf(damage))
+    result.append(WorsenPoisonSelf)
     result.toList
   }
 }

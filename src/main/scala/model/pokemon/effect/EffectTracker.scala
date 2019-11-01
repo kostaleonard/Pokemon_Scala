@@ -1,5 +1,7 @@
 package model.pokemon.effect
 
+import model.pokemon.Pokemon
+import model.pokemon.move.MoveEvent
 import model.statuseffect.{NonPersistentEffect, PersistentEffect, StatusEffect}
 
 class EffectTracker {
@@ -23,4 +25,11 @@ class EffectTracker {
 
   /** Returns true if the effect is in the Set. */
   def contains(effect: StatusEffect): Boolean = effects(effect)
+
+  //TODO ordering of effects? Should only have one persistent effect, so only applies in limited cases.
+  /** Returns the Array of Events that result from the Effects this Pokemon has. */
+  def getEventsFromEffects(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
+    effects.toArray.sortBy(_.toString)
+      .flatMap(_.getTurnlyActions(thisPokemon, otherPokemon))
+      .flatMap(_.getResults(thisPokemon, otherPokemon))
 }

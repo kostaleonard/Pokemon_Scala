@@ -10,7 +10,7 @@ object PrintController {
   def main(args: Array[String]): Unit = {
     println("Hello world!")
 
-    val p1 = new Charmander(LevelTracker.create(5))
+    val p1 = new Charmander(LevelTracker.create(5), true)
     println(p1.getBaseStats.getStatsMap)
     println(p1.getIVStats.getStatsMap)
     p1.getIVStats.setStat("HP", 1)

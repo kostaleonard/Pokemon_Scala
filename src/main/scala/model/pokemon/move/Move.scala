@@ -45,6 +45,10 @@ abstract class Move {
   /** Returns the chance of a critical hit. Subclasses may override. */
   def getCriticalHitChance: Double = Move.BASE_CRITICAL_HIT_CHANCE
 
+  /** Returns the MoveEvents that are the result of thisPokemon using the move on otherPokemon. */
+  def getEventsFromMove(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
+    getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
+
   /** Returns the name of the move, in all caps. */
   def getName: String
 
