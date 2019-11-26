@@ -10,14 +10,17 @@ class Battle(playerPokemon: Pokemon, opponentPokemon: Pokemon) {
 
   /** Makes the opponent's move. */
   def makeOpponentMove: Unit = {
-    val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
-    //TODO before move effects.
-    val beforeMoveEffectEvents = ???
     //TODO support for more opponent behaviors, not just random.
+    val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
+    val beforeMoveEffectEvents = opponentPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(opponentPokemon,
+      playerPokemon)
+    processEvents(beforeMoveEffectEvents, opponentPokemon, playerPokemon)
+    if(beforeMoveEffectEvents.contains(EndMove)) return
     val moveEvents = move.getEventsFromMove(opponentPokemon, playerPokemon)
     processEvents(moveEvents, opponentPokemon, playerPokemon)
     move.decrementPP
-    val afterMoveEffectEvents = opponentPokemon.getEffectTracker.getEventsFromEffects(opponentPokemon, playerPokemon)
+    val afterMoveEffectEvents = opponentPokemon.getEffectTracker.getEventsFromAfterMoveEffects(opponentPokemon,
+      playerPokemon)
     processEvents(afterMoveEffectEvents, opponentPokemon, playerPokemon)
   }
 

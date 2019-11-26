@@ -1,7 +1,7 @@
 package model.pokemon.move
 
 import model.pokemon.Pokemon
-import model.statuseffect.{Burn, Poison, StatusEffect}
+import model.statuseffect.{Burn, Frozen, Poison, StatusEffect}
 
 object MoveEvent {
   val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
@@ -27,6 +27,14 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon is hurt by poison. */
   def getDisplayMessageHurtByPoison(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was hurt by poison.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon has thawed. */
+  def getDisplayMessageThawed(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s has thawed out!".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is frozen solid. */
+  def getDisplayMessageFrozenSolid(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s is frozen solid.".format(pokemonName))
 }
 
 sealed trait MoveEvent {
@@ -79,4 +87,10 @@ case object WorsenPoisonSelf extends MoveEvent {
     thisPokemon.getEffectTracker.removeEffect(poison)
     thisPokemon.getEffectTracker.addEffect(poison.copy(turn = poison.turn + 1))
   }
+}
+
+case object RemoveFrozenSelf extends MoveEvent {
+  /** Removes the Frozen status effect from this Pokemon */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker.removeEffect(
+    thisPokemon.getEffectTracker.getPersistentEffects.find(_.getIdentifier == Frozen.getIdentifier).get)
 }

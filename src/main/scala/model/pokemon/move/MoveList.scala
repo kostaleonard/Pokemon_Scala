@@ -26,5 +26,9 @@ class MoveList(protected val initialMoves: Array[Move]) {
   def getMoves: Array[Move] = moves.flatten
 
   /** Returns only the usable moves (the ones with PP). */
-  def getUsableMoves: Array[Move] = moves.flatten.filter(_.canUse)
+  def getUsableMoves: Array[Move] = {
+    val usableMoves = moves.flatten.filter(_.canUse)
+    if(usableMoves.isEmpty) ??? //TODO struggle.
+    else usableMoves
+  }
 }

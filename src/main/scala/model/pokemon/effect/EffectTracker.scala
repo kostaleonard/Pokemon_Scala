@@ -26,10 +26,18 @@ class EffectTracker {
   /** Returns true if the effect is in the Set. */
   def contains(effect: StatusEffect): Boolean = effects(effect)
 
-  //TODO ordering of effects? Should only have one persistent effect, so only applies in limited cases.
-  /** Returns the Array of Events that result from the Effects this Pokemon has. */
-  def getEventsFromEffects(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
-    effects.toArray.sortBy(_.toString)
+  /** Returns the Array of Events that result from the given Effects. */
+  protected def getEventsFromSomeEffects(someEffects: Array[StatusEffect], thisPokemon: Pokemon,
+                                         otherPokemon: Pokemon): Array[MoveEvent] =
+    someEffects
       .flatMap(_.getTurnlyActions(thisPokemon, otherPokemon))
       .flatMap(_.getResults(thisPokemon, otherPokemon))
+
+  /** Returns the Array of Events that result from the before-move Effects this Pokemon has. */
+  def getEventsFromBeforeMoveEffects(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
+    getEventsFromSomeEffects(effects.toArray.filter(_.isBeforeMove).sorted, thisPokemon, otherPokemon)
+
+  /** Returns the Array of Events that result from the after-move Effects this Pokemon has. */
+  def getEventsFromAfterMoveEffects(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
+    getEventsFromSomeEffects(effects.toArray.filterNot(_.isBeforeMove).sorted, thisPokemon, otherPokemon)
 }

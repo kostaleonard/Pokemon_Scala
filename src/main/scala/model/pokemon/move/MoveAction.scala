@@ -1,7 +1,7 @@
 package model.pokemon.move
 
 import model.pokemon.Pokemon
-import model.statuseffect.Burn
+import model.statuseffect.{Burn, Frozen}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -67,7 +67,7 @@ case object TurnlyBurnDamage extends MoveAction {
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
     //TODO get burn animation.
     result.append(PlayAnimation("TODO"))
-    val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt
+    val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt //TODO magic numbers
     result.append(DealDamageToSelf(damage))
     result.toList
   }
@@ -84,5 +84,15 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveAction {
     result.append(DealDamageToSelf(damage))
     result.append(WorsenPoisonSelf)
     result.toList
+  }
+}
+
+case object TurnlyTryThaw extends MoveAction {
+  /** Tries to thaw the Pokemon. On failure, prevents this Pokemon from moving because it is frozen. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    if(Random.nextDouble() < Frozen.THAW_CHANCE)
+      List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemoveFrozenSelf)
+    else
+      List(PlayAnimation("TODO"), MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), EndMove) //TODO get frozen animation.
   }
 }
