@@ -63,7 +63,7 @@ class PokemonStats(protected var hp: Int,
 
   /** Sets the given stat to a new value. */
   def setStat(statKey: String, newVal: Int): Unit =
-    if(newVal <= 0) throw new UnsupportedOperationException("Cannot set stat below 0.")
+    if(newVal < 0) throw new UnsupportedOperationException("Cannot set stat below 0.")
     else statKey match{
       case PokemonStats.HP_KEY => hp = newVal
       case PokemonStats.ATK_KEY => attack = newVal
