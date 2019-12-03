@@ -4,6 +4,8 @@ import model.pokemon.Pokemon
 import model.pokemon.move.{TurnlyTryThaw, MoveAction, TurnlyBurnDamage, TurnlyPoisonDamage}
 
 sealed trait StatusEffect extends Ordered[StatusEffect] {
+  val SLEEP_ORDER = -3
+  val PARALYZE_ORDER = -2
   val FROZEN_ORDER = -1
   val BURN_ORDER = 1
   val POISON_ORDER = 2
@@ -22,9 +24,11 @@ sealed trait StatusEffect extends Ordered[StatusEffect] {
   /** Returns true if the status effect is persistent. */
   def isPersistent: Boolean
 
+  //TODO this method does not seem to require these arguments.
   /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
   def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction]
 
+  //TODO this method does not seem to require these arguments.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction]
 }
@@ -64,6 +68,58 @@ case object Burn extends PersistentEffect {
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List(TurnlyBurnDamage)
 
   /** Returns an empty List. Burn does not have any outside of battle effects. */
+  override def getOutOfBattleAction: List[MoveAction] = List.empty
+}
+
+case object Paralyze extends PersistentEffect {
+  val NO_MOVE_CHANCE = 0.25
+
+  /** Returns the name of the status effect. */
+  override def getIdentifier: String = "PAR"
+
+  /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
+    * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
+    * after. This is just convention, and is actually controlled by isBeforeMove. */
+  def getOrder: Int = PARALYZE_ORDER
+
+  /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
+  def isBeforeMove: Boolean = true
+
+  //TODO lower Pokemon speed.
+  /** Returns an empty List. Paralyze lowers the Pokemon's speed by 50%. */
+  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List.empty
+
+  //TODO see if Pokemon can move.
+  /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List(TurnlyTryThaw)
+
+  /** Returns an empty List. Paralyze does not have any outside of battle effects. */
+  override def getOutOfBattleAction: List[MoveAction] = List.empty
+}
+
+case object Sleep extends PersistentEffect {
+  val MIN_TURNS = 1
+  val MAX_TURNS = 5
+
+  /** Returns the name of the status effect. */
+  override def getIdentifier: String = "SLP"
+
+  /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
+    * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
+    * after. This is just convention, and is actually controlled by isBeforeMove. */
+  def getOrder: Int = SLEEP_ORDER
+
+  /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
+  def isBeforeMove: Boolean = true
+
+  /** Returns an empty List. */
+  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List.empty
+
+  //TODO see if Pokemon wakes up.
+  /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List(TurnlyTryThaw)
+
+  /** Returns an empty List. Sleep does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveAction] = List.empty
 }
 
