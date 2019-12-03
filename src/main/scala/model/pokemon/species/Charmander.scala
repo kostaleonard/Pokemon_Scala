@@ -23,7 +23,7 @@ class Charmander(override protected val levelTracker: LevelTracker, override pro
   extends Pokemon(levelTracker, wild) {
 
   /** Returns the Pokemon's pokedex number. */
-  override def getPokedexNum: Int = 7
+  override def getPokedexNum: Int = 4
 
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "CHARMANDER"

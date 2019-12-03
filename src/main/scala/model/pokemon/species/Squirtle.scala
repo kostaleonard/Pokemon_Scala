@@ -1,30 +1,30 @@
 package model.pokemon.species
 
-import model.elementaltype.{ElementalType, GrassType, PoisonType}
+import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
-object Bulbasaur {
-  val BASE_HP = 45
-  val BASE_ATK = 49
-  val BASE_DEF = 49
-  val BASE_SPATK = 65
-  val BASE_SPDEF = 65
-  val BASE_SPD = 45
+object Squirtle {
+  val BASE_HP = 44
+  val BASE_ATK = 48
+  val BASE_DEF = 65
+  val BASE_SPATK = 50
+  val BASE_SPDEF = 64
+  val BASE_SPD = 43
 
-  val TYPE_ARRAY: Array[ElementalType] = Array(GrassType, PoisonType)
+  val TYPE_ARRAY: Array[ElementalType] = Array(WaterType)
 }
 
-class Bulbasaur(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
+class Squirtle(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
   extends Pokemon(levelTracker, wild) {
 
   /** Returns the Pokemon's pokedex number. */
-  override def getPokedexNum: Int = 1
+  override def getPokedexNum: Int = 7
 
   /** Returns the name of the Pokemon species. */
-  override def getSpeciesName: String = "BULBASAUR"
+  override def getSpeciesName: String = "SQUIRTLE"
 
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
