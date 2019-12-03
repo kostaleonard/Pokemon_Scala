@@ -3,7 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.MoveList
+import model.pokemon.move.{Move, MoveList}
 import model.pokemon.move.bytype.normal.Tackle
 import model.pokemon.stat.PokemonStats
 
@@ -36,6 +36,10 @@ class Charmander(override protected val levelTracker: LevelTracker, override pro
   /** Returns the Pokemon's types. */
   override def getTypeArray: Array[ElementalType] = Charmander.TYPE_ARRAY
 
-  /** Returns the Pokemon's moves at a given level. */
-  override def getInitialMoveList(level: Int): MoveList = new MoveList(Array(new Tackle)) //TODO Charmander's moves.
+  /** Returns the Pokemon's learn map. */
+  override def getLearnMap: Map[Int, Move] = Map(
+    //TODO correct/complete Charmander's learnset.
+    1 -> new Tackle,
+    7 -> new Ember
+  )
 }

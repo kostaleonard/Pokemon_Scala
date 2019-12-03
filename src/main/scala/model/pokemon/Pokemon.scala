@@ -3,7 +3,7 @@ package model.pokemon
 import model.elementaltype.ElementalType
 import model.pokemon.effect.EffectTracker
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.MoveList
+import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
 
 import scala.util.Random
@@ -72,6 +72,14 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
   /** Returns true if the Pokemon is wild. */
   def isWild: Boolean = wild
 
+  /** Returns the Pokemon's moves at a given level. */
+  def getInitialMoveList(level: Int): MoveList = {
+    val learnMap = getLearnMap
+    val moveKeys = learnMap.keys.filter(_ <= level).toArray.sorted.reverse.take(MoveList.MAX_SIZE)
+    val moveArray = moveKeys.map(learnMap(_))
+    new MoveList(moveArray)
+  }
+
   /** Returns the name of the Pokemon species. */
   def getSpeciesName: String
 
@@ -81,6 +89,6 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
   /** Returns the Pokemon's types. */
   def getTypeArray: Array[ElementalType]
 
-  /** Returns the Pokemon's moves at a given level. */
-  def getInitialMoveList(level: Int): MoveList
+  /** Returns the Pokemon's learn map. */
+  def getLearnMap: Map[Int, Move]
 }
