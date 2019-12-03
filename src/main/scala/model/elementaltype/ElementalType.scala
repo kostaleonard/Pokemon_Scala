@@ -205,3 +205,4 @@ case object GhostType extends ElementalType
 case object DragonType extends ElementalType
 case object DarkType extends ElementalType
 case object SteelType extends ElementalType
+
