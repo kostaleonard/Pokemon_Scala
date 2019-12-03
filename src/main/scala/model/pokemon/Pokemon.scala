@@ -83,6 +83,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
   /** Returns the Pokemon's pokedex number. */
   def getPokedexNum: Int
 
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String
+
   /** Returns the name of the Pokemon species. */
   def getSpeciesName: String
 

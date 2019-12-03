@@ -37,7 +37,7 @@ class Venasaur(override protected val levelTracker: LevelTracker, override prote
   ))
 
   /** Returns the Pokemon's types. */
-  override def getTypeArray: Array[ElementalType] = Bulbasaur.TYPE_ARRAY
+  override def getTypeArray: Array[ElementalType] = Venasaur.TYPE_ARRAY
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(

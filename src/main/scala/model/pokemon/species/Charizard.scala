@@ -1,30 +1,32 @@
 package model.pokemon.species
 
-import model.elementaltype.{ElementalType, WaterType}
+import model.elementaltype.{ElementalType, FireType, FlyingType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
+import model.pokemon.move.bytype.normal.Scratch
+import model.pokemon.move.bytype.fire.Ember
 import model.pokemon.stat.PokemonStats
 
-object Squirtle {
-  val BASE_HP = 44
-  val BASE_ATK = 48
-  val BASE_DEF = 65
-  val BASE_SPATK = 50
-  val BASE_SPDEF = 64
-  val BASE_SPD = 43
+object Charizard {
+  val BASE_HP = 78
+  val BASE_ATK = 84
+  val BASE_DEF = 78
+  val BASE_SPATK = 109
+  val BASE_SPDEF = 85
+  val BASE_SPD = 100
 
-  val TYPE_ARRAY: Array[ElementalType] = Array(WaterType)
+  val TYPE_ARRAY: Array[ElementalType] = Array(FireType, FlyingType)
 }
 
-class Squirtle(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
+class Charizard(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
   extends Pokemon(levelTracker, wild) {
 
   /** Returns the Pokemon's pokedex number. */
-  override def getPokedexNum: Int = 7
+  override def getPokedexNum: Int = 6
 
   /** Returns the name of the Pokemon species. */
-  override def getSpeciesName: String = "SQUIRTLE"
+  override def getSpeciesName: String = "CHARIZARD"
 
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
@@ -37,11 +39,12 @@ class Squirtle(override protected val levelTracker: LevelTracker, override prote
   ))
 
   /** Returns the Pokemon's types. */
-  override def getTypeArray: Array[ElementalType] = Squirtle.TYPE_ARRAY
+  override def getTypeArray: Array[ElementalType] = Charizard.TYPE_ARRAY
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete learnset.
-    1 -> new Tackle
+    //TODO correct/complete Charmander's learnset.
+    1 -> new Scratch,
+    7 -> new Ember
   )
 }
