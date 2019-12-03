@@ -5,6 +5,7 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.move.bytype.normal.Tackle
+import model.pokemon.move.bytype.fire.Ember
 import model.pokemon.stat.PokemonStats
 
 object Charmander {
