@@ -3,6 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.normal.Tackle
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -22,6 +23,10 @@ class Wartortle(override protected val levelTracker: LevelTracker, override prot
 
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 8
+
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String = "It often hides in water to stalk unwary prey. For fast swimming, it moves its ears" +
+    " to maintain balance."
 
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "WARTORTLE"

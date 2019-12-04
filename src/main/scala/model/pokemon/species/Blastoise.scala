@@ -3,6 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.normal.Tackle
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -22,6 +23,10 @@ class Blastoise(override protected val levelTracker: LevelTracker, override prot
 
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 9
+
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String = "It crushes its foe under its heavy body to cause fainting. In a pinch, it will" +
+    " withdraw inside its shell."
 
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "BLASTOISE"

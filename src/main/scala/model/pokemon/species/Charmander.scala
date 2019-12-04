@@ -25,6 +25,10 @@ class Charmander(override protected val levelTracker: LevelTracker, override pro
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 4
 
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String = "It has a preference for hot things. When it rains, steam is said to spout from the" +
+    " tip of its tail."
+
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "CHARMANDER"
 

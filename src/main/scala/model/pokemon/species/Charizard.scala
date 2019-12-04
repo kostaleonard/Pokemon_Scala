@@ -25,6 +25,10 @@ class Charizard(override protected val levelTracker: LevelTracker, override prot
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 6
 
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String = "It spits fire that is hot enough to melt boulders. It may cause forest fires by " +
+    "blowing flames."
+
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "CHARIZARD"
 

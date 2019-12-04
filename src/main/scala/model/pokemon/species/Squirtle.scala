@@ -3,6 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.normal.Tackle
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -22,6 +23,10 @@ class Squirtle(override protected val levelTracker: LevelTracker, override prote
 
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 7
+
+  /** Returns the Pokemon's pokedex entry. */
+  def getPokedexEntry: String = "After birth, its back swells and hardens into a shell. Powerfully sprays foam from" +
+    " its mouth."
 
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "SQUIRTLE"
