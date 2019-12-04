@@ -85,6 +85,7 @@ case object Paralyze extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
+  //TODO this has to happen at the start of every battle. Probably need to add that functionality to PersistentEffect.
   //TODO lower Pokemon speed.
   /** Returns an empty List. Paralyze lowers the Pokemon's speed by 50%. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List.empty
@@ -162,6 +163,7 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
   /** Returns an empty List. Poison does not have any initial effects. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = List.empty
 
+  //TODO the turn has to reset after every battle somehow.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveAction] = {
     if(badly) List(TurnlyPoisonDamage(turn * 1.0 / 8.0)) //TODO magic numbers
