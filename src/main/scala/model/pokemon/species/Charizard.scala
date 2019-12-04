@@ -34,12 +34,12 @@ class Charizard(override protected val levelTracker: LevelTracker, override prot
 
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
-    PokemonStats.HP_KEY -> Charmander.BASE_HP,
-    PokemonStats.ATK_KEY -> Charmander.BASE_ATK,
-    PokemonStats.DEF_KEY -> Charmander.BASE_DEF,
-    PokemonStats.SPATK_KEY -> Charmander.BASE_SPATK,
-    PokemonStats.SPDEF_KEY -> Charmander.BASE_SPDEF,
-    PokemonStats.SPD_KEY -> Charmander.BASE_SPD
+    PokemonStats.HP_KEY -> Charizard.BASE_HP,
+    PokemonStats.ATK_KEY -> Charizard.BASE_ATK,
+    PokemonStats.DEF_KEY -> Charizard.BASE_DEF,
+    PokemonStats.SPATK_KEY -> Charizard.BASE_SPATK,
+    PokemonStats.SPDEF_KEY -> Charizard.BASE_SPDEF,
+    PokemonStats.SPD_KEY -> Charizard.BASE_SPD
   ))
 
   /** Returns the Pokemon's types. */
@@ -47,7 +47,7 @@ class Charizard(override protected val levelTracker: LevelTracker, override prot
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete Charmander's learnset.
+    //TODO correct/complete Charizard's learnset.
     1 -> new Scratch,
     7 -> new Ember
   )

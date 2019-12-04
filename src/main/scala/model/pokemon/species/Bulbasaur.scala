@@ -33,12 +33,12 @@ class Bulbasaur(override protected val levelTracker: LevelTracker, override prot
 
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](
-    PokemonStats.HP_KEY -> Charmander.BASE_HP,
-    PokemonStats.ATK_KEY -> Charmander.BASE_ATK,
-    PokemonStats.DEF_KEY -> Charmander.BASE_DEF,
-    PokemonStats.SPATK_KEY -> Charmander.BASE_SPATK,
-    PokemonStats.SPDEF_KEY -> Charmander.BASE_SPDEF,
-    PokemonStats.SPD_KEY -> Charmander.BASE_SPD
+    PokemonStats.HP_KEY -> Bulbasaur.BASE_HP,
+    PokemonStats.ATK_KEY -> Bulbasaur.BASE_ATK,
+    PokemonStats.DEF_KEY -> Bulbasaur.BASE_DEF,
+    PokemonStats.SPATK_KEY -> Bulbasaur.BASE_SPATK,
+    PokemonStats.SPDEF_KEY -> Bulbasaur.BASE_SPDEF,
+    PokemonStats.SPD_KEY -> Bulbasaur.BASE_SPD
   ))
 
   /** Returns the Pokemon's types. */
