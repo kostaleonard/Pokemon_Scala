@@ -87,6 +87,20 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveAction {
   }
 }
 
+case object TurnlySleep extends MoveAction {
+  /** Decrements the sleep counter and sends a message if the Pokemon is fast asleep, or wakes up.
+   *  In special cases, the Pokemon can still move. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    //TODO TurnlySleep
+    val result = ListBuffer.empty[MoveEvent]
+    //TODO try wake up
+    result.append(DecrementSleepCounterSelf)
+    //TODO more stuff
+    
+    result.toList
+  }
+}
+
 case object TurnlyTryThaw extends MoveAction {
   /** Tries to thaw the Pokemon. On failure, prevents this Pokemon from moving because it is frozen. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {

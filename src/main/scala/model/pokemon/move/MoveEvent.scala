@@ -89,6 +89,19 @@ case object WorsenPoisonSelf extends MoveEvent {
   }
 }
 
+case object DecrementSleepCounterSelf extends MoveEvent {
+  /** Replaces the Pokemon's Sleep with Sleep that has progressed one turn. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    val sleep = thisPokemon.getEffectTracker.getEffects.find(_ match{
+      case Sleep(turnsRemaining) => true
+      case _ => false
+    }).get.asInstanceOf[Sleep]
+    thisPokemon.getEffectTracker.removeEffect(sleep)
+    //TODO only add back if turnsRemaining > 1, but either way you need to display a message saying that the Pokemon is fast asleep or that it woke up.
+    thisPokemon.getEffectTracker.addEffect(sleep.copy(turnsRemaining = sleep.turnsRemaining - 1))
+  } 
+}
+
 case object RemoveFrozenSelf extends MoveEvent {
   /** Removes the Frozen status effect from this Pokemon */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker.removeEffect(

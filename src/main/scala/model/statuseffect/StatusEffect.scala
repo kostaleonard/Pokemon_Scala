@@ -98,7 +98,7 @@ case object Paralyze extends PersistentEffect {
   override def getOutOfBattleAction: List[MoveAction] = List.empty
 }
 
-case object Sleep extends PersistentEffect {
+case class Sleep(turnsRemaining: Int) extends PersistentEffect {
   val MIN_TURNS = 1
   val MAX_TURNS = 5
 
