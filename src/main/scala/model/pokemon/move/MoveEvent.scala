@@ -65,6 +65,11 @@ case class DealDamageToSelf(amount: Int) extends MoveEvent {
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.takeDamage(amount)
 }
 
+case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
+  /** Lowers the opponent's given stat by the given number of stages.  */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = ???
+}
+
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =

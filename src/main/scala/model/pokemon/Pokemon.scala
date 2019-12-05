@@ -57,7 +57,7 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
   def getStandardStats: PokemonStats = standardStats
 
   /** Returns the stats the Pokemon currently has. */
-  def getCurrentStats: PokemonStats = currentStats
+  def getCurrentStats: BattleStats = currentStats
 
   /** Decrements the current HP by the given amount. */
   def takeDamage(amount: Int): Unit = currentStats.takeDamage(amount)

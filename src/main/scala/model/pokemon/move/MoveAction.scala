@@ -52,6 +52,20 @@ case class Damage(move: Move) extends MoveAction {
   }
 }
 
+case class TryLowerStatOther(statKey: Int, stages: Int) extends MoveAction {
+  /** Lowers the opponent's given stat by the given number of stages. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    if(otherPokemon.getCurrentStats.getStage(statKey) == BattleStats.MIN_STAGE) List(DisplayMessage("%s's %s won't go any lower!")) //TODO make this a predefined DisplayMessage in MoveEvent.
+    else {
+      //TODO play animation, lower stat, display message.
+      val result = ListBuffer.empty[MoveEvent]
+      result.append(PlayAnimation("TODO"))
+      //TODO lower stat
+      result.append(DisplayMessage("%s's %s fell.")) //TODO predefined DisplayMessage in MoveEvent.
+      result.toList
+    }
+}
+
 case class TryBurn(probability: Double) extends MoveAction {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
@@ -64,6 +78,7 @@ case object TurnlyBurnDamage extends MoveAction {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
+    //TODO I legit don't remember if the message comes before the animation. Maybe swap later.
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
     //TODO get burn animation.
     result.append(PlayAnimation("TODO"))
