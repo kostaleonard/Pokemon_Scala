@@ -37,6 +37,9 @@ sealed trait PersistentEffect extends StatusEffect {
   /** Returns true if the status effect is persistent. */
   override def isPersistent: Boolean = true
 
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  def isInitialActionRecurrent: Boolean
+
   /** Returns the name of the status effect. */
   def getIdentifier: String
 
@@ -52,6 +55,9 @@ sealed trait NonPersistentEffect extends StatusEffect {
 case object Burn extends PersistentEffect {
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "BRN"
+  
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  override def isInitialActionRecurrent: Boolean = false
 
   /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
@@ -76,6 +82,9 @@ case object Paralyze extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "PAR"
+  
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  override def isInitialActionRecurrent: Boolean = true
 
   /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
@@ -104,6 +113,10 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "SLP"
+ 
+  //TODO pretty sure about this boolean value.
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  override def isInitialActionRecurrent: Boolean = false
 
   /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
@@ -129,6 +142,9 @@ case object Frozen extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "FRZ"
+  
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  override def isInitialActionRecurrent: Boolean = false
 
   /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
@@ -156,6 +172,9 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
     * after. This is just convention, and is actually controlled by isBeforeMove. */
   def getOrder: Int = POISON_ORDER
+  
+  /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
+  override def isInitialActionRecurrent: Boolean = false
 
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = false
