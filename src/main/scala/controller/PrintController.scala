@@ -36,7 +36,11 @@ object PrintController {
     playerPokemon.getMoveList.getMoves.foreach(println)
 
     (1 to 10).foreach { i =>
-      battle.makePlayerMove(playerPokemon.getMoveList.getUsableMoves.head)
+      println("Choose a move.")
+      playerPokemon.getMoveList.zipWithIndex.foreach((move, i) => println("%d.%s".format(i, move.getName)))
+      val chosenIndex = readInt
+      //battle.makePlayerMove(playerPokemon.getMoveList.getUsableMoves.head)
+      battle.makePlayerMove(playerPokemon.getMoveList(chosenIndex))
       println("Opponent: %d/%d".format(opponentPokemon.getCurrentStats.getHP, opponentPokemon.getStandardStats.getHP))
       battle.makeOpponentMove
       println("Player: %d/%d".format(playerPokemon.getCurrentStats.getHP, playerPokemon.getStandardStats.getHP))

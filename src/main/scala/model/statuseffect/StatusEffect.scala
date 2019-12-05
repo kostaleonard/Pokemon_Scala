@@ -164,7 +164,10 @@ case object Frozen extends PersistentEffect {
   override def getOutOfBattleAction: List[MoveAction] = List.empty
 }
 
+//TODO could add another constructor arg to keep track of step % NUM_STEPS_TO_DAMAGE.
 case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
+  val NUM_STEPS_TO_DAMAGE = 4
+
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "PSN"
 

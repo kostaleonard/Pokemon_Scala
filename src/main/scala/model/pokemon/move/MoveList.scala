@@ -5,6 +5,7 @@ object MoveList {
   val MAX_SIZE = 4
 }
 
+//TODO consider refactor: rename MoveList to MoveArray (since under the hood backed by Array, not List).
 class MoveList(protected val initialMoves: Array[Move]) {
   if(initialMoves.isEmpty) throw new UnsupportedOperationException("Cannot instantiate MoveList with empty moves.")
   protected val moves: Array[Option[Move]] = (0 until MoveList.MAX_SIZE).map(i =>
