@@ -37,13 +37,14 @@ object PrintController {
 
     (1 to 10).foreach { i =>
       println("Choose a move.")
-      playerPokemon.getMoveList.zipWithIndex.foreach((move, i) => println("%d.%s".format(i, move.getName)))
-      val chosenIndex = readInt
+      playerPokemon.getMoveList.getMoves.zipWithIndex.foreach(tup => println("%d.%s".format(tup._2, tup._1.getName)))
+      val chosenIndex = scala.io.StdIn.readInt()
       //battle.makePlayerMove(playerPokemon.getMoveList.getUsableMoves.head)
-      battle.makePlayerMove(playerPokemon.getMoveList(chosenIndex))
+      battle.makePlayerMove(playerPokemon.getMoveList.getMoves(chosenIndex))
       println("Opponent: %d/%d".format(opponentPokemon.getCurrentStats.getHP, opponentPokemon.getStandardStats.getHP))
       battle.makeOpponentMove
       println("Player: %d/%d".format(playerPokemon.getCurrentStats.getHP, playerPokemon.getStandardStats.getHP))
+      println
     }
   }
 }

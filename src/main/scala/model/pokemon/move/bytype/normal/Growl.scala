@@ -1,7 +1,8 @@
 package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
-import model.pokemon.move.{Damage, Move, MoveAction}
+import model.pokemon.move._
+import model.pokemon.stat.PokemonStats
 
 class Growl extends Move {
   /** Returns the name of the move, in all caps. */
@@ -36,5 +37,5 @@ class Growl extends Move {
   override def isPhysical: Boolean = false
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveAction] = Array(LowerStatOther(PokemonStat.ATK_KEY, 1))
+  override def getMoveActions: Array[MoveAction] = Array(TryLowerStatOther(PokemonStats.ATK_KEY, 1))
 }

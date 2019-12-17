@@ -1,7 +1,7 @@
 package model.pokemon.move
 
 import model.pokemon.Pokemon
-import model.statuseffect.{Burn, Frozen, Poison, StatusEffect}
+import model.statuseffect._
 
 object MoveEvent {
   val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
