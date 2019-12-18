@@ -13,6 +13,9 @@ class Party(protected val pokemonList: ListBuffer[Pokemon]) {
   else if(pokemonList.length > Party.MAX_SIZE) throw new UnsupportedOperationException(
     "Cannot initialize Party object with more than %d Pokemon.".format(Party.MAX_SIZE))
 
+  /** Returns true if there are no more Pokemon in the party. */
+  def isWhiteout: Boolean = getNextPokemon.isEmpty
+
   /** Returns the first Pokemon that has not fainted, or None if no such Pokemon exists. */
   def getNextPokemon: Option[Pokemon] = pokemonList.collectFirst({case pok: Pokemon if !pok.isKO => pok})
 

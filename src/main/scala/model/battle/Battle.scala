@@ -14,6 +14,11 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     if(opponent.isEmpty) wildPokemon.get else opponent.get.getParty.getNextPokemon.get
   //TODO support for double battles.
 
+  /** Returns true if the battle is over. */
+  def isOver: Boolean = player.getParty.isWhiteout ||
+    (opponent.nonEmpty && opponent.get.getParty.isWhiteout) ||
+    (wildPokemon.nonEmpty && wildPokemon.get.isKO)
+
   /** Makes the player's move. */
   def makePlayerMove(move: Move): Unit = makePokemonMove(playerPokemon, opponentPokemon, move)
 

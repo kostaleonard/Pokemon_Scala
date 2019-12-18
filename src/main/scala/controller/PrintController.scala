@@ -40,15 +40,14 @@ object PrintController {
     val battle = new Battle(playerCharacter, None, Some(opponentPokemon))
     playerPokemon.getMoveList.getMoves.foreach(println)
 
-    //TODO until the battle is over.
-    (1 to 10).foreach { i =>
+    while(!battle.isOver){
       println("Choose a move.")
       playerPokemon.getMoveList.getMoves.zipWithIndex.foreach(tup => println("%d.%s".format(tup._2, tup._1.getName)))
       val chosenIndex = scala.io.StdIn.readInt()
       //battle.makePlayerMove(playerPokemon.getMoveList.getUsableMoves.head)
       battle.makePlayerMove(playerPokemon.getMoveList.getMoves(chosenIndex))
       println("Opponent: %d/%d".format(opponentPokemon.getCurrentStats.getHP, opponentPokemon.getStandardStats.getHP))
-      battle.makeOpponentMove
+      if(!opponentPokemon.isKO) battle.makeOpponentMove
       println("Player: %d/%d".format(playerPokemon.getCurrentStats.getHP, playerPokemon.getStandardStats.getHP))
       println
     }
