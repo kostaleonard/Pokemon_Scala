@@ -35,6 +35,22 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon is frozen solid. */
   def getDisplayMessageFrozenSolid(pokemonName: String): DisplayMessage =
     DisplayMessage("%s is frozen solid.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon's stat won't go lower. */
+  def getDisplayMessageStatWillNotGoLower(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s won't go any lower!".format(pokemonName, statName))
+
+  /** Returns the DisplayMessage used when a Pokemon's stat won't go higher. */
+  def getDisplayMessageStatWillNotGoHigher(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s won't go any higher!".format(pokemonName, statName))
+
+  /** Returns the DisplayMessage used when a Pokemon's stat falls. */
+  def getDisplayMessageStatFell(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s fell.".format(pokemonName, statName))
+
+  /** Returns the DisplayMessage used when a Pokemon's stat rises. */
+  def getDisplayMessageStatRose(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s rose.".format(pokemonName, statName))
 }
 
 sealed trait MoveEvent {
@@ -67,7 +83,8 @@ case class DealDamageToSelf(amount: Int) extends MoveEvent {
 
 case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
   /** Lowers the opponent's given stat by the given number of stages.  */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = ???
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
+    otherPokemon.getCurrentStats.incrementStage(statKey, -1 * stages)
 }
 
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {

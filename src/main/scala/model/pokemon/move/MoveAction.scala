@@ -56,13 +56,13 @@ case class Damage(move: Move) extends MoveAction {
 case class TryLowerStatOther(statKey: String, stages: Int) extends MoveAction {
   /** Lowers the opponent's given stat by the given number of stages. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(otherPokemon.getCurrentStats.getStage(statKey) == BattleStats.MIN_STAGE) List(DisplayMessage("%s's %s won't go any lower!")) //TODO make this a predefined DisplayMessage in MoveEvent.
+    if(otherPokemon.getCurrentStats.getStage(statKey) == BattleStats.MIN_STAGE)
+      List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
     else {
-      //TODO play animation, lower stat, display message.
       val result = ListBuffer.empty[MoveEvent]
       result.append(PlayAnimation("TODO"))
-      //TODO lower stat
-      result.append(DisplayMessage("%s's %s fell.")) //TODO predefined DisplayMessage in MoveEvent.
+      result.append(LowerStatOther(statKey, stages))
+      result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
       result.toList
     }
 }
