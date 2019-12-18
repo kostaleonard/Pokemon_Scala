@@ -1,7 +1,7 @@
 package model.pokemon.move.bytype.fire
 
 import model.elementaltype.{ElementalType, FireType}
-import model.pokemon.move.{Damage, Move, MoveAction, TryBurn}
+import model.pokemon.move.{Damage, Move, MoveEventGenerator, TryBurn}
 
 object Ember {
   val BURN_CHANCE = 0.1
@@ -40,5 +40,5 @@ class Ember extends Move {
   override def isPhysical: Boolean = false
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveAction] = Array(Damage(this), TryBurn(Ember.BURN_CHANCE))
+  override def getMoveActions: Array[MoveEventGenerator] = Array(Damage(this), TryBurn(Ember.BURN_CHANCE))
 }

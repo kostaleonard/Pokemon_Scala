@@ -1,7 +1,7 @@
 package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
-import model.pokemon.move.{Damage, Move, MoveAction}
+import model.pokemon.move.{Damage, Move, MoveEventGenerator}
 
 class Scratch extends Move {
   /** Returns the name of the move, in all caps. */
@@ -36,5 +36,5 @@ class Scratch extends Move {
   override def isPhysical: Boolean = true
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveAction] = Array(Damage(this))
+  override def getMoveActions: Array[MoveEventGenerator] = Array(Damage(this))
 }

@@ -37,5 +37,5 @@ class Growl extends Move {
   override def isPhysical: Boolean = false
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveAction] = Array(TryLowerStatOther(PokemonStats.ATK_KEY, 1))
+  override def getMoveActions: Array[MoveEventGenerator] = Array(TryLowerStatOther(PokemonStats.ATK_KEY, 1))
 }

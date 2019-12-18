@@ -7,13 +7,13 @@ import model.statuseffect.{Burn, Frozen}
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
-sealed trait MoveAction {
+sealed trait MoveEventGenerator {
   /** Does some action that occurs during a move (e.g. damage, effects, KO). Returns the List of MoveEvents that result
     * from this action. */
   def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent]
 }
 
-case class Damage(move: Move) extends MoveAction {
+case class Damage(move: Move) extends MoveEventGenerator {
   /** Deals damage to the other pokemon. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     if(Random.nextDouble() > move.getAccuracy) return List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName))
@@ -53,7 +53,7 @@ case class Damage(move: Move) extends MoveAction {
   }
 }
 
-case class TryLowerStatOther(statKey: String, stages: Int) extends MoveAction {
+case class TryLowerStatOther(statKey: String, stages: Int) extends MoveEventGenerator {
   /** Lowers the opponent's given stat by the given number of stages. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
     if(otherPokemon.getCurrentStats.getStage(statKey) == BattleStats.MIN_STAGE)
@@ -67,7 +67,7 @@ case class TryLowerStatOther(statKey: String, stages: Int) extends MoveAction {
     }
 }
 
-case class TryBurn(probability: Double) extends MoveAction {
+case class TryBurn(probability: Double) extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
     if(otherPokemon.getEffectTracker.getPersistentEffects.isEmpty && Random.nextDouble() < probability)
@@ -75,7 +75,7 @@ case class TryBurn(probability: Double) extends MoveAction {
     else List.empty
 }
 
-case object TurnlyBurnDamage extends MoveAction {
+case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
@@ -89,7 +89,7 @@ case object TurnlyBurnDamage extends MoveAction {
   }
 }
 
-case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveAction {
+case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveEventGenerator {
   /** Deals a portion of the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
@@ -103,7 +103,7 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveAction {
   }
 }
 
-case object TurnlySleep extends MoveAction {
+case object TurnlySleep extends MoveEventGenerator {
   /** Decrements the sleep counter and sends a message if the Pokemon is fast asleep, or wakes up.
    *  In special cases, the Pokemon can still move. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -112,12 +112,12 @@ case object TurnlySleep extends MoveAction {
     //TODO try wake up
     result.append(DecrementSleepCounterSelf)
     //TODO more stuff
-    
+
     result.toList
   }
 }
 
-case object TurnlyTryThaw extends MoveAction {
+case object TurnlyTryThaw extends MoveEventGenerator {
   /** Tries to thaw the Pokemon. On failure, prevents this Pokemon from moving because it is frozen. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     if(Random.nextDouble() < Frozen.THAW_CHANCE)

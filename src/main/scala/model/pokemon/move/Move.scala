@@ -81,5 +81,5 @@ abstract class Move {
   def isPhysical: Boolean
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  def getMoveActions: Array[MoveAction]
+  def getMoveActions: Array[MoveEventGenerator]
 }
