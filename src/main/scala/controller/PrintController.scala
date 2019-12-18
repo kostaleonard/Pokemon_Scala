@@ -1,8 +1,12 @@
 package controller
 
 import model.battle.Battle
+import model.character.PlayerCharacter
+import model.party.Party
 import model.pokemon.exp.LevelTracker
 import model.pokemon.species.Charmander
+
+import scala.collection.mutable.ListBuffer
 
 /** Runs the program and handles user input. Only displays information via stdout. */
 object PrintController {
@@ -32,9 +36,11 @@ object PrintController {
   protected def testBattle: Unit = {
     val playerPokemon = new Charmander(LevelTracker.create(5), false)
     val opponentPokemon = new Charmander(LevelTracker.create(4), true)
-    val battle = new Battle(playerPokemon, opponentPokemon)
+    val playerCharacter = new PlayerCharacter(new Party(ListBuffer(playerPokemon)))
+    val battle = new Battle(playerCharacter, None, Some(opponentPokemon))
     playerPokemon.getMoveList.getMoves.foreach(println)
 
+    //TODO until the battle is over.
     (1 to 10).foreach { i =>
       println("Choose a move.")
       playerPokemon.getMoveList.getMoves.zipWithIndex.foreach(tup => println("%d.%s".format(tup._2, tup._1.getName)))

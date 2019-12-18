@@ -1,11 +1,17 @@
 package model.battle
 
+import model.character.{PlayerCharacter, Trainer}
 import model.pokemon.Pokemon
 import model.pokemon.move._
 
 import scala.util.Random
 
-class Battle(playerPokemon: Pokemon, opponentPokemon: Pokemon) {
+class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Option[Pokemon]) {
+  if(opponent.isEmpty && wildPokemon.isEmpty) throw new UnsupportedOperationException("No foe pokemon defined; " +
+    "both opponent and wildPokemon are None.")
+  protected var playerPokemon: Pokemon = player.getParty.getNextPokemon.get
+  protected var opponentPokemon: Pokemon =
+    if(opponent.isEmpty) wildPokemon.get else opponent.get.getParty.getNextPokemon.get
   //TODO support for double battles.
 
   /** Makes the player's move. */

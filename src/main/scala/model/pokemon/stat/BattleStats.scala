@@ -34,6 +34,9 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
   /** Changes the stats to match the given stats map. Called, for example, when resting or using a Pokemon Center. */
   def returnToBaseline: Unit = baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
 
+  /** Returns true if the Pokemon is KO, false otherwise. */
+  def isKO: Boolean = getStat(PokemonStats.HP_KEY) == 0
+
   /** Lowers HP by the given amount. */
   def takeDamage(amount: Int): Unit = setStat(PokemonStats.HP_KEY, (getStat(PokemonStats.HP_KEY) - amount) max 0)
 

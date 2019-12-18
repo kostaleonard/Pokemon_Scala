@@ -59,6 +59,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
   /** Returns the stats the Pokemon currently has. */
   def getCurrentStats: BattleStats = currentStats
 
+  /** Returns true if the Pokemon is KO, false otherwise. */
+  def isKO: Boolean = currentStats.isKO
+
   /** Decrements the current HP by the given amount. */
   def takeDamage(amount: Int): Unit = currentStats.takeDamage(amount)
 
