@@ -1,5 +1,7 @@
 package model.character
 
-class Character {
+import model.board.BoardObject
+
+class Character extends BoardObject {
 
 }
