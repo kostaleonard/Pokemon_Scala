@@ -30,6 +30,7 @@ object Pokemon {
   }
 }
 
+//TODO does Pokemon need to know if it's wild or not?
 abstract class Pokemon(protected val levelTracker: LevelTracker, protected val wild: Boolean) {
   protected val ivStats: IVStats = Pokemon.getRandomIVStats
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
