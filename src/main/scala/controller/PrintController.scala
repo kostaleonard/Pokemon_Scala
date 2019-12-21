@@ -20,7 +20,7 @@ object PrintController {
 
   /** Prints some Pokemon stats. */
   protected def testStats: Unit = {
-    val p1 = new Charmander(LevelTracker.create(5), true)
+    val p1 = new Charmander(LevelTracker.create(5))
     println(p1.getBaseStats.getStatsMap)
     println(p1.getIVStats.getStatsMap)
     p1.getIVStats.setStat("HP", 1)
@@ -34,8 +34,8 @@ object PrintController {
 
   /** Tests battle functionality. */
   protected def testBattle: Unit = {
-    val playerPokemon = new Charmander(LevelTracker.create(8), false)
-    val opponentPokemon = new Charmander(LevelTracker.create(7), true)
+    val playerPokemon = new Charmander(LevelTracker.create(8))
+    val opponentPokemon = new Charmander(LevelTracker.create(7))
     val playerCharacter = new PlayerCharacter(new Party(ListBuffer(playerPokemon)))
     val battle = new Battle(playerCharacter, None, Some(opponentPokemon))
     playerPokemon.getMoveList.getMoves.foreach(println)

@@ -30,8 +30,7 @@ object Pokemon {
   }
 }
 
-//TODO does Pokemon need to know if it's wild or not?
-abstract class Pokemon(protected val levelTracker: LevelTracker, protected val wild: Boolean) {
+abstract class Pokemon(protected val levelTracker: LevelTracker) {
   protected val ivStats: IVStats = Pokemon.getRandomIVStats
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
@@ -72,9 +71,6 @@ abstract class Pokemon(protected val levelTracker: LevelTracker, protected val w
 
   /** Returns the MoveList. */
   def getMoveList: MoveList = moveList
-
-  /** Returns true if the Pokemon is wild. */
-  def isWild: Boolean = wild
 
   /** Returns the Pokemon's moves at a given level. */
   def getInitialMoveList(level: Int): MoveList = {

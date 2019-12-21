@@ -19,8 +19,8 @@ object Charmeleon {
   val TYPE_ARRAY: Array[ElementalType] = Array(FireType)
 }
 
-class Charmeleon(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
-  extends Pokemon(levelTracker, wild) {
+class Charmeleon(override protected val levelTracker: LevelTracker)
+  extends Pokemon(levelTracker) {
 
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 5

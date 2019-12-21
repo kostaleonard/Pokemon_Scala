@@ -18,8 +18,8 @@ object Venasaur {
   val TYPE_ARRAY: Array[ElementalType] = Array(GrassType, PoisonType)
 }
 
-class Venasaur(override protected val levelTracker: LevelTracker, override protected val wild: Boolean)
-  extends Pokemon(levelTracker, wild) {
+class Venasaur(override protected val levelTracker: LevelTracker)
+  extends Pokemon(levelTracker) {
 
   /** Returns the Pokemon's pokedex number. */
   override def getPokedexNum: Int = 3
