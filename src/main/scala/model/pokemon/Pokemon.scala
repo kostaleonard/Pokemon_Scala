@@ -30,6 +30,9 @@ object Pokemon {
   }
 }
 
+/** Represents a Pokemon object. The reason why a Pokemon needs a LevelTracker object in the constructor--not just an
+  * int representing its level--is because, during evolution, the experience gained needs to follow forward smoothly
+  * when the Pokemon object is replaced with a new one of the evolved form. */
 abstract class Pokemon(protected val levelTracker: LevelTracker) {
   protected val ivStats: IVStats = Pokemon.getRandomIVStats
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
