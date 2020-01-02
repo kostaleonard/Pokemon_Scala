@@ -10,4 +10,7 @@ abstract class Controller {
 
   /** Called when a key is released. */
   def keyReleased(keyCode: Int): Unit
+
+  /** Called when a key is typed. */
+  def keyTyped(keyCode: Int): Unit
 }

@@ -9,7 +9,7 @@ import model.pokemon.species.MissingNo
 import scala.collection.mutable.ListBuffer
 
 object Model {
-  val MODEL_SERIAL_VERSION_UID = 2017L
+  final val MODEL_SERIAL_VERSION_UID = 2017L
 }
 
 /** Represents the save state of an entire game.

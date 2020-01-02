@@ -14,6 +14,7 @@ object PrintController {
   /** Runs the program. */
   def main(args: Array[String]): Unit = {
     println("Hello world!")
+    println(System.getProperty("user.dir"))
 
     testBattle
   }
