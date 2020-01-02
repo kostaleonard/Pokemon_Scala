@@ -2,6 +2,8 @@ package view.gui
 
 import java.awt.image.BufferedImage
 
+import view.Drawable
+
 import scala.collection.mutable.ArrayBuffer
 
 object Menu{
@@ -9,7 +11,7 @@ object Menu{
   val DEFAULT_HEIGHT = 300
 }
 
-abstract class Menu[A <: MenuItem] {
+abstract class Menu[A <: MenuItem] extends Drawable {
   protected val menuItems: ArrayBuffer[A] = ArrayBuffer.empty[A]
   protected var width: Int = Menu.DEFAULT_WIDTH
   protected var height: Int = Menu.DEFAULT_HEIGHT
@@ -26,15 +28,6 @@ abstract class Menu[A <: MenuItem] {
 
   /** Removes a menu item from the menu. */
   def removeMenuItem(index: Int): A = menuItems.remove(index)
-
-  /** Returns the width of the menu. */
-  def getWidth: Int = width
-
-  /** Returns the height of the menu. */
-  def getHeight: Int = height
-
-  /** Returns the menu's BufferedImage. */
-  def getImage: BufferedImage
 
   /** If the menu is active, calls the selected menu item's GuiAction function. */
   def makeSelection(): Unit = if(isActive) menuItems(selectedMenuItem).guiAction.functionToCall()

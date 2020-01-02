@@ -1,5 +1,13 @@
 package model.board
 
-//TODO does anything actually go here? I don't think this needs a body.
-/** Represents a dynamic object on the Board, e.g. Characters, Items, PC, objects the player can use. */
-trait BoardObject
+import view.Drawable
+
+/** Represents a dynamic object on the Board, e.g. Characters, Items, PC, objects the player can use. Notably,
+  * BoardObjects are Drawable, so they must define those abstract methods. */
+trait BoardObject extends Drawable {
+  /** Returns the object's width. */
+  override def getObjectWidth: Int = Board.TILE_SIZE
+
+  /** Returns the object's height. */
+  override def getObjectHeight: Int = Board.TILE_SIZE
+}

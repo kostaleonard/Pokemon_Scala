@@ -16,7 +16,7 @@ object View {
     "%s/%s/%s".format(RESOURCE_ROOT_DIRECTORY, IMAGE_DIRECTORY, imageFilename)
 }
 
-abstract class View(protected val keyPressManager: KeyPressManager) {
+abstract class View(protected val keyPressManager: KeyPressManager) extends Drawable {
   protected val controllerMessages: ListBuffer[ControllerMessage] = ListBuffer.empty
 
   /** Returns the KeyPressManager. */
@@ -26,10 +26,16 @@ abstract class View(protected val keyPressManager: KeyPressManager) {
   def sendControllerMessage(message: ControllerMessage): Unit = controllerMessages.append(message)
 
   /** Clears controller messages. */
-  def clearControllerMessages: Unit = controllerMessages.clear
+  def clearControllerMessages(): Unit = controllerMessages.clear
 
   /** Returns the controller messages as a List. */
   def getControllerMessages: List[ControllerMessage] = controllerMessages.toList
+
+  /** Returns the object's width. */
+  override def getObjectWidth: Int = View.FRAME_DESIGN_WIDTH
+
+  /** Returns the object's height. */
+  override def getObjectHeight: Int = View.FRAME_DESIGN_HEIGHT
 
   /** The action taken when a key is pressed and the View is in focus. */
   def keyPressed(keyCode: Int): Unit

@@ -47,10 +47,10 @@ class ImageMenu extends Menu[ImageItem] {
   def setTitleString(title: String): Unit = titleString = title
 
   /** Returns the width of the menu. */
-  override def getWidth: Int = if(wrapContentWidth) getWrappedWidth else width
+  override def getObjectWidth: Int = if(wrapContentWidth) getWrappedWidth else width
 
   /** Returns the height of the menu. */
-  override def getHeight: Int = if(wrapContentHeight) getWrappedHeight else height
+  override def getObjectHeight: Int = if(wrapContentHeight) getWrappedHeight else height
 
   /** Determines whether the menu height wraps the content or uses its static value. */
   def setWrapContentHeight(b: Boolean): Unit = wrapContentHeight = b
@@ -78,18 +78,18 @@ class ImageMenu extends Menu[ImageItem] {
 
   /** Returns the menu's BufferedImage. */
   override def getImage: BufferedImage = {
-    val bufferedImage = new BufferedImage(getWidth, getHeight, BufferedImage.TYPE_INT_RGB)
-    val g2d = bufferedImage.getGraphics.asInstanceOf[Graphics2D]
+    val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
     g2d.setColor(borderColor)
-    g2d.fillRect(0, 0, getWidth, getHeight)
+    g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
     g2d.setColor(menuBackgroundColor)
-    g2d.fillRect(borderThickness, borderThickness, getWidth - 2 * borderThickness, getHeight - 2 * borderThickness)
+    g2d.fillRect(borderThickness, borderThickness, getObjectWidth - 2 * borderThickness,
+      getObjectHeight - 2 * borderThickness)
     g2d.setColor(titleFontColor)
     g2d.setFont(titleFont)
     val titleHeight = g2d.getFontMetrics(titleFont).getHeight
     g2d.drawString(titleString, borderThickness * 2, (titleHeight * 3) / 4)
     g2d.setColor(borderColor)
-    g2d.fillRect(0, titleHeight, getWidth, titleSeparatorThickness)
+    g2d.fillRect(0, titleHeight, getObjectWidth, titleSeparatorThickness)
     val heightStartMenuItems = titleHeight
     g2d.setFont(menuItemFont)
     var heightStartThisMenuItem = heightStartMenuItems
@@ -97,20 +97,21 @@ class ImageMenu extends Menu[ImageItem] {
       val imageItem = menuItems(i)
       if(selectedMenuItem == i && isActive){
         g2d.setColor(highlightColor)
-        if(i == 0)
-          g2d.fillRect(borderThickness, heightStartThisMenuItem + borderThickness, getWidth - 2 * borderThickness, imageItem.height - borderThickness)
-        else if(i == menuItems.length - 1)
-          g2d.fillRect(borderThickness, heightStartThisMenuItem, getWidth - 2 * borderThickness, imageItem.height - borderThickness)
-        else
-          g2d.fillRect(borderThickness, heightStartThisMenuItem, getWidth - 2 * borderThickness, imageItem.height)
+        if(i == 0) g2d.fillRect(borderThickness, heightStartThisMenuItem + borderThickness,
+          getObjectWidth - 2 * borderThickness, imageItem.height - borderThickness)
+        else if(i == menuItems.length - 1) g2d.fillRect(borderThickness, heightStartThisMenuItem,
+          getObjectWidth - 2 * borderThickness, imageItem.height - borderThickness)
+        else g2d.fillRect(borderThickness, heightStartThisMenuItem, getObjectWidth - 2 * borderThickness,
+          imageItem.height)
       }
       if(imageItem.isSelectable) g2d.setColor(menuItemFontColor)
       else g2d.setColor(nonSelectableMenuItemColor)
       //g2d.drawString(menuItem.text, borderThickness * 2, heightStartThisMenuItem + (menuItemHeight * 3) / 4)
-      g2d.drawImage(imageItem.image, borderThickness * 2, heightStartThisMenuItem, imageItem.width, imageItem.height, null)
+      g2d.drawImage(imageItem.image, borderThickness * 2, heightStartThisMenuItem, imageItem.width, imageItem.height,
+        null)
       heightStartThisMenuItem += imageItem.height
     }
     g2d.dispose()
-    bufferedImage
+    canvasImage
   }
 }
