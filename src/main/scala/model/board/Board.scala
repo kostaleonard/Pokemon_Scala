@@ -3,7 +3,7 @@ package model.board
 import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
-import model.board.cells.{Cell, LowGrass, TallGrass}
+import model.board.cells._
 import view.Drawable
 
 object Board {
@@ -12,6 +12,21 @@ object Board {
   /** Returns a test board. */
   def getTestBoard1: Board = {
     val cells: Array[Array[Cell]] = Array.fill(10)(Array.fill(10)(new LowGrass))
+    val board = new Board(cells)
+    board
+  }
+
+  /** Returns a test board. */
+  def getTestBoard2: Board = {
+    val cells: Array[Array[Cell]] =
+      (0 until 50).map { r =>
+        (0 until 75).map { c =>
+          if(r > 10 && r < 13) new ConcretePavement
+          else if(r < 8 && c < 10) new TallGrass
+          else if(c < 30 && c % 4 == 0 && r % 2 == 0) new Dirt
+          else new LowGrass
+      }.toArray
+    }.toArray
     val board = new Board(cells)
     board
   }

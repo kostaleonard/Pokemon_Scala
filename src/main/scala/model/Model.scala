@@ -2,7 +2,7 @@ package model
 
 import java.io._
 
-import model.board.BoardLibrary
+import model.board.{Board, BoardLibrary}
 import model.character.PlayerCharacter
 import model.party.Party
 import model.pokemon.exp.LevelTracker
@@ -53,6 +53,7 @@ object Model {
 class Model(protected val profileName: String) extends Serializable {
   protected val boardLibrary = new BoardLibrary
   protected val playerCharacter = new PlayerCharacter(new Party(ListBuffer(new MissingNo(LevelTracker.create(1)))))
+  protected var currentBoard: Board = boardLibrary.getStartBoard
   //TODO the PC gets saved because it stores all the Pokemon not in the player's party.
 
   /** Returns the PlayerCharacter. */
@@ -60,6 +61,9 @@ class Model(protected val profileName: String) extends Serializable {
 
   /** Returns the BoardLibrary. */
   def getBoardLibrary: BoardLibrary = boardLibrary
+
+  /** Returns the current board. */
+  def getCurrentBoard: Board = currentBoard
 
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {

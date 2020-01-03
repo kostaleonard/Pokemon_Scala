@@ -16,4 +16,8 @@ class BoardLibrary {
   /** Returns the Board associated with a given name. */
   def getBoard(name: String): Board = boardsByName.getOrElse(name,
     throw new UnsupportedOperationException("No Board with name %s".format(name)))
+
+  //TODO get the actual start board.
+  /** Returns the starting board. */
+  def getStartBoard: Board = Board.getTestBoard2
 }
