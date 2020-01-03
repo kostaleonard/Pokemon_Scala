@@ -4,8 +4,8 @@ object BoardLibrary {
   //TODO define starting boards.
   /** Returns the Map of Board names to Boards with which every new game begins. */
   def getStartingBoardsByName: Map[String, Board] = Map(
-    "ANTIETAM" -> ???,
-    "SNOWBLIND" -> ???
+    //"ANTIETAM" -> ???,
+    //"SNOWBLIND" -> ???
   )
 }
 

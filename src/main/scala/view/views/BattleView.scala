@@ -3,10 +3,10 @@ package view.views
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-import controller.KeyPressManager
+import model.Model
 import view.View
 
-class BattleView(override protected val keyPressManager: KeyPressManager) extends View(keyPressManager) {
+class BattleView(override protected val model: Model) extends View(model) {
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = ???
 

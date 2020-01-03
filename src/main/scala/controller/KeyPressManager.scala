@@ -4,7 +4,7 @@ import java.awt.event.{KeyEvent, KeyListener}
 
 import scala.collection.mutable.ListBuffer
 
-class KeyPressManager(controller: Controller) extends KeyListener{
+class KeyPressManager(controller: Controller) extends KeyListener {
   protected val keyCodeMap: scala.collection.mutable.Map[Int, ListBuffer[Boolean]] = scala.collection.mutable.Map.empty[Int, ListBuffer[Boolean]]
   protected val keyMappings = new KeyMappings
 
