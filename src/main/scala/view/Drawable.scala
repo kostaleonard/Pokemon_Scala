@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage
 trait Drawable {
   /** This is the canvas on which the object's image is drawn. */
   protected val canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
-    BufferedImage.TYPE_INT_RGB)
+    BufferedImage.TYPE_INT_ARGB)
 
   /** Returns the object's width. */
   def getObjectWidth: Int

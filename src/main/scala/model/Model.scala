@@ -2,7 +2,7 @@ package model
 
 import java.io._
 
-import model.board.{Board, BoardLibrary}
+import model.board.{Board, BoardLibrary, Location}
 import model.character.PlayerCharacter
 import model.party.Party
 import model.pokemon.exp.LevelTracker
@@ -55,6 +55,7 @@ class Model(protected val profileName: String) extends Serializable {
   protected val playerCharacter = new PlayerCharacter(new Party(ListBuffer(new MissingNo(LevelTracker.create(1)))))
   protected var currentBoard: Board = boardLibrary.getStartBoard
   //TODO the PC gets saved because it stores all the Pokemon not in the player's party.
+  spawnPlayerOnBoard()
 
   /** Returns the PlayerCharacter. */
   def getPlayerCharacter: PlayerCharacter = playerCharacter
@@ -64,6 +65,13 @@ class Model(protected val profileName: String) extends Serializable {
 
   /** Returns the current board. */
   def getCurrentBoard: Board = currentBoard
+
+  /** Places the player on the current board. If the board has no spawn location, place the player on the backup
+    * location. */
+  def spawnPlayerOnBoard(backupLoc: Location = Location(0, 0)): Unit = currentBoard.getSpawnLocation match {
+    case Some(spawnLoc) => currentBoard.placeObjectAt(Some(playerCharacter), spawnLoc)
+    case None => currentBoard.placeObjectAt(Some(playerCharacter), backupLoc)
+  }
 
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {

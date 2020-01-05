@@ -70,7 +70,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
         cells(r)(c).getBoardObject.map(obj =>
           g2d.drawImage(obj.getImage,
             c * Board.TILE_SIZE, r * Board.TILE_SIZE,
-            getObjectWidth, obj.getObjectHeight,
+            obj.getObjectWidth, obj.getObjectHeight,
             null)
         )
       }

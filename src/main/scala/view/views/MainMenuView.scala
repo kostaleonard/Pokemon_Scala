@@ -25,6 +25,8 @@ class MainMenuView(override protected val model: Model) extends View(model) {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
 
     //TODO draw main menu.
+    g2d.setColor(Color.BLUE)
+    g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
     g2d.setColor(Color.RED)
     g2d.fillRect(0, 0, 200, 300)
 
