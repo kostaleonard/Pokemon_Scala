@@ -7,7 +7,7 @@ import model.board.cells._
 import view.Drawable
 
 object Board {
-  val TILE_SIZE = 50
+  val TILE_SIZE = 75
 
   /** Returns a test board. */
   def getTestBoard1: Board = {

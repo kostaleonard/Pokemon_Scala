@@ -73,6 +73,9 @@ class Model(protected val profileName: String) extends Serializable {
     case None => currentBoard.placeObjectAt(Some(playerCharacter), backupLoc)
   }
 
+  //TODO
+  def movePlayer(): Unit = ???
+
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {
     val destinationPath = Model.getProfilePath(profileName)

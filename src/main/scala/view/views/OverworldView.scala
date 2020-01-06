@@ -3,13 +3,15 @@ package view.views
 import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
-import controller.SwitchViews
+import controller.{KeyMappings, SwitchViews}
 import model.Model
 import view.View
 
 class OverworldView(override protected val model: Model) extends View(model) {
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = {}
+  override def keyPressed(keyCode: Int): Unit = keyCode match {
+    case KeyMappings.DOWN_KEY => ???
+  }
 
   /** The action taken when a key is released and the View is in focus. */
   override def keyReleased(keyCode: Int): Unit = {}
