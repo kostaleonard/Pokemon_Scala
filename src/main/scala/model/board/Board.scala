@@ -63,7 +63,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   override def getObjectWidth: Int = Board.TILE_SIZE * cells.head.length
 
   /** Returns the object's height. */
-  def getObjectHeight: Int = Board.TILE_SIZE * cells.length
+  override def getObjectHeight: Int = Board.TILE_SIZE * cells.length
 
   //TODO you'll have to do a bit of gymnastics to get animations to work right with board objects.
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
@@ -91,5 +91,10 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     }
     g2d.dispose()
     canvasImage
+  }
+
+  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
+  override def advanceFrame(): Unit = {
+    //TODO call advanceFrame on all objects on the board.
   }
 }

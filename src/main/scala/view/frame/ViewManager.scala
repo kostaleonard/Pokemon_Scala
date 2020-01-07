@@ -10,7 +10,7 @@ object ViewManager{
     "screen; you must switch the current View."
   val DEFAULT_FRAME_WIDTH = 800
   val DEFAULT_FRAME_HEIGHT = 450
-  val FRAMES_PER_SECOND = 2
+  val FRAMES_PER_SECOND = 60
   val KEY_EVENTS_PER_SECOND = 100
   val HELD_KEY_EVENTS_PER_KEY_ACTION = 10
   val MILLISECONDS_PER_SECOND = 1000

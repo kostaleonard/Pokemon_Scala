@@ -83,6 +83,10 @@ class Model(protected val profileName: String) extends Serializable {
       "on the board.")
     currentBoard.setBoardObjectAt(playerLoc.get, None)
     currentBoard.setBoardObjectAt(loc, Some(playerCharacter))
+    val xOffset = loc.col * Board.TILE_SIZE - playerLoc.get.col * Board.TILE_SIZE
+    val yOffset = loc.row * Board.TILE_SIZE - playerLoc.get.row * Board.TILE_SIZE
+    playerCharacter.setDrawOffsetX(xOffset)
+    playerCharacter.setDrawOffsetY(yOffset)
   }
 
   /** Writes the model to the output file for the profile name. */

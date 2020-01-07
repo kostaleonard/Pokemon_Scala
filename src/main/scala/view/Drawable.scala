@@ -16,4 +16,7 @@ trait Drawable {
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   def getImage: BufferedImage
+
+  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
+  def advanceFrame(): Unit
 }

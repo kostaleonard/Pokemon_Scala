@@ -33,4 +33,7 @@ class MainMenuView(override protected val model: Model) extends View(model) {
     g2d.dispose()
     canvasImage
   }
+
+  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
+  override def advanceFrame(): Unit = {}
 }

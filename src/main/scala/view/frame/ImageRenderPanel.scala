@@ -34,7 +34,11 @@ class ImageRenderPanel extends JPanel {
   /** Draws the image on the panel. */
   override def paintComponent(g: Graphics): Unit = {
     //TODO there may be a way to speed up graphics by avoiding the use of paintComponent.
+    val t0 = System.nanoTime()
     super.paintComponent(g)
     renderImage(g)
+    val t1 = System.nanoTime()
+    //TODO remove timing code.
+    //println("Render time: %f".format((t1 - t0) / 1e9))
   }
 }
