@@ -66,15 +66,24 @@ class Model(protected val profileName: String) extends Serializable {
   /** Returns the current board. */
   def getCurrentBoard: Board = currentBoard
 
+  /** Returns the location of the playerCharacter, or None if not on the board. */
+  def getPlayerLocation: Option[Location] = currentBoard.getBoardObjectLocation(playerCharacter)
+
   /** Places the player on the current board. If the board has no spawn location, place the player on the backup
     * location. */
   def spawnPlayerOnBoard(backupLoc: Location = Location(0, 0)): Unit = currentBoard.getSpawnLocation match {
-    case Some(spawnLoc) => currentBoard.placeObjectAt(Some(playerCharacter), spawnLoc)
-    case None => currentBoard.placeObjectAt(Some(playerCharacter), backupLoc)
+    case Some(spawnLoc) => currentBoard.setBoardObjectAt(spawnLoc, Some(playerCharacter))
+    case None => currentBoard.setBoardObjectAt(backupLoc, Some(playerCharacter))
   }
 
-  //TODO
-  def movePlayer(): Unit = ???
+  /** Moves the player to the given location. */
+  def movePlayer(loc: Location): Unit = {
+    val playerLoc = getPlayerLocation
+    if(playerLoc.isEmpty) throw new UnsupportedOperationException("Cannot move the player before they have spawned " +
+      "on the board.")
+    currentBoard.setBoardObjectAt(playerLoc.get, None)
+    currentBoard.setBoardObjectAt(loc, Some(playerCharacter))
+  }
 
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {

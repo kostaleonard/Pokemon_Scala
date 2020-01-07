@@ -33,7 +33,14 @@ object Board {
 }
 
 class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation: Option[Location] = None)
-  extends Drawable{
+  extends Drawable {
+  //TODO this would be a cool use case for a new data structure.
+  /** The boardObjectMap provides an O(1) mapping to get the Location of any given BoardObject. It is the inverse
+    * operation of retrieving the BoardObject at any given Location, which can be done by accessing cells. This is
+    * redundant information, but is necessary to ensure fast access. */
+  val boardObjectMap: scala.collection.mutable.Map[BoardObject, Location] =
+    scala.collection.mutable.Map.empty[BoardObject, Location]
+
   /** Returns the cells on the Board. */
   def getCells: Array[Array[Cell]] = cells
 
@@ -41,9 +48,16 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     * it. If None and the player tries to spawn on this Board, behavior is undefined. */
   def getSpawnLocation: Option[Location] = spawnLocation
 
-  /** Sets the BoardObject at the given Location to obj, which is optional. */
-  def placeObjectAt(obj: Option[BoardObject], location: Location): Unit =
+  /** Sets the BoardObject at the given Location to obj, which is optional. Also updates the boardObjectMap. */
+  def setBoardObjectAt(location: Location, obj: Option[BoardObject]): Unit = {
+    val oldObject = cells(location.row)(location.col).getBoardObject
     cells(location.row)(location.col).setBoardObject(obj)
+    if(obj.nonEmpty) boardObjectMap(obj.get) = location
+    if(oldObject.nonEmpty) boardObjectMap.remove(oldObject.get)
+  }
+
+  /** Returns the location of obj on the board, or None if not present. */
+  def getBoardObjectLocation(obj: BoardObject): Option[Location] = boardObjectMap.get(obj)
 
   /** Returns the object's width. */
   override def getObjectWidth: Int = Board.TILE_SIZE * cells.head.length
