@@ -2,7 +2,7 @@ package model
 
 import java.io._
 
-import model.board.{Board, BoardLibrary, Location}
+import model.board._
 import model.character.PlayerCharacter
 import model.party.Party
 import model.pokemon.exp.LevelTracker
@@ -77,14 +77,22 @@ class Model(protected val profileName: String) extends Serializable {
   }
 
   /** Moves the player to the given location. */
-  def movePlayer(loc: Location): Unit = {
+  def movePlayer(direction: Direction): Unit = {
     val playerLoc = getPlayerLocation
     if(playerLoc.isEmpty) throw new UnsupportedOperationException("Cannot move the player before they have spawned " +
       "on the board.")
+    if(playerCharacter.isMoving) throw new UnsupportedOperationException("Cannot move the player when they are " +
+      "already moving.")
     currentBoard.setBoardObjectAt(playerLoc.get, None)
-    currentBoard.setBoardObjectAt(loc, Some(playerCharacter))
-    val xOffset = loc.col * Board.TILE_SIZE - playerLoc.get.col * Board.TILE_SIZE
-    val yOffset = loc.row * Board.TILE_SIZE - playerLoc.get.row * Board.TILE_SIZE
+    val destination = direction match {
+      case North => Location(playerLoc.get.row - 1, playerLoc.get.col)
+      case East => Location(playerLoc.get.row, playerLoc.get.col + 1)
+      case South => Location(playerLoc.get.row + 1, playerLoc.get.col)
+      case West => Location(playerLoc.get.row, playerLoc.get.col - 1)
+    }
+    currentBoard.setBoardObjectAt(destination, Some(playerCharacter))
+    val xOffset = destination.col * Board.TILE_SIZE - playerLoc.get.col * Board.TILE_SIZE
+    val yOffset = destination.row * Board.TILE_SIZE - playerLoc.get.row * Board.TILE_SIZE
     playerCharacter.setDrawOffsetX(xOffset)
     playerCharacter.setDrawOffsetY(yOffset)
   }

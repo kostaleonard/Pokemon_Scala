@@ -53,9 +53,19 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
   }
 
   class RepaintListener extends ActionListener {
+    protected var referenceTime: Long = System.nanoTime()
+    protected var framesProcessed = 0
     /** Called every time the timer expires. */
     override def actionPerformed(e: ActionEvent): Unit = {
+      viewManager.getCurrentView.advanceFrame()
       viewManager.repaint()
+      framesProcessed += 1
+      val seconds = (System.nanoTime() - referenceTime) / 1e9
+      if(seconds > 1.0){
+        println("FPS: %f".format(framesProcessed / seconds))
+        framesProcessed = 0
+        referenceTime = System.nanoTime()
+      }
     }
   }
 

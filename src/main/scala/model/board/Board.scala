@@ -4,6 +4,8 @@ import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
 import model.board.cells._
+import model.character.Trainer
+import model.item.Item
 import view.Drawable
 
 object Board {
@@ -35,11 +37,22 @@ object Board {
 class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation: Option[Location] = None)
   extends Drawable {
   //TODO this would be a cool use case for a new data structure.
+  //TODO maybe this is petty, but I really want to write a combinator for this so I don't have to call buildBoardObjectMap().
   /** The boardObjectMap provides an O(1) mapping to get the Location of any given BoardObject. It is the inverse
     * operation of retrieving the BoardObject at any given Location, which can be done by accessing cells. This is
     * redundant information, but is necessary to ensure fast access. */
   val boardObjectMap: scala.collection.mutable.Map[BoardObject, Location] =
     scala.collection.mutable.Map.empty[BoardObject, Location]
+  buildBoardObjectMap()
+
+  /** Builds the boardObjectMap. */
+  protected def buildBoardObjectMap(): Unit = {
+    cells.indices.foreach(r =>
+      cells(r).indices.foreach(c =>
+        cells(r)(c).getBoardObject.map(boardObjectMap(_) = Location(r, c))
+      )
+    )
+  }
 
   /** Returns the cells on the Board. */
   def getCells: Array[Array[Cell]] = cells
@@ -55,6 +68,9 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     if(obj.nonEmpty) boardObjectMap(obj.get) = location
     if(oldObject.nonEmpty) boardObjectMap.remove(oldObject.get)
   }
+
+  /** Returns an Array of all objects on the board. */
+  def getBoardObjects: Array[BoardObject] = boardObjectMap.keys.toArray
 
   /** Returns the location of obj on the board, or None if not present. */
   def getBoardObjectLocation(obj: BoardObject): Option[Location] = boardObjectMap.get(obj)
@@ -83,7 +99,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       cells(r).indices.foreach { c =>
         cells(r)(c).getBoardObject.map(obj =>
           g2d.drawImage(obj.getImage,
-            c * Board.TILE_SIZE, r * Board.TILE_SIZE,
+            c * Board.TILE_SIZE - obj.getDrawOffsetX, r * Board.TILE_SIZE - obj.getDrawOffsetY,
             obj.getObjectWidth, obj.getObjectHeight,
             null)
         )
@@ -95,6 +111,6 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {
-    //TODO call advanceFrame on all objects on the board.
+    getBoardObjects.foreach(_.advanceFrame())
   }
 }
