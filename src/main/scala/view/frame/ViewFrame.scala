@@ -17,6 +17,8 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
   protected val mainPanel = new ImageRenderPanel
   protected val repaintTimer = new Timer(ViewManager.MILLISECONDS_PER_SECOND / ViewManager.FRAMES_PER_SECOND,
     new RepaintListener)
+  protected val frameAdvanceTimer = new Timer(ViewManager.MILLISECONDS_PER_SECOND / ViewManager.FRAMES_PER_SECOND,
+    new FrameAdvanceTimer)
   //TODO I have no idea how the keyHeldExecutor works anymore.
   protected val keyHeldExecutor = new ScheduledThreadPoolExecutor(ViewFrame.SCHEDULED_THREAD_POOL_EXECUTOR_NUM_THREADS)
   setVisible(false)
@@ -40,11 +42,14 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     setFocusable(true)
     add(mainPanel)
     addKeyListener(keyPressManager)
-    setupRepaintTimer()
+    setupDrawTimers()
   }
 
-  /** Starts the repaint time. */
-  def setupRepaintTimer(): Unit = repaintTimer.start()
+  /** Starts the repaint and frame timers. */
+  def setupDrawTimers(): Unit = {
+    repaintTimer.start()
+    frameAdvanceTimer.start()
+  }
 
   /** Displays the given image on the frame. */
   def renderImage(bufferedImage: BufferedImage): Unit = {
@@ -57,7 +62,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     protected var framesProcessed = 0
     /** Called every time the timer expires. */
     override def actionPerformed(e: ActionEvent): Unit = {
-      viewManager.getCurrentView.advanceFrame()
+      //TODO this is the slow part.
       viewManager.repaint()
       framesProcessed += 1
       val seconds = (System.nanoTime() - referenceTime) / 1e9
@@ -69,11 +74,28 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     }
   }
 
+  class FrameAdvanceTimer extends ActionListener {
+    protected var referenceTime: Long = System.nanoTime()
+    protected var framesProcessed = 0
+    /** Called every time the timer expires. */
+    override def actionPerformed(e: ActionEvent): Unit = {
+      viewManager.getCurrentView.advanceFrame()
+      framesProcessed += 1
+      val seconds = (System.nanoTime() - referenceTime) / 1e9
+      if(seconds > 1.0){
+        println("Frame advance FPS: %f".format(framesProcessed / seconds))
+        framesProcessed = 0
+        referenceTime = System.nanoTime()
+      }
+    }
+  }
+
   //TODO is this necessary?
   class CustomWindowListener extends WindowListener {
     /** Called when the window is closed. */
     override def windowClosed(e: WindowEvent): Unit = {
       repaintTimer.stop()
+      frameAdvanceTimer.stop()
       keyHeldExecutor.shutdown()
       System.exit(0)
     }
@@ -88,6 +110,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     /** Called when the window is closing. */
     override def windowClosing(e: WindowEvent): Unit = {
       repaintTimer.stop()
+      frameAdvanceTimer.stop()
       keyHeldExecutor.shutdown()
       System.exit(0)
     }

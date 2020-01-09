@@ -81,7 +81,6 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   /** Returns the object's height. */
   override def getObjectHeight: Int = Board.TILE_SIZE * cells.length
 
-  //TODO you'll have to do a bit of gymnastics to get animations to work right with board objects.
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
