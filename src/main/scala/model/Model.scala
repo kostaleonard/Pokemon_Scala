@@ -76,6 +76,7 @@ class Model(protected val profileName: String) extends Serializable {
     case None => currentBoard.setBoardObjectAt(backupLoc, Some(playerCharacter))
   }
 
+  //TODO this belongs in Board.
   /** Moves the player to the given location. */
   def movePlayer(direction: Direction): Unit = {
     val playerLoc = getPlayerLocation

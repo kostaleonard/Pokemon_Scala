@@ -85,8 +85,8 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
     /** Draw cells. */
-    cells.indices.foreach { r =>
-      cells(r).indices.foreach { c =>
+    cells.take(10).indices.foreach { r =>
+      cells(r).take(10).indices.foreach { c =>
         g2d.drawImage(cells(r)(c).getImage,
           c * Board.TILE_SIZE, r * Board.TILE_SIZE,
           cells(r)(c).getObjectWidth, cells(r)(c).getObjectHeight,
@@ -94,8 +94,8 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       }
     }
     /** Draw board objects. */
-    cells.indices.foreach { r =>
-      cells(r).indices.foreach { c =>
+    cells.take(10).indices.foreach { r =>
+      cells(r).take(10).indices.foreach { c =>
         cells(r)(c).getBoardObject.map(obj =>
           g2d.drawImage(obj.getImage,
             c * Board.TILE_SIZE - obj.getDrawOffsetX, r * Board.TILE_SIZE - obj.getDrawOffsetY,

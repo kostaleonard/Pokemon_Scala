@@ -67,7 +67,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       framesProcessed += 1
       val seconds = (System.nanoTime() - referenceTime) / 1e9
       if(seconds > 1.0){
-        println("FPS: %f".format(framesProcessed / seconds))
+        //println("FPS: %f".format(framesProcessed / seconds))
         framesProcessed = 0
         referenceTime = System.nanoTime()
       }
@@ -83,7 +83,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       framesProcessed += 1
       val seconds = (System.nanoTime() - referenceTime) / 1e9
       if(seconds > 1.0){
-        println("Frame advance FPS: %f".format(framesProcessed / seconds))
+        //println("Frame advance FPS: %f".format(framesProcessed / seconds))
         framesProcessed = 0
         referenceTime = System.nanoTime()
       }
@@ -96,6 +96,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     override def windowClosed(e: WindowEvent): Unit = {
       repaintTimer.stop()
       frameAdvanceTimer.stop()
+      keyPressManager.getKeyTimer.stop()
       keyHeldExecutor.shutdown()
       System.exit(0)
     }
@@ -111,6 +112,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
     override def windowClosing(e: WindowEvent): Unit = {
       repaintTimer.stop()
       frameAdvanceTimer.stop()
+      keyPressManager.getKeyTimer.stop()
       keyHeldExecutor.shutdown()
       System.exit(0)
     }
