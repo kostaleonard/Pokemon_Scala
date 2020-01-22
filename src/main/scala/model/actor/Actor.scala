@@ -1,4 +1,4 @@
-package model.character
+package model.actor
 
 import java.awt.{Color, Graphics2D, Image}
 import java.awt.image.BufferedImage
@@ -8,7 +8,7 @@ import javax.imageio.ImageIO
 import model.board.{Board, BoardObject, Direction}
 import view.View
 
-object Character {
+object Actor {
   val MOVE_SPEED = 4
   val ALMOST_DONE_MOVING_MULTIPLIER = 2
   //TODO get the actual player avatar.
@@ -17,9 +17,9 @@ object Character {
     ImageIO.read(new File(View.getSourcePath("sprites/player/player_front.png")))
 }
 
-class Character extends BoardObject {
+class Actor extends BoardObject {
   //TODO you're going to have to end up defining classes of avatars to handle animations, then make it a constructor argument.
-  protected var avatar: Image = Character.getPlayerAvatar
+  protected var avatar: Image = Actor.getPlayerAvatar
   protected var queuedMove: Option[() => Unit] = None
 
   /** Returns true if the character is moving. */
@@ -28,8 +28,8 @@ class Character extends BoardObject {
   /** Returns true if the character is almost done moving so that the next move can be scheduled. This is just for
     * player quality of life. */
   def isAlmostDoneMoving: Boolean =
-    math.abs(drawOffsetX) < Character.ALMOST_DONE_MOVING_MULTIPLIER * Character.MOVE_SPEED &&
-    math.abs(drawOffsetY) < Character.ALMOST_DONE_MOVING_MULTIPLIER * Character.MOVE_SPEED
+    math.abs(drawOffsetX) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED &&
+    math.abs(drawOffsetY) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
@@ -44,10 +44,10 @@ class Character extends BoardObject {
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {
-    if(drawOffsetX > 0) drawOffsetX = 0 max (drawOffsetX - Character.MOVE_SPEED)
-    else if(drawOffsetX < 0) drawOffsetX = 0 min (drawOffsetX + Character.MOVE_SPEED)
-    if(drawOffsetY > 0) drawOffsetY = 0 max (drawOffsetY - Character.MOVE_SPEED)
-    else if(drawOffsetY < 0) drawOffsetY = 0 min (drawOffsetY + Character.MOVE_SPEED)
+    if(drawOffsetX > 0) drawOffsetX = 0 max (drawOffsetX - Actor.MOVE_SPEED)
+    else if(drawOffsetX < 0) drawOffsetX = 0 min (drawOffsetX + Actor.MOVE_SPEED)
+    if(drawOffsetY > 0) drawOffsetY = 0 max (drawOffsetY - Actor.MOVE_SPEED)
+    else if(drawOffsetY < 0) drawOffsetY = 0 min (drawOffsetY + Actor.MOVE_SPEED)
     if(!isMoving && queuedMove.nonEmpty){
       queuedMove.get.apply()
       queuedMove = None

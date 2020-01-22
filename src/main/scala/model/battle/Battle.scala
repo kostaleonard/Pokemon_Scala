@@ -1,6 +1,6 @@
 package model.battle
 
-import model.character.{PlayerCharacter, Trainer}
+import model.actor.{PlayerCharacter, Trainer}
 import model.pokemon.Pokemon
 import model.pokemon.move._
 

@@ -1,4 +1,4 @@
-package model.character
+package model.actor
 
 import model.party.Party
 

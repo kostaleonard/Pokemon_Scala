@@ -1,7 +1,7 @@
 package controller
 
 import model.battle.Battle
-import model.character.PlayerCharacter
+import model.actor.PlayerCharacter
 import model.party.Party
 import model.pokemon.exp.LevelTracker
 import model.pokemon.species.Charmander

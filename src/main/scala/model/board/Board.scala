@@ -4,7 +4,7 @@ import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
 import model.board.cells._
-import model.character.Trainer
+import model.actor.Trainer
 import model.item.Item
 import view.Drawable
 

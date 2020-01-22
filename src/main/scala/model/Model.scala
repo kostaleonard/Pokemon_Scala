@@ -3,7 +3,7 @@ package model
 import java.io._
 
 import model.board._
-import model.character.PlayerCharacter
+import model.actor.PlayerCharacter
 import model.party.Party
 import model.pokemon.exp.LevelTracker
 import model.pokemon.species.MissingNo
