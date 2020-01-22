@@ -24,12 +24,15 @@ class OverworldView(override protected val model: Model) extends View(model) {
     case KeyMappings.DOWN_KEY =>
       if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(South))
       else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(South)))
-    case KeyMappings.UP_KEY => if(!model.getPlayerCharacter.isMoving)
-      model.getPlayerLocation.map(_ => model.movePlayer(North))
-    case KeyMappings.LEFT_KEY => if(!model.getPlayerCharacter.isMoving)
-      model.getPlayerLocation.map(_ => model.movePlayer(West))
-    case KeyMappings.RIGHT_KEY => if(!model.getPlayerCharacter.isMoving)
-      model.getPlayerLocation.map(_ => model.movePlayer(East))
+    case KeyMappings.UP_KEY =>
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(North))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(North)))
+    case KeyMappings.LEFT_KEY =>
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(West))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(West)))
+    case KeyMappings.RIGHT_KEY =>
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(East))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(East)))
     case _ => ;
   }
 

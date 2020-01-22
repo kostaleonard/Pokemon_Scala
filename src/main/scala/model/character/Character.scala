@@ -10,6 +10,7 @@ import view.View
 
 object Character {
   val MOVE_SPEED = 4
+  val ALMOST_DONE_MOVING_MULTIPLIER = 2
   //TODO get the actual player avatar.
   /** Returns the avatar used for the player character. */
   def getPlayerAvatar: Image =
@@ -27,8 +28,8 @@ class Character extends BoardObject {
   /** Returns true if the character is almost done moving so that the next move can be scheduled. This is just for
     * player quality of life. */
   def isAlmostDoneMoving: Boolean =
-    math.abs(drawOffsetX) < 8 * Character.MOVE_SPEED &&
-    math.abs(drawOffsetY) < 8 * Character.MOVE_SPEED
+    math.abs(drawOffsetX) < Character.ALMOST_DONE_MOVING_MULTIPLIER * Character.MOVE_SPEED &&
+    math.abs(drawOffsetY) < Character.ALMOST_DONE_MOVING_MULTIPLIER * Character.MOVE_SPEED
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
@@ -49,7 +50,6 @@ class Character extends BoardObject {
     else if(drawOffsetY < 0) drawOffsetY = 0 min (drawOffsetY + Character.MOVE_SPEED)
     if(!isMoving && queuedMove.nonEmpty){
       queuedMove.get.apply()
-      System.out.println("Used queued move.")
       queuedMove = None
     }
   }
