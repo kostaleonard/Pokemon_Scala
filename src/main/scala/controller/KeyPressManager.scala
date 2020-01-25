@@ -28,8 +28,10 @@ class KeyPressManager(controller: Controller) extends KeyListener {
   /** Called when a key is pressed. */
   override def keyPressed(e: KeyEvent): Unit = {
     val keyCode = translateKeyCode(e.getKeyCode)
-    heldKeys.add(keyCode)
-    controller.keyPressed(keyCode)
+    if(!heldKeys(keyCode)) {
+      heldKeys.add(keyCode)
+      controller.keyPressed(keyCode)
+    }
   }
 
   /** Called when a key is released. */
