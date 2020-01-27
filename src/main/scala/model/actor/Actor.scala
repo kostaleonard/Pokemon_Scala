@@ -90,6 +90,8 @@ class Actor extends BoardObject {
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight,
+      BufferedImage.TYPE_INT_ARGB)
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
     g2d.drawImage(getAvatar, 0, 0, (getObjectWidth * 0.8).toInt, getObjectHeight, null)
     g2d.dispose()

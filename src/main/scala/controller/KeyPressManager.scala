@@ -8,7 +8,7 @@ import view.frame.ViewManager
 import scala.collection.mutable.ListBuffer
 
 object KeyPressManager {
-  val KEYHELD_EVENTS_PER_SECOND = 60
+  val KEYHELD_EVENTS_PER_SECOND = 45
 }
 
 class KeyPressManager(controller: Controller) extends KeyListener {

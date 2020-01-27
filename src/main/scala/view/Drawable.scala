@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage
 /** Represents an object that can be drawn. */
 trait Drawable {
   /** This is the canvas on which the object's image is drawn. */
-  protected val canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
     BufferedImage.TYPE_INT_ARGB)
   protected var drawOffsetX = 0
   protected var drawOffsetY = 0
