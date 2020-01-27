@@ -94,6 +94,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       val yOffset = destination.row * Board.TILE_SIZE - actorLoc.get.row * Board.TILE_SIZE
       actor.setDrawOffsetX(xOffset)
       actor.setDrawOffsetY(yOffset)
+      actor.alternateStep()
     }
     def turnActor(): Unit = actor.setFacingDirection(direction)
 

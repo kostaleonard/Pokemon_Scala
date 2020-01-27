@@ -19,6 +19,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
     )
   }
 
+  //TODO clean this up.
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = keyCode match {
     case KeyMappings.DOWN_KEY =>
