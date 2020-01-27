@@ -50,14 +50,14 @@ object Actor {
     PLAYER_SOUTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_left.png"))),
     PLAYER_SOUTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_right.png"))),
     PLAYER_EAST -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east.png"))),
-    PLAYER_EAST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_left.png"))),
-    PLAYER_EAST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_right.png"))),
+    PLAYER_EAST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east_walk_left.png"))),
+    PLAYER_EAST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east_walk_right.png"))),
     PLAYER_NORTH -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north.png"))),
-    PLAYER_NORTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_left.png"))),
-    PLAYER_NORTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_right.png"))),
+    PLAYER_NORTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north_walk_left.png"))),
+    PLAYER_NORTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north_walk_right.png"))),
     PLAYER_WEST -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west.png"))),
-    PLAYER_WEST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_left.png"))),
-    PLAYER_WEST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_right.png")))
+    PLAYER_WEST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west_walk_left.png"))),
+    PLAYER_WEST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west_walk_right.png")))
   )
 }
 
@@ -66,9 +66,7 @@ class Actor extends BoardObject {
   protected var avatarFrame: Int = Actor.PLAYER_SOUTH
   protected var queuedMove: Option[() => Unit] = None
   protected var facingDirection: Direction = South
-  //TODO stepNum makes onLeftFoot superfluous.
   protected var onLeftFoot: Boolean = true
-  protected var stepNum: Int = 0
 
   /** Returns the player's current avatar. */
   def getAvatar: Image = Actor.playerAvatarMap(avatarFrame)
