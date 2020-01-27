@@ -76,27 +76,9 @@ class Model(protected val profileName: String) extends Serializable {
     case None => currentBoard.setBoardObjectAt(backupLoc, Some(playerCharacter))
   }
 
-  //TODO this belongs in Board.
-  /** Moves the player to the given location. */
-  def movePlayer(direction: Direction): Unit = {
-    val playerLoc = getPlayerLocation
-    if(playerLoc.isEmpty) throw new UnsupportedOperationException("Cannot move the player before they have spawned " +
-      "on the board.")
-    if(playerCharacter.isMoving) throw new UnsupportedOperationException("Cannot move the player when they are " +
-      "already moving.")
-    currentBoard.setBoardObjectAt(playerLoc.get, None)
-    val destination = direction match {
-      case North => Location(playerLoc.get.row - 1, playerLoc.get.col)
-      case East => Location(playerLoc.get.row, playerLoc.get.col + 1)
-      case South => Location(playerLoc.get.row + 1, playerLoc.get.col)
-      case West => Location(playerLoc.get.row, playerLoc.get.col - 1)
-    }
-    currentBoard.setBoardObjectAt(destination, Some(playerCharacter))
-    val xOffset = destination.col * Board.TILE_SIZE - playerLoc.get.col * Board.TILE_SIZE
-    val yOffset = destination.row * Board.TILE_SIZE - playerLoc.get.row * Board.TILE_SIZE
-    playerCharacter.setDrawOffsetX(xOffset)
-    playerCharacter.setDrawOffsetY(yOffset)
-  }
+  /** Sends the player in the given direction. If they are not facing this direction, performs a turn; if they are,
+    * performs a move. */
+  def sendPlayerInDirection(direction: Direction): Unit = currentBoard.sendActorInDirection(playerCharacter, direction)
 
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {

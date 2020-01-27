@@ -4,7 +4,7 @@ import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
 import model.board.cells._
-import model.actor.Trainer
+import model.actor.{Actor, Trainer}
 import model.item.Item
 import view.Drawable
 
@@ -74,6 +74,31 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
 
   /** Returns the location of obj on the board, or None if not present. */
   def getBoardObjectLocation(obj: BoardObject): Option[Location] = boardObjectMap.get(obj)
+
+  /** Sends the actor in the given direction. If they are not facing this direction, performs a turn; if they are,
+    * performs a move. */
+  def sendActorInDirection(actor: Actor, direction: Direction): Unit = {
+    val actorLoc = getBoardObjectLocation(actor)
+    if(actorLoc.isEmpty) throw new UnsupportedOperationException("Actor not found on board.")
+    if(actor.isMoving) throw new UnsupportedOperationException("Cannot move actor when they are already moving.")
+    def moveActor(): Unit = {
+      setBoardObjectAt(actorLoc.get, None)
+      val destination = direction match {
+        case North => Location(actorLoc.get.row - 1, actorLoc.get.col)
+        case East => Location(actorLoc.get.row, actorLoc.get.col + 1)
+        case South => Location(actorLoc.get.row + 1, actorLoc.get.col)
+        case West => Location(actorLoc.get.row, actorLoc.get.col - 1)
+      }
+      setBoardObjectAt(destination, Some(actor))
+      val xOffset = destination.col * Board.TILE_SIZE - actorLoc.get.col * Board.TILE_SIZE
+      val yOffset = destination.row * Board.TILE_SIZE - actorLoc.get.row * Board.TILE_SIZE
+      actor.setDrawOffsetX(xOffset)
+      actor.setDrawOffsetY(yOffset)
+    }
+    def turnActor(): Unit = actor.setFacingDirection(direction)
+
+    if(actor.getFacingDirection == direction) moveActor() else turnActor()
+  }
 
   /** Returns the object's width. */
   override def getObjectWidth: Int = Board.TILE_SIZE * cells.head.length

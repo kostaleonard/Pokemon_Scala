@@ -22,17 +22,17 @@ class OverworldView(override protected val model: Model) extends View(model) {
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = keyCode match {
     case KeyMappings.DOWN_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(South))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(South)))
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(South))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(South)))
     case KeyMappings.UP_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(North))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(North)))
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(North))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(North)))
     case KeyMappings.LEFT_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(West))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(West)))
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(West))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(West)))
     case KeyMappings.RIGHT_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.movePlayer(East))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.movePlayer(East)))
+      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(East))
+      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(East)))
     case _ => ;
   }
 
