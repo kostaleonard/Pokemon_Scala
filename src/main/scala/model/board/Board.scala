@@ -6,10 +6,12 @@ import java.awt.image.BufferedImage
 import model.board.cells._
 import model.actor.{Actor, Trainer}
 import model.item.Item
-import view.Drawable
+import view.{Drawable, View}
 
 object Board {
-  val TILE_SIZE = 75
+  val TILE_SIZE = 100
+  val NUM_ROWS_RENDERED: Int = View.FRAME_DESIGN_HEIGHT / TILE_SIZE
+  val NUM_COLS_RENDERED: Int = View.FRAME_DESIGN_WIDTH / TILE_SIZE
 
   /** Returns a test board. */
   def getTestBoard1: Board = {
@@ -41,9 +43,10 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   /** The boardObjectMap provides an O(1) mapping to get the Location of any given BoardObject. It is the inverse
     * operation of retrieving the BoardObject at any given Location, which can be done by accessing cells. This is
     * redundant information, but is necessary to ensure fast access. */
-  val boardObjectMap: scala.collection.mutable.Map[BoardObject, Location] =
+  protected val boardObjectMap: scala.collection.mutable.Map[BoardObject, Location] =
     scala.collection.mutable.Map.empty[BoardObject, Location]
   buildBoardObjectMap()
+  protected var centeredLocation: Location = spawnLocation.getOrElse(Location(0, 0))
 
   /** Builds the boardObjectMap. */
   protected def buildBoardObjectMap(): Unit = {
@@ -53,6 +56,12 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       )
     )
   }
+
+  /** Returns the location on which the board is centered. */
+  def getCenteredLocation: Location = centeredLocation
+
+  /** Sets the location on which the board is centered. */
+  def setCenteredLocation(loc: Location): Unit = centeredLocation = loc
 
   /** Returns the cells on the Board. */
   def getCells: Array[Array[Cell]] = cells
@@ -110,9 +119,13 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
+    val startRow = 0 max (centeredLocation.row - Board.NUM_ROWS_RENDERED / 2)
+    val endRow = (cells.length - 1) min (startRow + Board.NUM_ROWS_RENDERED)
+    val startCol = 0 max (centeredLocation.col - Board.NUM_COLS_RENDERED / 2)
+    val endCol = (cells.head.length - 1) min (startCol + Board.NUM_COLS_RENDERED)
     /** Draw cells. */
-    cells.take(10).indices.foreach { r =>
-      cells(r).take(10).indices.foreach { c =>
+    cells.indices.slice(startRow, endRow + 1).foreach { r =>
+      cells(r).indices.slice(startCol, endCol + 1).foreach { c =>
         g2d.drawImage(cells(r)(c).getImage,
           c * Board.TILE_SIZE, r * Board.TILE_SIZE,
           cells(r)(c).getObjectWidth, cells(r)(c).getObjectHeight,
@@ -120,8 +133,8 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       }
     }
     /** Draw board objects. */
-    cells.take(10).indices.foreach { r =>
-      cells(r).take(10).indices.foreach { c =>
+    cells.indices.slice(startRow, endRow + 1).foreach { r =>
+      cells(r).indices.slice(startCol, endCol + 1).foreach { c =>
         cells(r)(c).getBoardObject.map(obj =>
           g2d.drawImage(obj.getImage,
             c * Board.TILE_SIZE - obj.getDrawOffsetX, r * Board.TILE_SIZE - obj.getDrawOffsetY,

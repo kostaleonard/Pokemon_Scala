@@ -71,14 +71,18 @@ class Model(protected val profileName: String) extends Serializable {
 
   /** Places the player on the current board. If the board has no spawn location, place the player on the backup
     * location. */
-  def spawnPlayerOnBoard(backupLoc: Location = Location(0, 0)): Unit = currentBoard.getSpawnLocation match {
-    case Some(spawnLoc) => currentBoard.setBoardObjectAt(spawnLoc, Some(playerCharacter))
-    case None => currentBoard.setBoardObjectAt(backupLoc, Some(playerCharacter))
+  def spawnPlayerOnBoard(backupLoc: Location = Location(0, 0)): Unit = {
+    val loc = currentBoard.getSpawnLocation.getOrElse(backupLoc)
+    currentBoard.setBoardObjectAt(loc, Some(playerCharacter))
+    currentBoard.setCenteredLocation(loc)
   }
 
   /** Sends the player in the given direction. If they are not facing this direction, performs a turn; if they are,
     * performs a move. */
-  def sendPlayerInDirection(direction: Direction): Unit = currentBoard.sendActorInDirection(playerCharacter, direction)
+  def sendPlayerInDirection(direction: Direction): Unit = {
+    currentBoard.sendActorInDirection(playerCharacter, direction)
+    currentBoard.setCenteredLocation(getPlayerLocation.get)
+  }
 
   /** Writes the model to the output file for the profile name. */
   def save(): Unit = {
