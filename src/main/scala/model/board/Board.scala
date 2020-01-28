@@ -127,9 +127,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     cells.indices.slice(startRow, endRow + 1).foreach { r =>
       cells(r).indices.slice(startCol, endCol + 1).foreach { c =>
         g2d.drawImage(cells(r)(c).getImage,
-          c * Board.TILE_SIZE, r * Board.TILE_SIZE,
-          cells(r)(c).getObjectWidth, cells(r)(c).getObjectHeight,
-          null)
+          c * Board.TILE_SIZE, r * Board.TILE_SIZE, null)
       }
     }
     /** Draw board objects. */
@@ -137,15 +135,16 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
       cells(r).indices.slice(startCol, endCol + 1).foreach { c =>
         cells(r)(c).getBoardObject.map(obj =>
           g2d.drawImage(obj.getImage,
-            c * Board.TILE_SIZE - obj.getDrawOffsetX, r * Board.TILE_SIZE - obj.getDrawOffsetY,
-            obj.getObjectWidth, obj.getObjectHeight,
-            null)
+            c * Board.TILE_SIZE - obj.getDrawOffsetX, r * Board.TILE_SIZE - obj.getDrawOffsetY, null)
         )
       }
     }
     g2d.dispose()
     canvasImage
   }
+
+  /** Returns the object's image, already scaled. This is to speed up rendering. */
+  def getPrescaledImage: Option[BufferedImage] = None
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {

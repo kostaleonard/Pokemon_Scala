@@ -125,6 +125,10 @@ class Actor extends BoardObject {
     canvasImage
   }
 
+  //TODO prescaled images for actors.
+  /** Returns the object's image, already scaled. This is to speed up rendering. */
+  override def getPrescaledImage: Option[BufferedImage] = None
+
   /** Queues the given move. The move function will be called when the player finishes the current move. */
   def queueMove(moveFunction: () => Unit): Unit = queuedMove = Some(moveFunction)
 
