@@ -9,7 +9,7 @@ import model.item.Item
 import view.{Drawable, View}
 
 object Board {
-  val TILE_SIZE = 100
+  val TILE_SIZE = 64
   val NUM_ROWS_RENDERED: Int = View.FRAME_DESIGN_HEIGHT / TILE_SIZE
   val NUM_COLS_RENDERED: Int = View.FRAME_DESIGN_WIDTH / TILE_SIZE
 

@@ -5,6 +5,10 @@ import java.awt.image.BufferedImage
 
 import javax.swing.JPanel
 
+object ImageRenderPanel {
+  val SCALE_WITH_FRAME = true
+}
+
 class ImageRenderPanel extends JPanel {
   protected var currentImage: Option[BufferedImage] = None
   protected var backgroundColor: Color = Color.RED.darker //TODO change background color. It is dark red for testing.
@@ -21,12 +25,14 @@ class ImageRenderPanel extends JPanel {
   def renderImage(g: Graphics): Unit = {
     g.setColor(backgroundColor)
     g.fillRect(0, 0, getWidth, getHeight)
-    //TODO this currently does not force the 16:9 aspect ratio. Consider changing.
     currentImage match{
-      case Some(bufferedImage) => g.drawImage(bufferedImage,
-        0, 0, getWidth, getHeight,
-        0, 0, bufferedImage.getWidth, bufferedImage.getHeight,
-        null)
+      case Some(bufferedImage) =>
+        if(ImageRenderPanel.SCALE_WITH_FRAME)
+          g.drawImage(bufferedImage,
+            0, 0, getWidth, getHeight,
+            0, 0, bufferedImage.getWidth, bufferedImage.getHeight,
+            null)
+        else g.drawImage(bufferedImage, 0, 0, null)
       case None => ;
     }
   }
