@@ -22,30 +22,9 @@ class OverworldView(override protected val model: Model) extends View(model) {
     )
   }
 
-  //TODO clean this up.
-  /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = {
+  /** Tries to start a random encounter from the cell on which the player is standing. */
+  protected def tryStartRandomEncounter(): Unit = {
     val playerCharacter = model.getPlayerCharacter
-    val playerLoc = model.getPlayerLocation
-    keyCode match {
-      case KeyMappings.DOWN_KEY =>
-        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(South))
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(South)))
-      case KeyMappings.UP_KEY =>
-        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(North))
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(North)))
-      case KeyMappings.LEFT_KEY =>
-        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(West))
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(West)))
-      case KeyMappings.RIGHT_KEY =>
-        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(East))
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(East)))
-      case _ => ;
-    }
     val newPlayerLoc = model.getPlayerLocation
     if(newPlayerLoc.nonEmpty){
       val cell = model.getCurrentBoard.getCells.apply(newPlayerLoc.get.row)(newPlayerLoc.get.col)
@@ -54,6 +33,44 @@ class OverworldView(override protected val model: Model) extends View(model) {
         playerCharacter.queueFunctionAfterAnimation(
           Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
       }
+    }
+  }
+
+  //TODO clean this up.
+  /** The action taken when a key is pressed and the View is in focus. */
+  override def keyPressed(keyCode: Int): Unit = {
+    val playerCharacter = model.getPlayerCharacter
+    val playerLoc = model.getPlayerLocation
+    keyCode match {
+      case KeyMappings.DOWN_KEY =>
+        if (!playerCharacter.isMoving) {
+          playerLoc.map(_ => model.sendPlayerInDirection(South))
+          tryStartRandomEncounter()
+        }
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(South)))
+      case KeyMappings.UP_KEY =>
+        if (!playerCharacter.isMoving){
+          playerLoc.map(_ => model.sendPlayerInDirection(North))
+          tryStartRandomEncounter()
+        }
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(North)))
+      case KeyMappings.LEFT_KEY =>
+        if (!playerCharacter.isMoving){
+          playerLoc.map(_ => model.sendPlayerInDirection(West))
+          tryStartRandomEncounter()
+        }
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(West)))
+      case KeyMappings.RIGHT_KEY =>
+        if (!playerCharacter.isMoving){
+          playerLoc.map(_ => model.sendPlayerInDirection(East))
+          tryStartRandomEncounter()
+        }
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(East)))
+      case _ => ;
     }
   }
 
