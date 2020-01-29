@@ -3,10 +3,12 @@ package view.views
 import java.awt.{Color, Graphics2D, Point}
 import java.awt.image.BufferedImage
 
-import controller.{KeyMappings, SwitchViews}
+import controller.{KeyMappings, StartRandomEncounter, SwitchViews}
 import model.Model
 import model.board._
 import view.View
+
+import scala.util.Random
 
 class OverworldView(override protected val model: Model) extends View(model) {
   /** Returns the offset for centering the player. */
@@ -21,20 +23,34 @@ class OverworldView(override protected val model: Model) extends View(model) {
 
   //TODO clean this up.
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = keyCode match {
-    case KeyMappings.DOWN_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(South))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(South)))
-    case KeyMappings.UP_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(North))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(North)))
-    case KeyMappings.LEFT_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(West))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(West)))
-    case KeyMappings.RIGHT_KEY =>
-      if(!model.getPlayerCharacter.isMoving) model.getPlayerLocation.map(_ => model.sendPlayerInDirection(East))
-      else if(model.getPlayerCharacter.isAlmostDoneMoving) model.getPlayerCharacter.queueMove(() => model.getPlayerLocation.map(_ => model.sendPlayerInDirection(East)))
-    case _ => ;
+  override def keyPressed(keyCode: Int): Unit = {
+    val playerCharacter = model.getPlayerCharacter
+    val playerLoc = model.getPlayerLocation
+    keyCode match {
+      case KeyMappings.DOWN_KEY =>
+        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(South))
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(South)))
+      case KeyMappings.UP_KEY =>
+        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(North))
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(North)))
+      case KeyMappings.LEFT_KEY =>
+        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(West))
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(West)))
+      case KeyMappings.RIGHT_KEY =>
+        if (!playerCharacter.isMoving) playerLoc.map(_ => model.sendPlayerInDirection(East))
+        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+          () => playerLoc.map(_ => model.sendPlayerInDirection(East)))
+      case _ => ;
+    }
+    val newPlayerLoc = model.getPlayerLocation
+    if(newPlayerLoc.nonEmpty){
+      val cell = model.getCurrentBoard.getCells.apply(newPlayerLoc.get.row)(newPlayerLoc.get.col)
+      if(Random.nextDouble() < cell.getRandomEncounterChance)
+        sendControllerMessage(StartRandomEncounter(cell.getRandomWildPokemon))
+    }
   }
 
   /** The action taken when a key is released and the View is in focus. */

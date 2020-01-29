@@ -6,14 +6,22 @@ import java.io.File
 
 import javax.imageio.ImageIO
 import model.board.Board
+import model.pokemon.Pokemon
+import model.pokemon.exp.LevelTracker
+import model.pokemon.species.{Bulbasaur, MissingNo}
 import view.View
 
 object TallGrass {
   val TALL_GRASS_IMAGE: Image = ImageIO.read(new File(View.getSourcePath("tiles/tall_grass_1.png")))
+  val DEFAULT_RANDOM_ENCOUNTER_CHANCE = 0.1
 }
 
 class TallGrass extends Cell {
   val prescaledImage: BufferedImage = getPrescaledImage.get
+  randomEncounterChance = TallGrass.DEFAULT_RANDOM_ENCOUNTER_CHANCE
+  wildPokemonMap = scala.collection.immutable.Map(
+    (() => new Bulbasaur(LevelTracker.create(1))) -> 1
+  )
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = prescaledImage

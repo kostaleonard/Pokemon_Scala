@@ -11,7 +11,7 @@ import view.View
 object Actor {
   val MOVE_SPEED: Int = Board.TILE_SIZE / 16
   val RUN_SPEED: Int = Board.TILE_SIZE / 8
-  val ALMOST_DONE_MOVING_MULTIPLIER = 2
+  val ALMOST_DONE_MOVING_MULTIPLIER = 4
 
   val PLAYER_SOUTH = 10
   val PLAYER_SOUTH_WALK_LEFT = 11
@@ -116,6 +116,7 @@ class Actor extends BoardObject {
     math.abs(drawOffsetX) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED &&
     math.abs(drawOffsetY) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED
 
+  //TODO turn off scaling here!
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
