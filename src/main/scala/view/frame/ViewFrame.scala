@@ -100,7 +100,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       frameAdvanceTimer.stop()
       keyPressManager.getKeyTimer.stop()
       keyHeldExecutor.shutdown()
-      System.exit(0)
+      controller.exitGame()
     }
 
     /** Called when the window is activated. */
@@ -116,7 +116,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       frameAdvanceTimer.stop()
       keyPressManager.getKeyTimer.stop()
       keyHeldExecutor.shutdown()
-      System.exit(0)
+      controller.exitGame()
     }
 
     /** Called when the window is deactivated. */

@@ -1,5 +1,8 @@
 package controller
 
+import java.awt.event.{ActionEvent, ActionListener}
+
+import javax.swing.Timer
 import model.Model
 import model.battle.Battle
 import view.View
@@ -8,6 +11,7 @@ import view.views.{MainMenuView, OverworldView}
 
 object Controller {
   val GAME_TITLE = "Gray"
+  val MESSAGE_CHECKS_PER_SECOND = 15
 
   /** Runs the game. */
   def main(args: Array[String]): Unit = {
@@ -19,6 +23,8 @@ object Controller {
 class Controller {
   protected val model: Model = Model.loadOrCreate(getProfileName)
   protected val viewManager = new ViewManager(new MainMenuView(model), this)
+  protected val messageTimer = new Timer(ViewManager.MILLISECONDS_PER_SECOND / Controller.MESSAGE_CHECKS_PER_SECOND,
+    new ControllerMessageListener)
 
   /** Returns the player profile name. */
   def getProfileName: String = {
@@ -27,7 +33,10 @@ class Controller {
   }
 
   /** Starts the game. */
-  def playGame(): Unit = runMainMenu()
+  def playGame(): Unit = {
+    messageTimer.start()
+    runMainMenu()
+  }
 
   /** Runs the main menu. */
   def runMainMenu(): Unit = viewManager.setCurrentView(new MainMenuView(model))
@@ -52,29 +61,33 @@ class Controller {
   /** Sends the key press to the current view, then checks for controller messages. */
   def keyPressed(keyCode: Int): Unit = {
     viewManager.getCurrentView.keyPressed(keyCode)
-    checkControllerMessages()
   }
 
   /** Sends the key release to the current view, then checks for controller messages. */
   def keyReleased(keyCode: Int): Unit = {
     viewManager.getCurrentView.keyReleased(keyCode)
-    checkControllerMessages()
   }
 
   /** Sends the key type to the current view, then checks for controller messages. */
   def keyTyped(keyCode: Int): Unit = {
     viewManager.getCurrentView.keyTyped(keyCode)
-    checkControllerMessages()
   }
 
   /** Sends the key hold to the current view, then checks for controller messages. */
   def keyHeld(keyCode: Int): Unit = {
     viewManager.getCurrentView.keyHeld(keyCode)
-    checkControllerMessages()
   }
 
   /** Exits the game by ending the program. */
   def exitGame(): Unit = {
+    messageTimer.stop()
     System.exit(0)
+  }
+
+  class ControllerMessageListener extends ActionListener {
+    /** Called every time the timer expires. */
+    override def actionPerformed(e: ActionEvent): Unit = {
+      checkControllerMessages()
+    }
   }
 }
