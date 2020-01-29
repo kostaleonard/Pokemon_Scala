@@ -9,8 +9,8 @@ import model.board._
 import view.View
 
 object Actor {
-  //val MOVE_SPEED = 4
-  val MOVE_SPEED = Board.TILE_SIZE / 15
+  val MOVE_SPEED: Int = Board.TILE_SIZE / 16
+  val RUN_SPEED: Int = Board.TILE_SIZE / 8
   val ALMOST_DONE_MOVING_MULTIPLIER = 2
 
   val PLAYER_SOUTH = 10

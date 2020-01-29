@@ -10,6 +10,8 @@ import javax.swing.{JFrame, Timer}
 object ViewFrame{
   val SCHEDULED_THREAD_POOL_EXECUTOR_NUM_THREADS = 3
   val SCHEDULED_THREAD_POOL_EXECUTOR_INITIAL_DELAY = 0
+  val SHOW_FPS_TIMER: Boolean = true
+  val SHOW_ADVANCE_FRAME_TIMER: Boolean = false
 }
 
 class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame {
@@ -67,7 +69,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       framesProcessed += 1
       val seconds = (System.nanoTime() - referenceTime) / 1e9
       if(seconds > 1.0){
-        //println("FPS: %f".format(framesProcessed / seconds))
+        if(ViewFrame.SHOW_FPS_TIMER) println("FPS: %f".format(framesProcessed / seconds))
         framesProcessed = 0
         referenceTime = System.nanoTime()
       }
@@ -83,7 +85,7 @@ class ViewFrame(viewManager: ViewManager, controller: Controller) extends JFrame
       framesProcessed += 1
       val seconds = (System.nanoTime() - referenceTime) / 1e9
       if(seconds > 1.0){
-        //println("Frame advance FPS: %f".format(framesProcessed / seconds))
+        if(ViewFrame.SHOW_ADVANCE_FRAME_TIMER) println("Frame advance FPS: %f".format(framesProcessed / seconds))
         framesProcessed = 0
         referenceTime = System.nanoTime()
       }
