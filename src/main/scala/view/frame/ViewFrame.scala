@@ -10,7 +10,7 @@ import javax.swing.{JFrame, Timer}
 object ViewFrame{
   val SCHEDULED_THREAD_POOL_EXECUTOR_NUM_THREADS = 3
   val SCHEDULED_THREAD_POOL_EXECUTOR_INITIAL_DELAY = 0
-  val SHOW_FPS_TIMER: Boolean = true
+  val SHOW_FPS_TIMER: Boolean = false
   val SHOW_ADVANCE_FRAME_TIMER: Boolean = false
 }
 
