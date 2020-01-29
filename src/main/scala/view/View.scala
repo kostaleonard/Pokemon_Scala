@@ -20,6 +20,7 @@ object View {
 
 abstract class View(protected val model: Model) extends Drawable {
   protected val controllerMessages: ListBuffer[ControllerMessage] = ListBuffer.empty
+  protected var inputFrozen: Boolean = false
 
   /** Sends a message to the Controller. */
   def sendControllerMessage(message: ControllerMessage): Unit = controllerMessages.append(message)

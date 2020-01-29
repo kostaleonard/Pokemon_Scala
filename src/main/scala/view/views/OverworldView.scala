@@ -11,7 +11,14 @@ import view.View
 
 import scala.util.Random
 
+object OverworldView {
+  val RANDOM_ENCOUNTER_ANIMATION_FRAMES = 120
+}
+
 class OverworldView(override protected val model: Model) extends View(model) {
+  protected var randomEncounterAnimationStarted: Boolean = false
+  protected var randomEncounterAnimationFrame: Int = 0
+
   /** Returns the offset for centering the player. */
   def getCenteringOffset: Point = {
     val loc = model.getPlayerLocation.get
@@ -31,14 +38,21 @@ class OverworldView(override protected val model: Model) extends View(model) {
       if(Random.nextDouble() < cell.getRandomEncounterChance){
         val battle = new Battle(playerCharacter, None, Some(cell.getRandomWildPokemon))
         playerCharacter.queueFunctionAfterAnimation(
-          Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
+          Some(() => queueRandomEncounter(battle)))
       }
     }
   }
 
+  /** Starts the random encounter animation, and queues the view switch after this animation. */
+  def queueRandomEncounter(battle: Battle): Unit = {
+    inputFrozen = true
+    randomEncounterAnimationStarted = true
+    queueFunctionAfterAnimation(Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
+  }
+
   //TODO clean this up.
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = {
+  override def keyPressed(keyCode: Int): Unit = if(!inputFrozen) {
     val playerCharacter = model.getPlayerCharacter
     val playerLoc = model.getPlayerLocation
     keyCode match {
@@ -89,8 +103,12 @@ class OverworldView(override protected val model: Model) extends View(model) {
     val boardImage = model.getCurrentBoard.getImage
     val centeringOffset = getCenteringOffset
     g2d.setColor(Color.BLACK)
-    g2d.fillRect(0, 0, boardImage.getWidth, boardImage.getHeight)
+    g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
     g2d.drawImage(boardImage, -centeringOffset.x, -centeringOffset.y, null)
+    if(randomEncounterAnimationStarted){
+      g2d.fillRect(0, 0, randomEncounterAnimationFrame, getObjectHeight)
+      g2d.fillRect(getObjectWidth - randomEncounterAnimationFrame, 0, randomEncounterAnimationFrame, getObjectHeight)
+    }
     g2d.dispose()
     canvasImage
   }
@@ -99,5 +117,14 @@ class OverworldView(override protected val model: Model) extends View(model) {
   override def getPrescaledImage: Option[BufferedImage] = None
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = model.getCurrentBoard.advanceFrame()
+  override def advanceFrame(): Unit = {
+    model.getCurrentBoard.advanceFrame()
+    if(randomEncounterAnimationStarted) {
+      randomEncounterAnimationFrame += 1
+      if (randomEncounterAnimationFrame == OverworldView.RANDOM_ENCOUNTER_ANIMATION_FRAMES)
+        executeAfterAnimation.getOrElse(
+          throw new UnsupportedOperationException("Expected random encounter code, but found nothing.")
+        ).apply()
+    }
+  }
 }
