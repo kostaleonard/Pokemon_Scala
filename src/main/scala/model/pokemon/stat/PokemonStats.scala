@@ -91,4 +91,8 @@ class PokemonStats(protected var hp: Int,
 
   /** Sets the Speed to a new value. */
   def setSpeed(newVal: Int): Unit = setStat(PokemonStats.SPD_KEY, newVal)
+
+  /** Returns the string representation of the object. */
+  override def toString: String = "HP = %d\nATK = %d\nDEF = %d\nSPATK = %d\nSPDEF = %d\nSPD = %d".format(
+    getHP, getAttack, getDefense, getSpecialAttack, getSpecialDefense, getSpeed)
 }

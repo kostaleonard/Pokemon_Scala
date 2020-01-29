@@ -40,7 +40,7 @@ class Controller {
     clearControllerMessages()
     messages.foreach {
       case SwitchViews(nextView) => changeViews(nextView)
-      case StartRandomEncounter(wildPokemon) => println(wildPokemon.getBaseStats)
+      case StartRandomEncounter(wildPokemon) => println(wildPokemon.getIVStats)
       case SendKeyPress(keyCode) => keyPressed(keyCode)
       case m => throw new UnsupportedOperationException("Unrecognized Controller Message: " + m)
     }
