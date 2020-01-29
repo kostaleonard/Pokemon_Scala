@@ -9,6 +9,7 @@ trait Drawable {
     BufferedImage.TYPE_INT_ARGB)
   protected var drawOffsetX = 0
   protected var drawOffsetY = 0
+  protected var executeAfterAnimation: Option[() => Unit] = None
 
   /** Returns the Character's x offset for drawing. */
   def getDrawOffsetX: Int = drawOffsetX
@@ -36,4 +37,7 @@ trait Drawable {
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   def advanceFrame(): Unit
+
+  /** Specifies code to execute after animation is complete. */
+  def queueFunctionAfterAnimation(f: Option[() => Unit]): Unit = executeAfterAnimation = f
 }

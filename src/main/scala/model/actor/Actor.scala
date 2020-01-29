@@ -65,7 +65,6 @@ class Actor extends BoardObject {
   //TODO you're going to have to end up defining classes of avatars to handle animations, then make it a constructor argument.
   protected var avatarFrame: Int = Actor.PLAYER_SOUTH
   protected var queuedMove: Option[() => Unit] = None
-  protected var executeAfterAnimation: Option[() => Unit] = None
   protected var facingDirection: Direction = South
   protected var onLeftFoot: Boolean = true
 
@@ -151,7 +150,4 @@ class Actor extends BoardObject {
       queuedMove = None
     }
   }
-
-  /** Specifies code to execute after animation is complete. */
-  def queueFunctionAfterAnimation(f: Option[() => Unit]): Unit = executeAfterAnimation = f
 }
