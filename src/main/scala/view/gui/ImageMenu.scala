@@ -107,8 +107,7 @@ class ImageMenu extends Menu[ImageItem] {
       if(imageItem.isSelectable) g2d.setColor(menuItemFontColor)
       else g2d.setColor(nonSelectableMenuItemColor)
       //g2d.drawString(menuItem.text, borderThickness * 2, heightStartThisMenuItem + (menuItemHeight * 3) / 4)
-      g2d.drawImage(imageItem.image, borderThickness * 2, heightStartThisMenuItem, imageItem.width, imageItem.height,
-        null)
+      g2d.drawImage(imageItem.image, borderThickness * 2, heightStartThisMenuItem, null)
       heightStartThisMenuItem += imageItem.height
     }
     g2d.dispose()

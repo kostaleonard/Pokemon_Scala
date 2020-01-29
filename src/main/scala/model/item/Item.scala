@@ -16,13 +16,10 @@ object Item {
 
 class Item extends BoardObject {
   protected val image: Image = Item.getPokeballImage
+  protected val prescaledImage: BufferedImage = getPrescaledImage.get
+
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
-  override def getImage: BufferedImage = {
-    val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
-    g2d.drawImage(image, 0, 0, getObjectWidth, getObjectHeight, null)
-    g2d.dispose()
-    canvasImage
-  }
+  override def getImage: BufferedImage = prescaledImage
 
   //TODO prescaled images for items.
   /** Returns the object's image, already scaled. This is to speed up rendering. */

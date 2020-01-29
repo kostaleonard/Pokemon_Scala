@@ -126,8 +126,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     /** Draw cells. */
     cells.indices.slice(startRow, endRow + 1).foreach { r =>
       cells(r).indices.slice(startCol, endCol + 1).foreach { c =>
-        g2d.drawImage(cells(r)(c).getImage,
-          c * Board.TILE_SIZE, r * Board.TILE_SIZE, null)
+        g2d.drawImage(cells(r)(c).getImage, c * Board.TILE_SIZE, r * Board.TILE_SIZE, null)
       }
     }
     /** Draw board objects. */
