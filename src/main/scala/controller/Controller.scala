@@ -1,6 +1,7 @@
 package controller
 
 import model.Model
+import model.battle.Battle
 import view.View
 import view.frame.ViewManager
 import view.views.{MainMenuView, OverworldView}
@@ -40,7 +41,6 @@ class Controller {
     clearControllerMessages()
     messages.foreach {
       case SwitchViews(nextView) => changeViews(nextView)
-      case StartRandomEncounter(wildPokemon) => println(wildPokemon.getIVStats)
       case SendKeyPress(keyCode) => keyPressed(keyCode)
       case m => throw new UnsupportedOperationException("Unrecognized Controller Message: " + m)
     }

@@ -3,8 +3,9 @@ package view.views
 import java.awt.{Color, Graphics2D, Point}
 import java.awt.image.BufferedImage
 
-import controller.{KeyMappings, StartRandomEncounter, SwitchViews}
+import controller.{KeyMappings, SwitchViews}
 import model.Model
+import model.battle.Battle
 import model.board._
 import view.View
 
@@ -48,8 +49,11 @@ class OverworldView(override protected val model: Model) extends View(model) {
     val newPlayerLoc = model.getPlayerLocation
     if(newPlayerLoc.nonEmpty){
       val cell = model.getCurrentBoard.getCells.apply(newPlayerLoc.get.row)(newPlayerLoc.get.col)
-      if(Random.nextDouble() < cell.getRandomEncounterChance)
-        sendControllerMessage(StartRandomEncounter(cell.getRandomWildPokemon))
+      if(Random.nextDouble() < cell.getRandomEncounterChance){
+        val battle = new Battle(playerCharacter, None, Some(cell.getRandomWildPokemon))
+        playerCharacter.queueFunctionAfterAnimation(
+          Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
+      }
     }
   }
 

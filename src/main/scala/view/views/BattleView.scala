@@ -1,12 +1,13 @@
 package view.views
 
-import java.awt.Graphics2D
+import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 
 import model.Model
+import model.battle.Battle
 import view.View
 
-class BattleView(override protected val model: Model) extends View(model) {
+class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = ???
 
@@ -23,8 +24,8 @@ class BattleView(override protected val model: Model) extends View(model) {
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
 
-    //TODO draw battle.
-    ???
+    g2d.setColor(Color.YELLOW)
+    g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
 
     g2d.dispose()
     canvasImage
