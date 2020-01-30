@@ -1,16 +1,28 @@
 package model.pokemon
 
+import java.awt.{Graphics2D, Image}
+import java.awt.image.BufferedImage
+import java.io.File
+
+import javax.imageio.ImageIO
+import model.board.Board
+import model.board.cells.TallGrass
 import model.elementaltype.ElementalType
 import model.pokemon.effect.EffectTracker
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
+import view.{Drawable, View}
 
 import scala.util.Random
 
 object Pokemon {
   val NAME_MIN_LENGTH = 1
   val NAME_MAX_LENGTH = 15
+  val MAX_DRAW_WIDTH: Int = 64 * 4
+  val MAX_DRAW_HEIGHT: Int = 64 * 4
+  val FRAME_FRONT = 0
+  val FRAME_BACK = 1
 
   /** Returns a stats object representing a new Pokemon's IVs. */
   def getRandomIVStats: IVStats = {
@@ -28,18 +40,28 @@ object Pokemon {
       ).toMap
     )
   }
+
+  /** The map of all frame numbers to their avatars. These are all of the images needed to render the pokemon. */
+  def getSpeciesImageMap(speciesName: String): scala.collection.immutable.Map[Int, Image] =
+    scala.collection.immutable.Map(
+      FRAME_FRONT -> ImageIO.read(new File(View.getSourcePath("sprites/pokemon/%s_front.png".format(speciesName)))),
+      FRAME_BACK -> ImageIO.read(new File(View.getSourcePath("sprites/pokemon/%s_back.png".format(speciesName))))
+    )
 }
 
 /** Represents a Pokemon object. The reason why a Pokemon needs a LevelTracker object in the constructor--not just an
   * int representing its level--is because, during evolution, the experience gained needs to follow forward smoothly
   * when the Pokemon object is replaced with a new one of the evolved form. */
-abstract class Pokemon(protected val levelTracker: LevelTracker) {
+abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawable {
   protected val ivStats: IVStats = Pokemon.getRandomIVStats
   protected var standardStats: PokemonStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
   protected var currentStats = new BattleStats(standardStats)
   protected val moveList: MoveList = getInitialMoveList(getLevel)
   protected var name: String = getSpeciesName
   protected val effectTracker: EffectTracker = new EffectTracker
+  protected val speciesImageMap: scala.collection.immutable.Map[Int, Image] = Pokemon.getSpeciesImageMap(getSpeciesName)
+  protected val prescaledImageFront: BufferedImage = getPrescaledImageFront.get
+  protected val prescaledImageBack: BufferedImage = getPrescaledImageBack.get
 
   /** Returns the Pokemon's name. By default, this is the species name. */
   def getName: String = name
@@ -100,4 +122,47 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) {
 
   /** Returns the Pokemon's learn map. */
   def getLearnMap: Map[Int, Move]
+
+  /** Returns the object's width. */
+  override def getObjectWidth: Int = Pokemon.MAX_DRAW_WIDTH
+
+  /** Returns the object's height. */
+  override def getObjectHeight: Int = Pokemon.MAX_DRAW_HEIGHT
+
+  /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
+  override def getImage: BufferedImage = throw new UnsupportedOperationException("Must call getImageFront or " +
+    "getImageBack.")
+
+  /** Returns the object's image, already scaled. This is to speed up rendering. */
+  override def getPrescaledImage: Option[BufferedImage] = throw new UnsupportedOperationException("Must call " +
+    "getPrescaledImageFront or getPrescaledImageBack.")
+
+  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
+  override def advanceFrame(): Unit = {}
+
+  /** Returns the object's front image. */
+  def getImageFront: BufferedImage = prescaledImageFront
+
+  /** Returns the object's back image. */
+  def getImageBack: BufferedImage = prescaledImageBack
+
+  /** Returns the object's front image, already scaled. This is to speed up rendering. */
+  def getPrescaledImageFront: Option[BufferedImage] = {
+    val bufferedImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+    val g2d = bufferedImage.getGraphics.asInstanceOf[Graphics2D]
+    g2d.drawImage(
+      speciesImageMap.getOrElse(Pokemon.FRAME_FRONT, ???), 0, 0, getObjectWidth, getObjectHeight, null)
+    g2d.dispose()
+    Some(bufferedImage)
+  }
+
+  /** Returns the object's back image, already scaled. This is to speed up rendering. */
+  def getPrescaledImageBack: Option[BufferedImage] = {
+    val bufferedImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+    val g2d = bufferedImage.getGraphics.asInstanceOf[Graphics2D]
+    g2d.drawImage(
+      speciesImageMap.getOrElse(Pokemon.FRAME_BACK, ???), 0, 0, getObjectWidth, getObjectHeight, null)
+    g2d.dispose()
+    Some(bufferedImage)
+  }
 }

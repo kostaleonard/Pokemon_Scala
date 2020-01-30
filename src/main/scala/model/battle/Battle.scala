@@ -14,6 +14,12 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     if(opponent.isEmpty) wildPokemon.get else opponent.get.getParty.getNextPokemon.get
   //TODO support for double battles.
 
+  /** Returns the player's current pokemon. */
+  def getPlayerPokemon: Pokemon = playerPokemon
+
+  /** Returns the opponent pokemon. */
+  def getOpponentPokemon: Pokemon = opponentPokemon
+
   /** Returns true if the battle is over. */
   def isOver: Boolean = player.getParty.isWhiteout ||
     (opponent.nonEmpty && opponent.get.getParty.isWhiteout) ||
@@ -23,7 +29,7 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   def makePlayerMove(move: Move): Unit = makePokemonMove(playerPokemon, opponentPokemon, move)
 
   /** Makes the opponent's move. */
-  def makeOpponentMove: Unit = {
+  def makeOpponentMove(): Unit = {
     //TODO support for more opponent behaviors, not just random.
     val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
     makePokemonMove(opponentPokemon, playerPokemon, move)

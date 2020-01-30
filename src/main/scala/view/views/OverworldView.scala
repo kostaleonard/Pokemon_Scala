@@ -12,7 +12,7 @@ import view.View
 import scala.util.Random
 
 object OverworldView {
-  val RANDOM_ENCOUNTER_ANIMATION_FRAMES = 120
+  val RANDOM_ENCOUNTER_ANIMATION_FRAMES = 180
 }
 
 class OverworldView(override protected val model: Model) extends View(model) {
@@ -106,8 +106,9 @@ class OverworldView(override protected val model: Model) extends View(model) {
     g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
     g2d.drawImage(boardImage, -centeringOffset.x, -centeringOffset.y, null)
     if(randomEncounterAnimationStarted){
-      g2d.fillRect(0, 0, randomEncounterAnimationFrame, getObjectHeight)
-      g2d.fillRect(getObjectWidth - randomEncounterAnimationFrame, 0, randomEncounterAnimationFrame, getObjectHeight)
+      val offset = randomEncounterAnimationFrame * 3
+      g2d.fillRect(0, 0, offset, getObjectHeight)
+      g2d.fillRect(getObjectWidth - offset, 0, offset, getObjectHeight)
     }
     g2d.dispose()
     canvasImage

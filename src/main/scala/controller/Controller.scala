@@ -59,24 +59,16 @@ class Controller {
   def changeViews(nextView: View): Unit = viewManager.setCurrentView(nextView)
 
   /** Sends the key press to the current view, then checks for controller messages. */
-  def keyPressed(keyCode: Int): Unit = {
-    viewManager.getCurrentView.keyPressed(keyCode)
-  }
+  def keyPressed(keyCode: Int): Unit = viewManager.getCurrentView.keyPressed(keyCode)
 
   /** Sends the key release to the current view, then checks for controller messages. */
-  def keyReleased(keyCode: Int): Unit = {
-    viewManager.getCurrentView.keyReleased(keyCode)
-  }
+  def keyReleased(keyCode: Int): Unit = viewManager.getCurrentView.keyReleased(keyCode)
 
   /** Sends the key type to the current view, then checks for controller messages. */
-  def keyTyped(keyCode: Int): Unit = {
-    viewManager.getCurrentView.keyTyped(keyCode)
-  }
+  def keyTyped(keyCode: Int): Unit = viewManager.getCurrentView.keyTyped(keyCode)
 
   /** Sends the key hold to the current view, then checks for controller messages. */
-  def keyHeld(keyCode: Int): Unit = {
-    viewManager.getCurrentView.keyHeld(keyCode)
-  }
+  def keyHeld(keyCode: Int): Unit = viewManager.getCurrentView.keyHeld(keyCode)
 
   /** Exits the game by ending the program. */
   def exitGame(): Unit = {

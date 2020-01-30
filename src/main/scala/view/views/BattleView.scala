@@ -1,13 +1,23 @@
 package view.views
 
-import java.awt.{Color, Graphics2D}
+import java.awt.{Color, Graphics2D, Image}
 import java.awt.image.BufferedImage
+import java.io.File
 
+import javax.imageio.ImageIO
 import model.Model
 import model.battle.Battle
 import view.View
 
+object BattleView {
+  val BACKGROUND_IMAGE: Image = ImageIO.read(
+    new File(View.getSourcePath("backgrounds/background_grassy_default.png")))
+  val BACKGROUND_IMAGE_SCALE_FACTOR = 4
+}
+
 class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
+  val prescaledBackground: BufferedImage = getPrescaledImage.get
+
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = ???
 
@@ -23,16 +33,27 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
+    g2d.drawImage(prescaledBackground, 0, 0, null)
 
-    g2d.setColor(Color.YELLOW)
-    g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
+    val opponentPokemonImage = battle.getOpponentPokemon.getPrescaledImageFront.get
+    val playerPokemonImage = battle.getPlayerPokemon.getPrescaledImageBack.get
+    g2d.drawImage(opponentPokemonImage, 575, 85, null)
+    g2d.drawImage(playerPokemonImage, 50, 192, null)
 
     g2d.dispose()
     canvasImage
   }
 
   /** Returns the object's image, already scaled. This is to speed up rendering. */
-  override def getPrescaledImage: Option[BufferedImage] = None
+  override def getPrescaledImage: Option[BufferedImage] = {
+    val bufferedImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+    val g2d = bufferedImage.getGraphics.asInstanceOf[Graphics2D]
+    val width = BattleView.BACKGROUND_IMAGE.getWidth(null) * BattleView.BACKGROUND_IMAGE_SCALE_FACTOR
+    val height = BattleView.BACKGROUND_IMAGE.getHeight(null) * BattleView.BACKGROUND_IMAGE_SCALE_FACTOR
+    g2d.drawImage(BattleView.BACKGROUND_IMAGE, 0, 0, width, height, null)
+    g2d.dispose()
+    Some(bufferedImage)
+  }
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {}

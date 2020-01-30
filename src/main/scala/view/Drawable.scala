@@ -20,7 +20,8 @@ trait Drawable {
   /** Sets the Character's x offset for drawing. */
   def setDrawOffsetX(off: Int): Unit = drawOffsetX = off
 
-  /** Sets the Character's y offset for drawing. */
+  /** Sets the
+    *  Character's y offset for drawing. */
   def setDrawOffsetY(off: Int): Unit = drawOffsetY = off
 
   /** Returns the object's width. */
