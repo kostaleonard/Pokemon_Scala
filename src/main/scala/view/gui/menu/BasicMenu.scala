@@ -40,15 +40,30 @@ class BasicMenu extends Menu[BasicMenuItem] {
   /** Will supersede this.width */
   protected var wrapContentWidth = false
   protected var titleString = "MENU"
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
 
   /** Changes the menu's title string. */
   def setTitleString(title: String): Unit = titleString = title
 
   /** Returns the width of the menu. */
-  override def getObjectWidth: Int = 300 // if(wrapContentWidth) getWrappedWidth else width
+  override def getObjectWidth: Int = if(wrapContentWidth) getWrappedWidth else width
 
   /** Returns the height of the menu. */
-  override def getObjectHeight: Int = 300 //if(wrapContentHeight) getWrappedHeight else height
+  override def getObjectHeight: Int = if(wrapContentHeight) getWrappedHeight else height
+
+  /** Adds a menu item to the menu. */
+  override def appendMenuItem(menuItem: BasicMenuItem): Unit = {
+    super.appendMenuItem(menuItem)
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+  }
+
+  /** Removes a menu item from the menu. */
+  override def removeMenuItem(index: Int): BasicMenuItem = {
+    val result = super.removeMenuItem(index)
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+    result
+  }
 
   /** Returns the width of the menu when the menu is wrapped to fit the content width. */
   def getWrappedWidth: Int = {

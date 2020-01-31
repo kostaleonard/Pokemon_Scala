@@ -42,6 +42,8 @@ class ImageMenu extends Menu[ImageItem] {
   /** Will supersede this.width */
   protected var wrapContentWidth = false
   protected var titleString = "MENU"
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
 
   /** Changes the menu's title string. */
   def setTitleString(title: String): Unit = titleString = title

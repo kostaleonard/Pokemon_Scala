@@ -4,10 +4,6 @@ import java.awt.image.BufferedImage
 
 /** Represents an object that can be drawn. */
 trait Drawable {
-  //TODO this is not actually necessary, and causes problems.
-  /** This is the canvas on which the object's image is drawn. */
-  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
-    BufferedImage.TYPE_INT_ARGB)
   protected var drawOffsetX = 0
   protected var drawOffsetY = 0
   protected var executeAfterAnimation: Option[() => Unit] = None

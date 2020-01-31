@@ -47,6 +47,8 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
     scala.collection.mutable.Map.empty[BoardObject, Location]
   buildBoardObjectMap()
   protected var centeredLocation: Location = spawnLocation.getOrElse(Location(0, 0))
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
 
   /** Builds the boardObjectMap. */
   protected def buildBoardObjectMap(): Unit = {

@@ -18,6 +18,8 @@ object BattleView {
 }
 
 class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
   val prescaledBackground: BufferedImage = getPrescaledImage.get
   val trainerMenu: BasicMenu = new BasicMenu
   val moveMenu: BasicMenu = new BasicMenu

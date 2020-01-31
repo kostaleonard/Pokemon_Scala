@@ -8,6 +8,9 @@ import model.Model
 import view.View
 
 class MainMenuView(override protected val model: Model) extends View(model) {
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
+
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = sendControllerMessage(SwitchViews(new OverworldView(model)))
 

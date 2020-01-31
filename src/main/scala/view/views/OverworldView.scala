@@ -18,6 +18,8 @@ object OverworldView {
 class OverworldView(override protected val model: Model) extends View(model) {
   protected var randomEncounterAnimationStarted: Boolean = false
   protected var randomEncounterAnimationFrame: Int = 0
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
 
   /** Returns the offset for centering the player. */
   def getCenteringOffset: Point = {
