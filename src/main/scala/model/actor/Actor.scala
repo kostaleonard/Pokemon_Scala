@@ -63,6 +63,8 @@ object Actor {
 
 class Actor extends BoardObject {
   //TODO you're going to have to end up defining classes of avatars to handle animations, then make it a constructor argument.
+  protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
+    BufferedImage.TYPE_INT_ARGB)
   protected var avatarFrame: Int = Actor.PLAYER_SOUTH
   protected var queuedMove: Option[() => Unit] = None
   protected var facingDirection: Direction = South
