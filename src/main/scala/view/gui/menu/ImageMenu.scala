@@ -1,7 +1,7 @@
-package view.gui
+package view.gui.menu
 
-import java.awt.{Color, Font, Graphics2D}
 import java.awt.image.BufferedImage
+import java.awt.{Color, Font, Graphics2D}
 
 import scala.collection.mutable.ArrayBuffer
 

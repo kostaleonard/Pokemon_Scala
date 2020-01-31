@@ -1,6 +1,4 @@
-package view.gui
-
-import java.awt.image.BufferedImage
+package view.gui.menu
 
 import view.Drawable
 

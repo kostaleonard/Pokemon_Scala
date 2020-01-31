@@ -8,6 +8,8 @@ import javax.imageio.ImageIO
 import model.Model
 import model.battle.Battle
 import view.View
+import view.gui.GuiAction
+import view.gui.menu.{BasicMenu, BasicMenuItem}
 
 object BattleView {
   val BACKGROUND_IMAGE: Image = ImageIO.read(
@@ -17,6 +19,23 @@ object BattleView {
 
 class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
   val prescaledBackground: BufferedImage = getPrescaledImage.get
+  val trainerMenu: BasicMenu = new BasicMenu
+  val moveMenu: BasicMenu = new BasicMenu
+  setupTrainerMenu()
+  setupMoveMenu()
+
+  /** Sets up the trainer menu. */
+  protected def setupTrainerMenu(): Unit = {
+    trainerMenu.appendMenuItem(BasicMenuItem("FIGHT", GuiAction()))
+    trainerMenu.appendMenuItem(BasicMenuItem("PKMN", GuiAction()))
+    trainerMenu.appendMenuItem(BasicMenuItem("ITEM", GuiAction()))
+    trainerMenu.appendMenuItem(BasicMenuItem("RUN", GuiAction()))
+  }
+
+  /** Sets up the move menu. */
+  protected def setupMoveMenu(): Unit = {
+    //TODO set up the move menu.
+  }
 
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = ???
@@ -34,12 +53,11 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
     g2d.drawImage(prescaledBackground, 0, 0, null)
-
     val opponentPokemonImage = battle.getOpponentPokemon.getPrescaledImageFront.get
     val playerPokemonImage = battle.getPlayerPokemon.getPrescaledImageBack.get
     g2d.drawImage(opponentPokemonImage, 575, 85, null)
     g2d.drawImage(playerPokemonImage, 50, 192, null)
-
+    g2d.drawImage(trainerMenu.getImage, 600, 300, null)
     g2d.dispose()
     canvasImage
   }

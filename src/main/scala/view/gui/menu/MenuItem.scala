@@ -1,6 +1,8 @@
-package view.gui
+package view.gui.menu
 
 import java.awt.image.BufferedImage
+
+import view.gui.GuiAction
 
 sealed trait MenuItem {
   val guiAction: GuiAction

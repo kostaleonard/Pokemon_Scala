@@ -1,7 +1,7 @@
-package view.gui
+package view.gui.menu
 
-import java.awt.{Color, Font, Graphics2D}
 import java.awt.image.BufferedImage
+import java.awt.{Color, Font, Graphics2D}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -45,10 +45,10 @@ class BasicMenu extends Menu[BasicMenuItem] {
   def setTitleString(title: String): Unit = titleString = title
 
   /** Returns the width of the menu. */
-  override def getObjectWidth: Int = if(wrapContentWidth) getWrappedWidth else width
+  override def getObjectWidth: Int = 300 // if(wrapContentWidth) getWrappedWidth else width
 
   /** Returns the height of the menu. */
-  override def getObjectHeight: Int = if(wrapContentHeight) getWrappedHeight else height
+  override def getObjectHeight: Int = 300 //if(wrapContentHeight) getWrappedHeight else height
 
   /** Returns the width of the menu when the menu is wrapped to fit the content width. */
   def getWrappedWidth: Int = {
@@ -113,7 +113,6 @@ class BasicMenu extends Menu[BasicMenuItem] {
     canvasImage
   }
 
-  //TODO prescaled images for menus.
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   override def getPrescaledImage: Option[BufferedImage] = None
 
