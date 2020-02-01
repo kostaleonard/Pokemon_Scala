@@ -13,7 +13,7 @@ import view.View
 
 object TallGrass {
   val TALL_GRASS_IMAGE: Image = ImageIO.read(new File(View.getSourcePath("tiles/tall_grass_1.png")))
-  val DEFAULT_RANDOM_ENCOUNTER_CHANCE = 0.1
+  val DEFAULT_RANDOM_ENCOUNTER_CHANCE = 0.139
 }
 
 class TallGrass extends Cell {

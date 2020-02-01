@@ -4,6 +4,7 @@ import java.awt.{Color, Graphics2D, Image}
 import java.awt.image.BufferedImage
 import java.io.File
 
+import controller.KeyMappings
 import javax.imageio.ImageIO
 import model.Model
 import model.battle.Battle
@@ -32,6 +33,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     trainerMenu.appendMenuItem(BasicMenuItem("PKMN", GuiAction()))
     trainerMenu.appendMenuItem(BasicMenuItem("ITEM", GuiAction()))
     trainerMenu.appendMenuItem(BasicMenuItem("RUN", GuiAction()))
+    trainerMenu.setTitleDisplayed(false)
   }
 
   /** Sets up the move menu. */
@@ -40,16 +42,21 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   }
 
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = ???
+  override def keyPressed(keyCode: Int): Unit = keyCode match{
+    case KeyMappings.UP_KEY => trainerMenu.scrollUp()
+    case KeyMappings.DOWN_KEY => trainerMenu.scrollDown()
+    case KeyMappings.A_KEY => trainerMenu.makeSelection()
+    case _ => ;
+  }
 
   /** The action taken when a key is released and the View is in focus. */
-  override def keyReleased(keyCode: Int): Unit = ???
+  override def keyReleased(keyCode: Int): Unit = {}
 
   /** The action taken when a key is typed and the View is in focus. */
-  override def keyTyped(keyCode: Int): Unit = ???
+  override def keyTyped(keyCode: Int): Unit = {}
 
   /** The action taken when a key is held and the View is in focus. */
-  override def keyHeld(keyCode: Int): Unit = ???
+  override def keyHeld(keyCode: Int): Unit = {}
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
@@ -59,7 +66,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     val playerPokemonImage = battle.getPlayerPokemon.getPrescaledImageBack.get
     g2d.drawImage(opponentPokemonImage, 575, 85, null)
     g2d.drawImage(playerPokemonImage, 50, 192, null)
-    g2d.drawImage(trainerMenu.getImage, 600, 300, null)
+    g2d.drawImage(trainerMenu.getImage, 660, 448, null)
+    g2d.setColor(BasicMenu.DEFAULT_MENU_BACKGROUND_COLOR)
+    g2d.fillRect(0, 592, getObjectWidth, getObjectHeight - 592)
     g2d.dispose()
     canvasImage
   }

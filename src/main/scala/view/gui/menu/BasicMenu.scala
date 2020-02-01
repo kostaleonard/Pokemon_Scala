@@ -10,7 +10,7 @@ object BasicMenu{
   val DEFAULT_TITLE_FONT_COLOR: Color = Color.BLACK
   val DEFAULT_MENUITEM_FONT = new Font(Font.MONOSPACED, Font.BOLD, 30)
   val DEFAULT_MENUITEM_FONT_COLOR: Color = Color.BLACK
-  val DEFAULT_MENU_BACKGROUND_COLOR = new Color(100, 100, 100, 200) //Grayish and slightly transparent
+  val DEFAULT_MENU_BACKGROUND_COLOR = new Color(80, 80, 80)
   val DEFAULT_HIGHLIGHT_COLOR: Color = Color.YELLOW
   val DEFAULT_ACCENT_COLOR: Color = Color.BLUE.brighter()
   val DEFAULT_BORDER_COLOR: Color = Color.BLACK
@@ -34,7 +34,7 @@ class BasicMenu extends Menu[BasicMenuItem] {
   protected var borderThickness: Int = BasicMenu.DEFAULT_BORDER_THICKNESS
   protected var titleSeparatorThickness: Int = BasicMenu.DEFAULT_TITLE_SEPARATOR_THICKNESS
   protected var nonSelectableMenuItemColor: Color = BasicMenu.DEFAULT_NONSELECTABLE_MENUITEM_COLOR
-  protected var titleDisplayed = true //TODO allow title to be hidden.
+  protected var titleDisplayed = true
   /** Will supersede this.height */
   protected var wrapContentHeight = true
   /** Will supersede this.width */
@@ -45,6 +45,12 @@ class BasicMenu extends Menu[BasicMenuItem] {
 
   /** Changes the menu's title string. */
   def setTitleString(title: String): Unit = titleString = title
+
+  /** Sets whether the title is displayed. */
+  def setTitleDisplayed(b: Boolean): Unit = {
+    titleDisplayed = b
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+  }
 
   /** Returns the width of the menu. */
   override def getObjectWidth: Int = if(wrapContentWidth) getWrappedWidth else width
@@ -80,7 +86,7 @@ class BasicMenu extends Menu[BasicMenuItem] {
   def getWrappedHeight: Int = {
     val buffer = 0 //TODO borderThickness * 2?
     val g2d = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB).getGraphics.asInstanceOf[Graphics2D]
-    val titleStringHeight = g2d.getFontMetrics(titleFont).getHeight
+    val titleStringHeight = if(titleDisplayed) g2d.getFontMetrics(titleFont).getHeight else 0
     val menuItemStringHeight = g2d.getFontMetrics(menuItemFont).getHeight * menuItems.length
     titleStringHeight + menuItemStringHeight + buffer
   }
@@ -99,10 +105,12 @@ class BasicMenu extends Menu[BasicMenuItem] {
     g2d.setColor(menuBackgroundColor)
     g2d.fillRect(borderThickness, borderThickness, getObjectWidth - 2 * borderThickness,
       getObjectHeight - 2 * borderThickness)
-    g2d.setColor(titleFontColor)
-    g2d.setFont(titleFont)
-    val titleHeight = g2d.getFontMetrics(titleFont).getHeight
-    g2d.drawString(titleString, borderThickness * 2, (titleHeight * 3) / 4)
+    val titleHeight = if(titleDisplayed) g2d.getFontMetrics(titleFont).getHeight else 0
+    if(titleDisplayed) {
+      g2d.setColor(titleFontColor)
+      g2d.setFont(titleFont)
+      g2d.drawString(titleString, borderThickness * 2, (titleHeight * 3) / 4)
+    }
     g2d.setColor(borderColor)
     g2d.fillRect(0, titleHeight, getObjectWidth, titleSeparatorThickness)
     val heightStartMenuItems = titleHeight
