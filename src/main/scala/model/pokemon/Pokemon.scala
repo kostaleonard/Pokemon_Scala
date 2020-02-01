@@ -1,6 +1,6 @@
 package model.pokemon
 
-import java.awt.{Graphics2D, Image}
+import java.awt.{Color, Graphics2D, Image}
 import java.awt.image.BufferedImage
 import java.io.File
 
@@ -19,6 +19,11 @@ import scala.util.Random
 object Pokemon {
   val NAME_MIN_LENGTH = 1
   val NAME_MAX_LENGTH = 15
+  val DEFAULT_PERCENT_MALE = 0.5
+  val UNICODE_MALE: String = "\u2642"
+  val UNICODE_FEMALE: String = "\u2640"
+  val COLOR_MALE: Color = Color.CYAN.darker()
+  val COLOR_FEMALE: Color = Color.RED.brighter()
   val MAX_DRAW_WIDTH: Int = 64 * 4
   val MAX_DRAW_HEIGHT: Int = 64 * 4
   val FRAME_FRONT = 0
@@ -58,6 +63,7 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   protected var currentStats = new BattleStats(standardStats)
   protected val moveList: MoveList = getInitialMoveList(getLevel)
   protected var name: String = getSpeciesName
+  protected val isMale: Boolean = Random.nextDouble() < getPercentMale
   protected val effectTracker: EffectTracker = new EffectTracker
   protected val speciesImageMap: scala.collection.immutable.Map[Int, Image] = Pokemon.getSpeciesImageMap(getSpeciesName)
   protected val prescaledImageFront: BufferedImage = getPrescaledImageFront.get
@@ -104,6 +110,18 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
     val moveArray = moveKeys.map(learnMap(_))
     new MoveList(moveArray)
   }
+
+  /** Returns the percentage of this species that are male. Subclasses may override. */
+  def getPercentMale: Double = Pokemon.DEFAULT_PERCENT_MALE
+
+  /** Returns true if the Pokemon is male (false if female). */
+  def getIsMale: Boolean = isMale
+
+  /** Returns the Pokemon's unicode gender sign. */
+  def getGenderSign: String = if(isMale) Pokemon.UNICODE_MALE else Pokemon.UNICODE_FEMALE
+
+  /** Returns the Pokemon's gender color. */
+  def getGenderColor: Color = if(isMale) Pokemon.COLOR_MALE else Pokemon.COLOR_FEMALE
 
   /** Returns the Pokemon's pokedex number. */
   def getPokedexNum: Int

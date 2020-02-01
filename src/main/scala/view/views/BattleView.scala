@@ -7,7 +7,7 @@ import java.io.File
 import controller.KeyMappings
 import javax.imageio.ImageIO
 import model.Model
-import model.battle.Battle
+import model.battle.{Battle, BattleInfoBox}
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
@@ -16,12 +16,17 @@ object BattleView {
   val BACKGROUND_IMAGE: Image = ImageIO.read(
     new File(View.getSourcePath("backgrounds/background_grassy_default.png")))
   val BACKGROUND_IMAGE_SCALE_FACTOR = 4
+  val BATTLE_FOREGROUND_BOTTOM = 448
+  val TRAINER_MENU_BOTTOM = 592
+  val BORDER_THICKNESS = 4
 }
 
 class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
   protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
     BufferedImage.TYPE_INT_ARGB)
   val prescaledBackground: BufferedImage = getPrescaledImage.get
+  val playerPokemonInfoBox: BattleInfoBox = new BattleInfoBox(battle.getPlayerPokemon, true)
+  val opponentPokemonInfoBox: BattleInfoBox = new BattleInfoBox(battle.getOpponentPokemon, false)
   val trainerMenu: BasicMenu = new BasicMenu
   val moveMenu: BasicMenu = new BasicMenu
   setupTrainerMenu()
@@ -66,9 +71,29 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     val playerPokemonImage = battle.getPlayerPokemon.getPrescaledImageBack.get
     g2d.drawImage(opponentPokemonImage, 575, 85, null)
     g2d.drawImage(playerPokemonImage, 50, 192, null)
-    g2d.drawImage(trainerMenu.getImage, 660, 448, null)
+    g2d.drawImage(playerPokemonInfoBox.getImage, BattleInfoBox.SINGLE_PLAYER_OFFSET_X,
+      BattleInfoBox.SINGLE_PLAYER_OFFSET_Y, null)
+    g2d.drawImage(opponentPokemonInfoBox.getImage, BattleInfoBox.SINGLE_OPPONENT_OFFSET_X,
+      BattleInfoBox.SINGLE_OPPONENT_OFFSET_Y, null)
     g2d.setColor(BasicMenu.DEFAULT_MENU_BACKGROUND_COLOR)
-    g2d.fillRect(0, 592, getObjectWidth, getObjectHeight - 592)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth,
+      getObjectHeight - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.setColor(Color.BLACK)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM, getObjectWidth, getObjectHeight - BattleView.TRAINER_MENU_BOTTOM)
+    g2d.setColor(Color.GRAY)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, BattleView.BORDER_THICKNESS,
+      BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth, BattleView.BORDER_THICKNESS)
+    g2d.fillRect(getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
+      BattleView.BORDER_THICKNESS)
+    g2d.drawImage(trainerMenu.getImage, 660, BattleView.BATTLE_FOREGROUND_BOTTOM, null)
+    g2d.setFont(BasicMenu.DEFAULT_TITLE_FONT)
+    g2d.setColor(Color.BLACK)
+    g2d.drawString("What will", BattleView.BORDER_THICKNESS * 2, BattleView.BATTLE_FOREGROUND_BOTTOM + 60)
+    g2d.drawString("%s do?".format(battle.getPlayerPokemon.getName), BattleView.BORDER_THICKNESS * 2,
+      BattleView.BATTLE_FOREGROUND_BOTTOM + 120)
     g2d.dispose()
     canvasImage
   }

@@ -15,6 +15,7 @@ object MissingNo {
   val BASE_SPATK = 255
   val BASE_SPDEF = 255
   val BASE_SPD = 255
+  val DEFAULT_PERCENT_MALE = 0.0
 
   val TYPE_ARRAY: Array[ElementalType] = Array(NormalType, GhostType)
 }
@@ -30,6 +31,9 @@ class MissingNo(override protected val levelTracker: LevelTracker)
 
   /** Returns the name of the Pokemon species. */
   override def getSpeciesName: String = "MISSINGNO"
+
+  /** Returns the percentage of this species that are male. Subclasses may override. */
+  override def getPercentMale: Double = MissingNo.DEFAULT_PERCENT_MALE
 
   /** Returns the base stats for the species. */
   override def getBaseStats: PokemonStats = new PokemonStats(scala.collection.immutable.Map[String, Int](

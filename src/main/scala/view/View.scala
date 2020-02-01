@@ -8,8 +8,11 @@ import scala.collection.mutable.ListBuffer
 object View {
   val GBA_WIDTH = 240
   val GBA_HEIGHT = 160
-  val FRAME_DESIGN_WIDTH: Int = GBA_WIDTH * 4
-  val FRAME_DESIGN_HEIGHT: Int = GBA_HEIGHT * 4
+  //val FRAME_DESIGN_WIDTH: Int = GBA_WIDTH * 4
+  //val FRAME_DESIGN_HEIGHT: Int = GBA_HEIGHT * 4
+  //It is really screwing me up not seeing these numbers multiplied out beforehand.
+  val FRAME_DESIGN_WIDTH: Int = 960
+  val FRAME_DESIGN_HEIGHT: Int = 640
   val IMAGE_DIRECTORY = "images"
 
   //TODO I am not certain that a relative path will work when this project changes hands. Works nicely with SBT, though.

@@ -21,6 +21,9 @@ trait Drawable {
     *  Character's y offset for drawing. */
   def setDrawOffsetY(off: Int): Unit = drawOffsetY = off
 
+  /** Specifies code to execute after animation is complete. */
+  def queueFunctionAfterAnimation(f: Option[() => Unit]): Unit = executeAfterAnimation = f
+
   /** Returns the object's width. */
   def getObjectWidth: Int
 
@@ -35,7 +38,4 @@ trait Drawable {
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   def advanceFrame(): Unit
-
-  /** Specifies code to execute after animation is complete. */
-  def queueFunctionAfterAnimation(f: Option[() => Unit]): Unit = executeAfterAnimation = f
 }
