@@ -24,7 +24,7 @@ object BattleInfoBox {
   val HP_FONT: Font = new Font(Font.MONOSPACED, Font.BOLD, 16)
   val HP_FONT_COLOR: Color = Color.YELLOW.darker()
   val HP_BACKGROUND_COLOR: Color = Color.GRAY
-  val HP_FILL_COLOR: Color = Color.GREEN
+  val HP_FILL_COLOR: Color = Color.GREEN.darker()
   val XP_FONT_COLOR: Color = Color.YELLOW.darker()
   val XP_BACKGROUND_COLOR: Color = Color.GRAY
   val XP_FILL_COLOR: Color = Color.CYAN.darker()

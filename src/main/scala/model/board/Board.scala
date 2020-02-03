@@ -26,7 +26,7 @@ object Board {
       (0 until 50).map { r =>
         (0 until 75).map { c =>
           if(r > 10 && r < 13) new ConcretePavement
-          else if(r < 8 && c < 10) new TallGrass
+          else if(r < 10 && c > 0 && c < 14) new TallGrass
           else if(c < 30 && c % 4 == 0 && r % 2 == 0) new Dirt
           else new LowGrass
       }.toArray
@@ -86,23 +86,29 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   /** Returns the location of obj on the board, or None if not present. */
   def getBoardObjectLocation(obj: BoardObject): Option[Location] = boardObjectMap.get(obj)
 
+  /** Returns true if the location is a valid spot on the board. */
+  def isValidLocation(loc: Location): Boolean = loc.row >= 0 && loc.col >= 0 &&
+    loc.row < cells.length && loc.col < cells.head.length
+
   /** Moves the actor in the given direction. */
   protected def moveActor(actor: Actor, direction: Direction): Unit = {
     val actorLoc = getBoardObjectLocation(actor)
     if(actorLoc.isEmpty) throw new UnsupportedOperationException("Actor not found on board.")
-    setBoardObjectAt(actorLoc.get, None)
     val destination = direction match {
       case North => Location(actorLoc.get.row - 1, actorLoc.get.col)
       case East => Location(actorLoc.get.row, actorLoc.get.col + 1)
       case South => Location(actorLoc.get.row + 1, actorLoc.get.col)
       case West => Location(actorLoc.get.row, actorLoc.get.col - 1)
     }
-    setBoardObjectAt(destination, Some(actor))
-    val xOffset = destination.col * Board.TILE_SIZE - actorLoc.get.col * Board.TILE_SIZE
-    val yOffset = destination.row * Board.TILE_SIZE - actorLoc.get.row * Board.TILE_SIZE
-    actor.setDrawOffsetX(xOffset)
-    actor.setDrawOffsetY(yOffset)
-    actor.alternateStep()
+    if(isValidLocation(destination)) {
+      setBoardObjectAt(actorLoc.get, None)
+      setBoardObjectAt(destination, Some(actor))
+      val xOffset = destination.col * Board.TILE_SIZE - actorLoc.get.col * Board.TILE_SIZE
+      val yOffset = destination.row * Board.TILE_SIZE - actorLoc.get.row * Board.TILE_SIZE
+      actor.setDrawOffsetX(xOffset)
+      actor.setDrawOffsetY(yOffset)
+      actor.alternateStep()
+    }
   }
 
   /** Turns the actor in the given direction. */

@@ -36,6 +36,7 @@ trait Drawable {
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   def getPrescaledImage: Option[BufferedImage]
 
+  //TODO do I need an animation class? How can I make animations cleaner?
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   def advanceFrame(): Unit
 }
