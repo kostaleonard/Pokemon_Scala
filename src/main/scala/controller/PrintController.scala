@@ -10,17 +10,16 @@ import scala.collection.mutable.ListBuffer
 
 /** Runs the program and handles user input. Only displays information via stdout. */
 object PrintController {
-
   /** Runs the program. */
   def main(args: Array[String]): Unit = {
     println("Hello world!")
     println(System.getProperty("user.dir"))
 
-    testBattle
+    testBattle()
   }
 
   /** Prints some Pokemon stats. */
-  protected def testStats: Unit = {
+  protected def testStats(): Unit = {
     val p1 = new Charmander(LevelTracker.create(5))
     println(p1.getBaseStats.getStatsMap)
     println(p1.getIVStats.getStatsMap)
@@ -34,7 +33,7 @@ object PrintController {
   }
 
   /** Tests battle functionality. */
-  protected def testBattle: Unit = {
+  protected def testBattle(): Unit = {
     val playerPokemon = new Charmander(LevelTracker.create(8))
     val opponentPokemon = new Charmander(LevelTracker.create(7))
     val playerCharacter = new PlayerCharacter(new Party(ListBuffer(playerPokemon)))
