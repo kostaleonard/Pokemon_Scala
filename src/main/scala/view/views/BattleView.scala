@@ -23,7 +23,10 @@ object BattleView {
   val BORDER_THICKNESS = 4
   val BATTLE_MESSAGE_LINES_PER_PAGE = 2
   val BATTLE_MESSAGE_LINE_SIZE = 29
+  val MULTIPAGE_TEST_STRING = "Hello, this is a test message from Leo. It is purposefully very long so that I can test the scrolling capability of my menu."
   val RUNAWAY_SUCCESSFUL_STRING = "Got away safely!"
+  val BATTLE_MESSAGE_TRIANGLE_XPOINTS = Array(920, 950, 935)
+  val BATTLE_MESSAGE_TRIANGLE_YPOINTS = Array(565, 565, 585)
 }
 
 class BattleView(override protected val model: Model, battle: Battle) extends View(model) {
@@ -57,6 +60,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     )
     moveMenu.setTitleDisplayed(false)
     moveMenu.setWrapContentHeight(false)
+    moveMenu.setWidth(500)
     moveMenu.setHeight(BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
   }
 
@@ -156,6 +160,10 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     if(battleMessage.get.message.length > 1) g2d.drawString(battleMessage.get.message.tail.head,
       BattleView.BORDER_THICKNESS * 2, BattleView.BATTLE_FOREGROUND_BOTTOM + 120)
     //TODO if more of the message, draw the little arrowhead.
+    if(!battleMessage.get.isOnLastPage(BattleView.BATTLE_MESSAGE_LINES_PER_PAGE)){
+      g2d.setColor(Color.RED.darker())
+      g2d.fillPolygon(BattleView.BATTLE_MESSAGE_TRIANGLE_XPOINTS, BattleView.BATTLE_MESSAGE_TRIANGLE_YPOINTS, 3)
+    }
   }
 
   /** Draws the trainer menu in the lower panel of the screen. */
@@ -187,6 +195,17 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
       BattleView.BORDER_THICKNESS)
     g2d.drawImage(moveMenu.getImage, 0, BattleView.BATTLE_FOREGROUND_BOTTOM, null)
+    val menuItemFont = BasicMenu.DEFAULT_MENUITEM_FONT
+    g2d.setFont(menuItemFont)
+    g2d.setColor(BasicMenu.DEFAULT_MENUITEM_FONT_COLOR)
+    val menuItemHeight = g2d.getFontMetrics(menuItemFont).getHeight
+    battle.getPlayerPokemon.getMoveList.getMoves.zipWithIndex.foreach { tup =>
+      val move = tup._1
+      val i = tup._2
+      val heightStartThisMenuItem = menuItemHeight * i
+      g2d.drawString("%d/%d".format(move.getCurrentPP, move.getMaxPP), 400,
+        BattleView.BATTLE_FOREGROUND_BOTTOM + heightStartThisMenuItem + (menuItemHeight * 3) / 4)
+    }
   }
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
