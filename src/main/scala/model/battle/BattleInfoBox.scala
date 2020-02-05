@@ -69,10 +69,11 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
     g2d.setFont(BattleInfoBox.HP_FONT)
     g2d.drawString("HP", 23, 53)
     g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-    g2d.fillRect(60, 42, getObjectWidth - 67, 10)
+    val hp_full_width = getObjectWidth - 67
+    g2d.fillRect(60, 42, hp_full_width, 10)
     g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
-    //TODO fill HP bar proportional to actual HP
-    g2d.fillRect(60, 42, getObjectWidth - 67, 10)
+    val hp_actual_width = hp_full_width * pokemon.getCurrentStats.getHP / pokemon.getStandardStats.getHP
+    g2d.fillRect(60, 42, hp_actual_width, 10)
     if(displayHP) {
       g2d.setColor(BattleInfoBox.DEFAULT_FONT_COLOR)
       val hpString = "%d/%d".format(pokemon.getCurrentStats.getHP, pokemon.getStandardStats.getHP)
@@ -84,11 +85,15 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
       g2d.fillRect(0, getObjectHeight - 14, getObjectWidth, 14)
       g2d.setColor(BattleInfoBox.HP_FONT_COLOR)
       g2d.drawString("EXP", BattleInfoBox.BORDER_THICKNESS * 2, 87)
+      val exp_full_width = getObjectWidth - 39
       g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-      g2d.fillRect(37, getObjectHeight - 12, getObjectWidth - 39, 10)
-      //TODO fill EXP bar proportional to actual EXP
+      g2d.fillRect(37, getObjectHeight - 12, exp_full_width, 10)
+      //TODO make this more efficient by reusing references?
+      val exp_actual_width = exp_full_width * pokemon.getLevelTracker.getExperienceAtCurrentLevel /
+        (pokemon.getLevelTracker.getExperienceForLevel(pokemon.getLevel + 1) -
+          pokemon.getLevelTracker.getExperienceForLevel(pokemon.getLevel))
       g2d.setColor(BattleInfoBox.XP_FILL_COLOR)
-      g2d.fillRect(37, getObjectHeight - 12, 100, 10)
+      g2d.fillRect(37, getObjectHeight - 12, exp_actual_width, 10)
     }
     g2d.dispose()
     canvasImage

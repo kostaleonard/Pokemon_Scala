@@ -12,7 +12,7 @@ object LevelTracker {
 class LevelTracker(protected var level: Int) {
   if(level < LevelTracker.MIN_LEVEL || level > LevelTracker.MAX_LEVEL)
     throw new UnsupportedOperationException("Invalid level: %d".format(level))
-  protected var currentExp = getExperienceForLevel(level)
+  protected var currentExp: Int = getExperienceForLevel(level)
 
   /** Returns the current level. */
   def getLevel: Int = level

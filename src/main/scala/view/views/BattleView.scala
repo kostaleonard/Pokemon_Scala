@@ -8,6 +8,8 @@ import controller.{KeyMappings, SwitchViews}
 import javax.imageio.ImageIO
 import model.Model
 import model.battle.{Battle, BattleInfoBox, BattleMessage}
+import model.pokemon.Pokemon
+import model.pokemon.move.{DisplayMessage, EndMove, MoveEvent, PlayAnimation}
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
@@ -56,7 +58,10 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Sets up the move menu. */
   protected def setupMoveMenu(): Unit = {
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
-      moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction()))
+      moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
+        processEvents(battle.makePlayerMove(move), battle.getPlayerPokemon, battle.getOpponentPokemon)
+        processEvents(battle.makeOpponentMove(), battle.getOpponentPokemon, battle.getPlayerPokemon)
+      })))
     )
     moveMenu.setTitleDisplayed(false)
     moveMenu.setWrapContentHeight(false)
@@ -69,6 +74,19 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Switches the display to the trainer menu. */
   protected def showTrainerMenu(): Unit = currentMenu = trainerMenu
+
+  /** Processes the events so that the move or effects are complete. thisPokemon is the Pokemon using the move,
+    * otherPokemon is the other. */
+  protected def processEvents(events: Array[MoveEvent], thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    events.foreach { event => event match {
+        case DisplayMessage(message) => System.out.println(message) //TODO show battle message
+        case PlayAnimation(path) => System.out.println("Animation at %s".format(path)) //TODO play animation.
+        case EndMove => return
+        case _ => ;
+      }
+      event.doEvent(thisPokemon, otherPokemon)
+    }
+  }
 
   /** Attempts to run away from the opponent. */
   protected def tryRunAway(): Unit = {

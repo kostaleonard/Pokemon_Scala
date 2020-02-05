@@ -26,41 +26,28 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     (wildPokemon.nonEmpty && wildPokemon.get.isKO)
 
   /** Makes the player's move. */
-  def makePlayerMove(move: Move): Unit = makePokemonMove(playerPokemon, opponentPokemon, move)
+  def makePlayerMove(move: Move): Array[MoveEvent] = makePokemonMove(playerPokemon, opponentPokemon, move)
 
   /** Makes the opponent's move. */
-  def makeOpponentMove(): Unit = {
+  def makeOpponentMove(): Array[MoveEvent] = {
     //TODO support for more opponent behaviors, not just random.
     val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
     makePokemonMove(opponentPokemon, playerPokemon, move)
   }
 
   /** Makes the move for the specified Pokemon. */
-  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): Unit = {
+  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): Array[MoveEvent] = {
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
-    processEvents(beforeMoveEffectEvents, movingPokemon, otherPokemon)
-    if(beforeMoveEffectEvents.contains(EndMove)) return
+    //processEvents(beforeMoveEffectEvents, movingPokemon, otherPokemon)
+    if(beforeMoveEffectEvents.contains(EndMove)) return beforeMoveEffectEvents
     val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
-    processEvents(moveEvents, movingPokemon, otherPokemon)
+    //processEvents(moveEvents, movingPokemon, otherPokemon)
     move.decrementPP
     val afterMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromAfterMoveEffects(movingPokemon,
       otherPokemon)
-    processEvents(afterMoveEffectEvents, movingPokemon, otherPokemon)
-  }
-
-  /** Processes the events so that the move or effects are complete. thisPokemon is the Pokemon using the move,
-    * otherPokemon is the other. */
-  def processEvents(events: Array[MoveEvent], thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
-    //Handle special events.
-    events.foreach { event => event match {
-        case DisplayMessage(message) => System.out.println(message) //TODO will probably need to store in message buffer for view. Also need to wait for user to cycle through messages.
-        case PlayAnimation(path) => System.out.println("Animation at %s".format(path)) //TODO play animation.
-        case EndMove => return
-        case _ => ;
-      }
-      event.doEvent(thisPokemon, otherPokemon)
-    }
+    //processEvents(afterMoveEffectEvents, movingPokemon, otherPokemon)
+    beforeMoveEffectEvents ++ moveEvents ++ afterMoveEffectEvents
   }
 
   //TODO this should be in an AI class or something.

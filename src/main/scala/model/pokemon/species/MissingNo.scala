@@ -1,6 +1,6 @@
 package model.pokemon.species
 
-import model.elementaltype.{ElementalType, GhostType, NormalType}
+import model.elementaltype.{ElementalType, FlyingType, GhostType, NormalType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
@@ -17,7 +17,8 @@ object MissingNo {
   val BASE_SPD = 255
   val DEFAULT_PERCENT_MALE = 0.0
 
-  val TYPE_ARRAY: Array[ElementalType] = Array(NormalType, GhostType)
+  //TODO turn MissingNo back to Normal/Ghost
+  val TYPE_ARRAY: Array[ElementalType] = Array(NormalType, FlyingType) // Array(NormalType, GhostType)
 }
 
 class MissingNo(override protected val levelTracker: LevelTracker)

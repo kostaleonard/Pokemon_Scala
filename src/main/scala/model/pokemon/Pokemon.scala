@@ -100,6 +100,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   /** Returns the EffectTracker. */
   def getEffectTracker: EffectTracker = effectTracker
 
+  /** Returns the LevelTracker. */
+  def getLevelTracker: LevelTracker = levelTracker
+
   /** Returns the MoveList. */
   def getMoveList: MoveList = moveList
 
