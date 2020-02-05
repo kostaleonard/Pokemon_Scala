@@ -52,6 +52,18 @@ class BasicMenu extends Menu[BasicMenuItem] {
     canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
   }
 
+  /** Sets the menu's width. */
+  def setWidth(w: Int): Unit ={
+    width = w
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+  }
+
+  /** Sets the menu's height. */
+  def setHeight(h: Int): Unit = {
+    height = h
+    canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
+  }
+
   /** Returns the width of the menu. */
   override def getObjectWidth: Int = if(wrapContentWidth) getWrappedWidth else width
 

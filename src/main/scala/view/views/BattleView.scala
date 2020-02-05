@@ -38,10 +38,12 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected val moveMenu: BasicMenu = new BasicMenu
   setupTrainerMenu()
   setupMoveMenu()
+  protected var currentMenu: BasicMenu = trainerMenu
+  protected var menuActive: Boolean = true
 
   /** Sets up the trainer menu. */
   protected def setupTrainerMenu(): Unit = {
-    trainerMenu.appendMenuItem(BasicMenuItem("FIGHT", GuiAction()))
+    trainerMenu.appendMenuItem(BasicMenuItem("FIGHT", GuiAction(() => showMoveMenu())))
     trainerMenu.appendMenuItem(BasicMenuItem("PKMN", GuiAction()))
     trainerMenu.appendMenuItem(BasicMenuItem("ITEM", GuiAction()))
     trainerMenu.appendMenuItem(BasicMenuItem("RUN", GuiAction(() => tryRunAway())))
@@ -50,8 +52,19 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Sets up the move menu. */
   protected def setupMoveMenu(): Unit = {
-    //TODO set up the move menu.
+    battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
+      moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction()))
+    )
+    moveMenu.setTitleDisplayed(false)
+    moveMenu.setWrapContentHeight(false)
+    moveMenu.setHeight(BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
   }
+
+  /** Switches the display to the move menu. */
+  protected def showMoveMenu(): Unit = currentMenu = moveMenu
+
+  /** Switches the display to the trainer menu. */
+  protected def showTrainerMenu(): Unit = currentMenu = trainerMenu
 
   /** Attempts to run away from the opponent. */
   protected def tryRunAway(): Unit = {
@@ -60,17 +73,20 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     //TODO runaway could fail.
     val callback = () => sendControllerMessage(SwitchViews(new OverworldView(model)))
     battleMessage = Some(createBattleMessage(BattleView.RUNAWAY_SUCCESSFUL_STRING, callback))
+    menuActive = false
   }
 
   /** The action taken when a key is pressed and the View is in focus. */
   override def keyPressed(keyCode: Int): Unit = keyCode match{
-    case KeyMappings.UP_KEY => trainerMenu.scrollUp()
-    case KeyMappings.DOWN_KEY => trainerMenu.scrollDown()
+    case KeyMappings.UP_KEY => if(menuActive) currentMenu.scrollUp()
+    case KeyMappings.DOWN_KEY => if(menuActive) currentMenu.scrollDown()
     case KeyMappings.A_KEY =>
-      if(battleMessage.isEmpty) trainerMenu.makeSelection() //TODO advance battleMessage. If the battleMessage is not empty, but its message IS, then this will instead execute the callback.
-      else if(battleMessage.get.isOnLastPage(BattleView.BATTLE_MESSAGE_LINES_PER_PAGE))
+      if(battleMessage.nonEmpty && battleMessage.get.isOnLastPage(BattleView.BATTLE_MESSAGE_LINES_PER_PAGE))
         battleMessage.get.callbackOnMessageComplete.apply()
-      else advanceBattleMessage()
+      else if(battleMessage.nonEmpty) advanceBattleMessage()
+      else if(menuActive) currentMenu.makeSelection()
+    case KeyMappings.B_KEY =>
+      if(menuActive) showTrainerMenu()
     case _ => ;
   }
 
@@ -105,12 +121,17 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Sets the displayed message to the next lines. */
   def advanceBattleMessage(): Unit = {
     if(battleMessage.isEmpty) throw new UnsupportedOperationException("Cannot advance message when message is empty.")
-    val nextLines = if(battleMessage.get.message.length <= 1) List.empty[String] else battleMessage.get.message.tail.tail
+    val nextLines =
+      if(battleMessage.get.message.length <= 1) List.empty[String]
+      else battleMessage.get.message.tail.tail
     battleMessage = Some(BattleMessage(nextLines, battleMessage.get.callbackOnMessageComplete))
   }
 
   /** Clears the battleMessage. */
-  def clearBattleMessage(): Unit = battleMessage = None
+  def clearBattleMessage(): Unit = {
+    battleMessage = None
+    menuActive = true
+  }
 
   /** Draws the battle message in the lower panel of the screen. */
   def drawBattleMessage(g2d: Graphics2D): Unit = {
@@ -137,6 +158,37 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     //TODO if more of the message, draw the little arrowhead.
   }
 
+  /** Draws the trainer menu in the lower panel of the screen. */
+  def drawTrainerMenu(g2d: Graphics2D): Unit = {
+    g2d.setColor(Color.GRAY)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, BattleView.BORDER_THICKNESS,
+      BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth, BattleView.BORDER_THICKNESS)
+    g2d.fillRect(getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
+      BattleView.BORDER_THICKNESS)
+    g2d.drawImage(trainerMenu.getImage, 660, BattleView.BATTLE_FOREGROUND_BOTTOM, null)
+    g2d.setFont(BasicMenu.DEFAULT_TITLE_FONT)
+    g2d.setColor(Color.BLACK)
+    g2d.drawString("What will", BattleView.BORDER_THICKNESS * 2, BattleView.BATTLE_FOREGROUND_BOTTOM + 60)
+    g2d.drawString("%s do?".format(battle.getPlayerPokemon.getName), BattleView.BORDER_THICKNESS * 2,
+      BattleView.BATTLE_FOREGROUND_BOTTOM + 120)
+  }
+
+  /** Draws the move menu in the lower panel of the screen. */
+  def drawMoveMenu(g2d: Graphics2D): Unit = {
+    g2d.setColor(Color.GRAY)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, BattleView.BORDER_THICKNESS,
+      BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth, BattleView.BORDER_THICKNESS)
+    g2d.fillRect(getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
+      BattleView.BORDER_THICKNESS)
+    g2d.drawImage(moveMenu.getImage, 0, BattleView.BATTLE_FOREGROUND_BOTTOM, null)
+  }
+
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
@@ -154,21 +206,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       getObjectHeight - BattleView.BATTLE_FOREGROUND_BOTTOM)
     g2d.setColor(Color.BLACK)
     g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM, getObjectWidth, getObjectHeight - BattleView.TRAINER_MENU_BOTTOM)
-    g2d.setColor(Color.GRAY)
-    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, BattleView.BORDER_THICKNESS,
-      BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
-    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth, BattleView.BORDER_THICKNESS)
-    g2d.fillRect(getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
-      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
-    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
-      BattleView.BORDER_THICKNESS)
-    g2d.drawImage(trainerMenu.getImage, 660, BattleView.BATTLE_FOREGROUND_BOTTOM, null)
-    g2d.setFont(BasicMenu.DEFAULT_TITLE_FONT)
-    g2d.setColor(Color.BLACK)
-    g2d.drawString("What will", BattleView.BORDER_THICKNESS * 2, BattleView.BATTLE_FOREGROUND_BOTTOM + 60)
-    g2d.drawString("%s do?".format(battle.getPlayerPokemon.getName), BattleView.BORDER_THICKNESS * 2,
-      BattleView.BATTLE_FOREGROUND_BOTTOM + 120)
     if(battleMessage.nonEmpty) drawBattleMessage(g2d)
+    else if(menuActive && currentMenu == trainerMenu) drawTrainerMenu(g2d)
+    else if(menuActive && currentMenu == moveMenu) drawMoveMenu(g2d)
     g2d.dispose()
     canvasImage
   }
