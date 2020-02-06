@@ -46,6 +46,15 @@ object Pokemon {
     )
   }
 
+  /** Returns the actual experience awarded for defeating this pokemon. */
+  def getExperienceAwarded(playerPokemon: Pokemon, defeatedPokemon: Pokemon, isWild: Boolean): Int = {
+    val a = if(isWild) 1.0 else 1.5
+    val t = 1.0 //TODO 1.5 if this pokemon was obtained through trade.
+    val b = defeatedPokemon.getBaseExpAwarded
+    val L = defeatedPokemon.getLevel
+    ((a * t * b * L) / 7).toInt
+  }
+
   /** The map of all frame numbers to their avatars. These are all of the images needed to render the pokemon. */
   def getSpeciesImageMap(speciesName: String): scala.collection.immutable.Map[Int, Image] =
     scala.collection.immutable.Map(
@@ -143,6 +152,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
 
   /** Returns the Pokemon's learn map. */
   def getLearnMap: Map[Int, Move]
+
+  /** Returns the base experience awarded for defeating this Pokemon. */
+  def getBaseExpAwarded: Int
 
   /** Returns the object's width. */
   override def getObjectWidth: Int = Pokemon.MAX_DRAW_WIDTH

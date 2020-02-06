@@ -56,4 +56,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     1 -> new Growl,
     7 -> new Ember
   )
+
+  /** Returns the experience awarded for defeating this Pokemon. */
+  override def getBaseExpAwarded: Int = 999
 }

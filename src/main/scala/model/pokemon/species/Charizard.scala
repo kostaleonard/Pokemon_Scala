@@ -51,4 +51,7 @@ class Charizard(override protected val levelTracker: LevelTracker)
     1 -> new Scratch,
     7 -> new Ember
   )
+
+  /** Returns the experience awarded for defeating this Pokemon. */
+  override def getBaseExpAwarded: Int = 209
 }

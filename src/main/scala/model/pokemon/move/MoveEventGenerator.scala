@@ -7,13 +7,23 @@ import model.statuseffect.{Burn, Frozen}
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
+object MoveEventGenerator {
+  val FAINT_ANIMATION_PATH = "TODO Fainted"
+  /** Returns true if the damage dealt will cause the pokemon to KO. */
+  def willDamageKO(pokemon: Pokemon, damage: Int): Boolean = pokemon.getCurrentStats.getHP <= damage
+
+  /** Returns the list of MoveEvents used when a Pokemon KOs. */
+  def getKOEvents(pokemon: Pokemon, isOther: Boolean): List[MoveEvent] = List(PlayAnimation(FAINT_ANIMATION_PATH),
+    MoveEvent.getDisplayMessageFainted(pokemon.getName), if(isOther) FaintOther else FaintSelf)
+}
+
 sealed trait MoveEventGenerator {
   /** Does some action that occurs during a move (e.g. damage, effects, KO). Returns the List of MoveEvents that result
     * from this action. */
   def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent]
 }
 
-case class Damage(move: Move) extends MoveEventGenerator {
+case class MoveDamage(move: Move) extends MoveEventGenerator {
   /** Deals damage to the other pokemon. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     if(Random.nextDouble() > move.getAccuracy) return List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName))
@@ -49,6 +59,8 @@ case class Damage(move: Move) extends MoveEventGenerator {
       MoveEvent.getDisplayMessageMoveNoEffect(move.getName, otherPokemon.getName))
     else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
     else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
+    if(MoveEventGenerator.willDamageKO(otherPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(otherPokemon, true)
     result.toList
   }
 }
@@ -85,6 +97,8 @@ case object TurnlyBurnDamage extends MoveEventGenerator {
     result.append(PlayAnimation("TODO"))
     val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt //TODO magic numbers
     result.append(DealDamageToSelf(damage))
+    if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(thisPokemon, false)
     result.toList
   }
 }
@@ -99,6 +113,8 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveEventGenerator {
     val damage = (thisPokemon.getStandardStats.getHP * portionMaxHP).toInt
     result.append(DealDamageToSelf(damage))
     result.append(WorsenPoisonSelf)
+    if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(thisPokemon, false)
     result.toList
   }
 }

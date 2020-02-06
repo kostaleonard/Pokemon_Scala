@@ -9,9 +9,12 @@ import scala.util.Random
 class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Option[Pokemon]) {
   if(opponent.isEmpty && wildPokemon.isEmpty) throw new UnsupportedOperationException("No foe pokemon defined; " +
     "both opponent and wildPokemon are None.")
+  if(opponent.nonEmpty && wildPokemon.nonEmpty) throw new UnsupportedOperationException("Cannot have trainer and " +
+    "wild pokemon set.")
   protected var playerPokemon: Pokemon = player.getParty.getNextPokemon.get
   protected var opponentPokemon: Pokemon =
     if(opponent.isEmpty) wildPokemon.get else opponent.get.getParty.getNextPokemon.get
+  protected val seenOpponentPokemon: scala.collection.mutable.Set[Pokemon] = scala.collection.mutable.Set(playerPokemon)
   //TODO support for double battles.
 
   /** Returns the player's current pokemon. */
@@ -19,6 +22,13 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
 
   /** Returns the opponent pokemon. */
   def getOpponentPokemon: Pokemon = opponentPokemon
+
+  /** Returns the set of all pokemon that the opponent pokemon has seen in battle. This is for experience
+    * distribution. */
+  def getSeenOpponentPokemon: scala.collection.mutable.Set[Pokemon] = seenOpponentPokemon
+
+  /** Returns true if the opponent pokemon is wild. */
+  def isOpponentWild: Boolean = wildPokemon.nonEmpty
 
   /** Returns true if the battle is over. */
   def isOver: Boolean = player.getParty.isWhiteout ||
@@ -40,6 +50,7 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
     //processEvents(beforeMoveEffectEvents, movingPokemon, otherPokemon)
+    //TODO I know the below is wrong because the after move effects get processed even if the move never happens.
     if(beforeMoveEffectEvents.contains(EndMove))
       return createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon)
     val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)

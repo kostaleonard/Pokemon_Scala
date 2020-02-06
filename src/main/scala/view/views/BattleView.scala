@@ -9,7 +9,7 @@ import javax.imageio.ImageIO
 import model.Model
 import model.battle.{Battle, BattleInfoBox, BattleMessage, MoveSpecification}
 import model.pokemon.Pokemon
-import model.pokemon.move.{DisplayMessage, EndMove, MoveEvent, PlayAnimation}
+import model.pokemon.move._
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
@@ -46,6 +46,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var currentMenu: BasicMenu = trainerMenu
   protected var menuActive: Boolean = true
 
+  /** Ends the battle and returns the player to the Overworld. */
+  def endBattle(): Unit = sendControllerMessage(SwitchViews(new OverworldView(model)))
+
   /** Sets up the trainer menu. */
   protected def setupTrainerMenu(): Unit = {
     trainerMenu.appendMenuItem(BasicMenuItem("FIGHT", GuiAction(() => showMoveMenu())))
@@ -78,6 +81,24 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Switches the display to the trainer menu. */
   protected def showTrainerMenu(): Unit = currentMenu = trainerMenu
 
+  //TODO the calculation would be better in Battle.
+  /** Distributes experience from the opponent pokemon to any pokemon who have seen it, then calls the final
+    * callback. */
+  protected def distributeExperience(finalCallback: () => Unit): Unit = {
+    val pokemonGainingExp = battle.getSeenOpponentPokemon.toList
+    val totalExp = Pokemon.getExperienceAwarded(battle.getPlayerPokemon, battle.getOpponentPokemon,
+      battle.isOpponentWild)
+    val expForEach = totalExp / pokemonGainingExp.length
+    def distributeNextExperience(pokemonList: List[Pokemon]): Unit = if(pokemonList.isEmpty) finalCallback.apply() else
+      battleMessage = Some(createBattleMessage("%s gained %d experience.".format(pokemonList.head.getName, expForEach), () => {
+        if(pokemonList.head == battle.getPlayerPokemon) println("EXP animation") //TODO play exp gain animation.
+        pokemonList.head.getLevelTracker.gainExp(expForEach)
+        if(pokemonList.head.getLevelTracker.canLevelUp) println("Level up") //TODO level up
+        distributeNextExperience(pokemonList.tail)
+      }))
+    distributeNextExperience(pokemonGainingExp)
+  }
+
   /** Recursively processes one battle event at a time. This allows messages and animations to callback. */
   protected def processNextMoveEvent(events: List[MoveSpecification]): Unit = {
     if(events.isEmpty) return
@@ -92,6 +113,12 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         System.out.println("Animation at %s".format(path)) //TODO play animation.
         recur_immediately = true
       case EndMove => return
+      case FaintSelf =>
+        if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
+        else distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.
+      case FaintOther =>
+        if(events.head.movingPokemon == battle.getPlayerPokemon) distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.
+        else ??? //TODO player pokemon faints.
       case _ => recur_immediately = true
     }
     events.head.moveEvent.doEvent(events.head.movingPokemon, events.head.otherPokemon)
@@ -103,7 +130,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     if(battleMessage.nonEmpty) throw new UnsupportedOperationException(
       "Cannot try runaway when battleMessage is nonEmpty.")
     //TODO runaway could fail.
-    val callback = () => sendControllerMessage(SwitchViews(new OverworldView(model)))
+    val callback = () => endBattle()
     battleMessage = Some(createBattleMessage(BattleView.RUNAWAY_SUCCESSFUL_STRING, callback))
     menuActive = false
   }

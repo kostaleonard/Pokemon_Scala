@@ -49,4 +49,7 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
     //TODO correct/complete learnset.
     1 -> new Tackle
   )
+
+  /** Returns the experience awarded for defeating this Pokemon. */
+  override def getBaseExpAwarded: Int = 64
 }

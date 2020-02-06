@@ -51,6 +51,10 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon's stat rises. */
   def getDisplayMessageStatRose(pokemonName: String, statName: String): DisplayMessage =
     DisplayMessage("%s's %s rose.".format(pokemonName, statName))
+
+  /** Returns the DisplayMessage used when a Pokemon faints. */
+  def getDisplayMessageFainted(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s fainted!".format(pokemonName))
 }
 
 sealed trait MoveEvent {
@@ -79,6 +83,16 @@ case class DealDamageToOpponent(amount: Int) extends MoveEvent {
 case class DealDamageToSelf(amount: Int) extends MoveEvent {
   /** Deals damage to this Pokemon. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.takeDamage(amount)
+}
+
+case object FaintOther extends MoveEvent {
+  /** Signals that the other Pokemon has fainted. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
+case object FaintSelf extends MoveEvent {
+  /** Signals that this Pokemon has fainted. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 
 case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
