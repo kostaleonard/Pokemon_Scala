@@ -26,31 +26,36 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     (wildPokemon.nonEmpty && wildPokemon.get.isKO)
 
   /** Makes the player's move. */
-  def makePlayerMove(move: Move): Array[MoveEvent] = makePokemonMove(playerPokemon, opponentPokemon, move)
+  def makePlayerMove(move: Move): Array[MoveSpecification] = makePokemonMove(playerPokemon, opponentPokemon, move)
 
   /** Makes the opponent's move. */
-  def makeOpponentMove(): Array[MoveEvent] = {
+  def makeOpponentMove(): Array[MoveSpecification] = {
     //TODO support for more opponent behaviors, not just random.
     val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
     makePokemonMove(opponentPokemon, playerPokemon, move)
   }
 
   /** Makes the move for the specified Pokemon. */
-  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): Array[MoveEvent] = {
+  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): Array[MoveSpecification] = {
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
     //processEvents(beforeMoveEffectEvents, movingPokemon, otherPokemon)
-    if(beforeMoveEffectEvents.contains(EndMove)) return beforeMoveEffectEvents
+    if(beforeMoveEffectEvents.contains(EndMove))
+      return createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon)
     val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
     //processEvents(moveEvents, movingPokemon, otherPokemon)
     move.decrementPP
     val afterMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromAfterMoveEffects(movingPokemon,
       otherPokemon)
     //processEvents(afterMoveEffectEvents, movingPokemon, otherPokemon)
-    beforeMoveEffectEvents ++ moveEvents ++ afterMoveEffectEvents
+    createMoveSpecifications(beforeMoveEffectEvents ++ moveEvents ++ afterMoveEffectEvents, movingPokemon, otherPokemon)
   }
 
   //TODO this should be in an AI class or something.
   /** Returns a random move from the Array. */
   protected def chooseRandomMove(moves: Array[Move]): Move = moves(Random.nextInt(moves.length))
+
+  /** Returns an Array of MoveSpecifications to match the events. */
+  protected def createMoveSpecifications(events: Array[MoveEvent], movingPokemon: Pokemon, otherPokemon: Pokemon):
+    Array[MoveSpecification] = events.map(MoveSpecification(_, movingPokemon, otherPokemon))
 }

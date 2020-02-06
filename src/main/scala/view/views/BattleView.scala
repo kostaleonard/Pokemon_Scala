@@ -7,7 +7,7 @@ import java.io.File
 import controller.{KeyMappings, SwitchViews}
 import javax.imageio.ImageIO
 import model.Model
-import model.battle.{Battle, BattleInfoBox, BattleMessage}
+import model.battle.{Battle, BattleInfoBox, BattleMessage, MoveSpecification}
 import model.pokemon.Pokemon
 import model.pokemon.move.{DisplayMessage, EndMove, MoveEvent, PlayAnimation}
 import view.View
@@ -59,8 +59,11 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected def setupMoveMenu(): Unit = {
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
       moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
-        processEvents(battle.makePlayerMove(move), battle.getPlayerPokemon, battle.getOpponentPokemon)
-        processEvents(battle.makeOpponentMove(), battle.getOpponentPokemon, battle.getPlayerPokemon)
+        menuActive = false
+        //TODO these should be ordered based on speed--have Battle do this.
+        processNextMoveEvent(battle.makePlayerMove(move).toList ++ battle.makeOpponentMove().toList)
+        menuActive = true
+        showTrainerMenu()
       })))
     )
     moveMenu.setTitleDisplayed(false)
@@ -75,17 +78,24 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Switches the display to the trainer menu. */
   protected def showTrainerMenu(): Unit = currentMenu = trainerMenu
 
-  /** Processes the events so that the move or effects are complete. thisPokemon is the Pokemon using the move,
-    * otherPokemon is the other. */
-  protected def processEvents(events: Array[MoveEvent], thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
-    events.foreach { event => event match {
-        case DisplayMessage(message) => System.out.println(message) //TODO show battle message
-        case PlayAnimation(path) => System.out.println("Animation at %s".format(path)) //TODO play animation.
-        case EndMove => return
-        case _ => ;
-      }
-      event.doEvent(thisPokemon, otherPokemon)
+  /** Recursively processes one battle event at a time. This allows messages and animations to callback. */
+  protected def processNextMoveEvent(events: List[MoveSpecification]): Unit = {
+    if(events.isEmpty) return
+    var recur_immediately = false
+    events.head.moveEvent match {
+      case DisplayMessage(message) =>
+        battleMessage = Some(createBattleMessage(message, () => {
+          battleMessage = None
+          processNextMoveEvent(events.tail)
+        }))
+      case PlayAnimation(path) =>
+        System.out.println("Animation at %s".format(path)) //TODO play animation.
+        recur_immediately = true
+      case EndMove => return
+      case _ => recur_immediately = true
     }
+    events.head.moveEvent.doEvent(events.head.movingPokemon, events.head.otherPokemon)
+    if(recur_immediately) processNextMoveEvent(events.tail)
   }
 
   /** Attempts to run away from the opponent. */
