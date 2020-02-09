@@ -5,7 +5,7 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
 import model.pokemon.move.bytype.fire.Ember
-import model.pokemon.move.bytype.normal.{Growl, Scratch}
+import model.pokemon.move.bytype.normal.{Growl, Scratch, Tackle}
 import model.pokemon.stat.PokemonStats
 
 object MissingNo {
@@ -54,7 +54,8 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     //TODO correct/complete MissingNo's learnset.
     0 -> new Scratch,
     1 -> new Growl,
-    7 -> new Ember
+    2 -> new Ember,
+    3 -> new Tackle
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

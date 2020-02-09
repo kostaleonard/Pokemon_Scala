@@ -81,6 +81,50 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Switches the display to the trainer menu. */
   protected def showTrainerMenu(): Unit = currentMenu = trainerMenu
 
+  /** Attempts to learn the given move, then makes the callback. */
+  protected def tryLearnMove(pokemon: Pokemon, move: Move, finalCallback: () => Unit): Unit =
+    if(pokemon.getMoveList.isFull) ??? //TODO query user.
+    else {
+      pokemon.getMoveList.setNextAvailableMove(move)
+      battleMessage = Some(createBattleMessage("%s learned %s!".format(pokemon.getName, move.getName), finalCallback))
+    }
+
+
+  /** Tries to level up the given pokemon, then makes the callback. */
+  protected def tryLevelUpPokemon(pokemon: Pokemon, finalCallback: () => Unit): Unit =
+    if (!pokemon.getLevelTracker.canLevelUp) finalCallback.apply()
+    else {
+      pokemon.getLevelTracker.levelUp()
+      val nextCallback =
+        if (pokemon.getMoveLearnedAtCurrentLevel.isEmpty) finalCallback
+        else () => tryLearnMove(pokemon, pokemon.getMoveLearnedAtCurrentLevel.get, finalCallback)
+      battleMessage = Some(createBattleMessage("%s grew to level %d!".format(pokemon.getName, pokemon.getLevel),
+        nextCallback))
+    }
+
+  /** Runs the experience gain animation, then makes the callback. */
+  protected def runExpGainAnimation(pokemon: Pokemon, amount: Int, finalCallback: () => Unit): Unit = {
+    println("EXP animation")
+    pokemon.getLevelTracker.gainExp(amount)
+    finalCallback.apply()
+  }
+
+
+  /** Adds the given amount of experience to the pokemon, then makes the callback. */
+  protected def gainExperience(pokemon: Pokemon, showMessage: Boolean, amount: Int, finalCallback: () => Unit): Unit = {
+    val currentGainAmount = amount min pokemon.getLevelTracker.getExperienceToLevelUp
+    val nextGainAmount = amount - currentGainAmount
+    val nextCallback = if(nextGainAmount == 0) finalCallback else
+      () => gainExperience(pokemon, false, nextGainAmount, finalCallback)
+    if(showMessage) battleMessage = Some(createBattleMessage("%s gained %d experience.".format(pokemon.getName, amount),
+      () => {
+        runExpGainAnimation(pokemon, currentGainAmount, () => tryLevelUpPokemon(pokemon, nextCallback))
+      }))
+    else {
+      runExpGainAnimation(pokemon, currentGainAmount, () => tryLevelUpPokemon(pokemon, nextCallback))
+    }
+  }
+
   //TODO the calculation would be better in Battle.
   /** Distributes experience from the opponent pokemon to any pokemon who have seen it, then calls the final
     * callback. */
@@ -89,13 +133,11 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     val totalExp = Pokemon.getExperienceAwarded(battle.getPlayerPokemon, battle.getOpponentPokemon,
       battle.isOpponentWild)
     val expForEach = totalExp / pokemonGainingExp.length
-    def distributeNextExperience(pokemonList: List[Pokemon]): Unit = if(pokemonList.isEmpty) finalCallback.apply() else
-      battleMessage = Some(createBattleMessage("%s gained %d experience.".format(pokemonList.head.getName, expForEach), () => {
-        if(pokemonList.head == battle.getPlayerPokemon) println("EXP animation") //TODO play exp gain animation.
-        pokemonList.head.getLevelTracker.gainExp(expForEach)
-        if(pokemonList.head.getLevelTracker.canLevelUp) println("Level up") //TODO level up
-        distributeNextExperience(pokemonList.tail)
-      }))
+    //TODO don't know if this works for pokemon not in battle.
+    def distributeNextExperience(pokemonList: List[Pokemon]): Unit =
+      if(pokemonList.isEmpty) finalCallback.apply()
+      else gainExperience(pokemonList.head, true, expForEach,
+        () => distributeNextExperience(pokemonList.tail))
     distributeNextExperience(pokemonGainingExp)
   }
 
@@ -110,9 +152,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           processNextMoveEvent(events.tail)
         }))
       case PlayAnimation(path) =>
-        System.out.println("Animation at %s".format(path)) //TODO play animation.
+        println("Animation at %s".format(path)) //TODO play animation.
         recur_immediately = true
-      case EndMove => return
+      case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
         else distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.

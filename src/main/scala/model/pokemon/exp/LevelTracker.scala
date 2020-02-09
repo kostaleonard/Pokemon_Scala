@@ -12,23 +12,33 @@ object LevelTracker {
 class LevelTracker(protected var level: Int) {
   if(level < LevelTracker.MIN_LEVEL || level > LevelTracker.MAX_LEVEL)
     throw new UnsupportedOperationException("Invalid level: %d".format(level))
-  protected var currentExp: Int = getExperienceForLevel(level)
+  protected var currentExp: Int = getTotalExperienceForLevel(level)
 
   /** Returns the current level. */
   def getLevel: Int = level
 
   /** Returns the experience achieved at the current level. */
-  def getExperienceAtCurrentLevel: Int = currentExp - getExperienceForLevel(level)
+  def getExperienceAtCurrentLevel: Int = currentExp - getTotalExperienceForCurrentLevel
+
+  /** Returns the experience required to reach the next level. */
+  def getExperienceToLevelUp: Int = getTotalExperienceForNextLevel - currentExp
 
   /** Returns the experience required to attain a given level. */
-  def getExperienceForLevel(lvl: Int): Int = math.pow(lvl.toDouble, LevelTracker.EXPERIENCE_EXPONENT).toInt
+  def getTotalExperienceForLevel(lvl: Int): Int =
+    math.pow(lvl.toDouble, LevelTracker.EXPERIENCE_EXPONENT).toInt
+
+  /** Returns the experience required to attain the current level. */
+  def getTotalExperienceForCurrentLevel: Int = getTotalExperienceForLevel(level)
+
+  /** Returns the experience required to attain the next level. */
+  def getTotalExperienceForNextLevel: Int = getTotalExperienceForLevel(level + 1)
 
   /** Increments the amount of experience. It is the responsibility of the pokemon to determine if it has leveled up! */
   def gainExp(exp: Int): Unit = currentExp += exp
 
   /** Returns true if this object can level up. */
-  def canLevelUp: Boolean = level < LevelTracker.MAX_LEVEL && currentExp >= getExperienceForLevel(level + 1)
+  def canLevelUp: Boolean = level < LevelTracker.MAX_LEVEL && currentExp >= getTotalExperienceForNextLevel
 
   /** Increments the level. */
-  def levelUp: Unit = level += 1
+  def levelUp(): Unit = level += 1
 }

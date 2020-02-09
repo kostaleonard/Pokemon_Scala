@@ -19,6 +19,9 @@ class MoveList(protected val initialMoves: Array[Move]) {
       throw new UnsupportedOperationException("Attempting to access outside of Array bounds.")
     else moves(index) = Some(move)
 
+  /** Sets the move at the first index of None to the given move. */
+  def setNextAvailableMove(move: Move): Unit = setMove(moves.indexOf(None), move)
+
   /** Returns the Array of optional moves. This is used more for display purposes, because players need to know the
     * indices of Nones. */
   def getMovesOption: Array[Option[Move]] = moves
@@ -32,4 +35,7 @@ class MoveList(protected val initialMoves: Array[Move]) {
     if(usableMoves.isEmpty) ??? //TODO struggle.
     else usableMoves
   }
+
+  /** Returns true if the move list has space for another move. */
+  def isFull: Boolean = !moves.contains(None)
 }

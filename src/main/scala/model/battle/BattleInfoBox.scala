@@ -90,8 +90,8 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
       g2d.fillRect(37, getObjectHeight - 12, exp_full_width, 10)
       //TODO make this more efficient by reusing references?
       val exp_actual_width = exp_full_width min (exp_full_width * pokemon.getLevelTracker.getExperienceAtCurrentLevel /
-        (pokemon.getLevelTracker.getExperienceForLevel(pokemon.getLevel + 1) -
-          pokemon.getLevelTracker.getExperienceForLevel(pokemon.getLevel)))
+        (pokemon.getLevelTracker.getTotalExperienceForNextLevel -
+          pokemon.getLevelTracker.getTotalExperienceForCurrentLevel))
       g2d.setColor(BattleInfoBox.XP_FILL_COLOR)
       g2d.fillRect(37, getObjectHeight - 12, exp_actual_width, 10)
     }

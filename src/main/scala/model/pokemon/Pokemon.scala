@@ -123,6 +123,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
     new MoveList(moveArray)
   }
 
+  /** Returns the move learned at the current level, optionally. */
+  def getMoveLearnedAtCurrentLevel: Option[Move] = getLearnMap.get(getLevel)
+
   /** Returns the percentage of this species that are male. Subclasses may override. */
   def getPercentMale: Double = Pokemon.DEFAULT_PERCENT_MALE
 
