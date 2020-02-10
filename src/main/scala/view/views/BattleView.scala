@@ -47,7 +47,10 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var menuActive: Boolean = true
 
   /** Ends the battle and returns the player to the Overworld. */
-  def endBattle(): Unit = sendControllerMessage(SwitchViews(new OverworldView(model)))
+  def endBattle(): Unit = {
+    battle.endBattle()
+    sendControllerMessage(SwitchViews(new OverworldView(model)))
+  }
 
   /** Sets up the trainer menu. */
   protected def setupTrainerMenu(): Unit = {

@@ -23,6 +23,12 @@ class EffectTracker {
   /** Removes the effect if present. */
   def removeEffect(effect: StatusEffect): Unit = effects -= effect
 
+  /** Removes all non-persistent effects. */
+  def removeNonPersistentEffects(): Unit = getNonPersistentEffects.foreach(removeEffect)
+
+  /** Removes all effects. */
+  def clearEffects(): Unit = effects = Set.empty
+
   /** Returns true if the effect is in the Set. */
   def contains(effect: StatusEffect): Boolean = effects(effect)
 

@@ -37,4 +37,10 @@ class Party(protected val pokemonList: ListBuffer[Pokemon]) {
   def removePokemon(index: Int): Unit =
     if(canRemovePokemon) pokemonList.remove(index)
     else throw new UnsupportedOperationException("Cannot remove only Pokemon from party.")
+
+  /** Fully heals the party. */
+  def resetOnHeal(): Unit = pokemonList.foreach(_.resetOnHeal())
+
+  /** Resets the party's stats and non-persistent effects. Called after a battle ends. */
+  def resetAfterBattle(): Unit = pokemonList.foreach(_.resetAfterBattle())
 }

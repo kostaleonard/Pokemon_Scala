@@ -78,6 +78,21 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   protected val prescaledImageFront: BufferedImage = getPrescaledImageFront.get
   protected val prescaledImageBack: BufferedImage = getPrescaledImageBack.get
 
+  /** Fully heals the pokemon. */
+  def resetOnHeal(): Unit = {
+    currentStats.resetOnHeal()
+    effectTracker.clearEffects()
+  }
+
+  /** Resets stats and removes non-persistent effects. */
+  def resetOnSwitch(): Unit = {
+    currentStats.resetOnSwitch()
+    effectTracker.removeNonPersistentEffects()
+  }
+
+  /** Resets stats and removes non-persistent effects. */
+  def resetAfterBattle(): Unit = resetOnSwitch()
+
   /** Returns the Pokemon's name. By default, this is the species name. */
   def getName: String = name
 

@@ -32,7 +32,7 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
   )
 
   /** Changes the stats to match the given stats map. Called, for example, when resting or using a Pokemon Center. */
-  def returnToBaseline: Unit = baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
+  def returnToBaseline(): Unit = baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
 
   /** Returns true if the Pokemon is KO, false otherwise. */
   def isKO: Boolean = getStat(PokemonStats.HP_KEY) == 0
@@ -59,23 +59,23 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
 
   /** Resets all stages, but doesn't change the actual stats. Used during resets because all stats will be set to the
     * baseline independently. Could call setStage, but this is just faster. */
-  protected def resetStagesNoStatUpdate: Unit = statStages.keys.foreach(statStages(_) = 0)
+  protected def resetStagesNoStatUpdate(): Unit = statStages.keys.foreach(statStages(_) = 0)
 
   /** Resets all stats to their baseline levels and resets all stages. This is what gets called when you heal at a
     * Pokemon Center. */
-  def resetOnHeal: Unit = {
-    resetStagesNoStatUpdate
+  def resetOnHeal(): Unit = {
+    resetStagesNoStatUpdate()
     baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
   }
 
   /** Resets all stats except HP to their baseline levels and resets all stat stages. This is what gets called when you
     * switch out a Pokemon. */
-  def resetOnSwitch: Unit = {
-    resetStagesNoStatUpdate
+  def resetOnSwitch(): Unit = {
+    resetStagesNoStatUpdate()
     baselineStats.getStatsMap.filter(_._1 != PokemonStats.HP_KEY).foreach(pair => setStat(pair._1, pair._2))
   }
 
   /** Resets all stats except HP to their baseline levels and resets all stat stages. This is what gets called when you
     * leave battle. Identical to resetOnSwitch. */
-  def resetAfterBattle: Unit = resetOnSwitch
+  def resetAfterBattle(): Unit = resetOnSwitch()
 }
