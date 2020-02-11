@@ -4,6 +4,7 @@ import java.awt.{Color, Font, Graphics2D}
 import java.awt.image.BufferedImage
 
 import model.pokemon.Pokemon
+import model.statuseffect._
 import view.Drawable
 import view.gui.menu.BasicMenu
 
@@ -28,6 +29,8 @@ object BattleInfoBox {
   val XP_FONT_COLOR: Color = Color.YELLOW.darker()
   val XP_BACKGROUND_COLOR: Color = Color.GRAY
   val XP_FILL_COLOR: Color = Color.CYAN.darker()
+  val PERSISTENT_EFFECT_FONT: Font = new Font(Font.MONOSPACED, Font.PLAIN, 16)
+  val PERSISTENT_EFFECT_FONT_COLOR: Color = Color.WHITE
 }
 
 class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable {
@@ -64,16 +67,50 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
     g2d.setColor(pokemon.getGenderColor)
     g2d.drawString(" " * pokemon.getName.length + pokemon.getGenderSign, BattleInfoBox.BORDER_THICKNESS * 2, 30)
     g2d.setColor(Color.BLACK)
-    g2d.fillRect(20, 40, getObjectWidth - 25, 14)
+    g2d.fillRect(60, 40, getObjectWidth - 65, 14)
     g2d.setColor(BattleInfoBox.HP_FONT_COLOR)
     g2d.setFont(BattleInfoBox.HP_FONT)
-    g2d.drawString("HP", 23, 53)
+    g2d.drawString("HP", 63, 53)
     g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-    val hp_full_width = getObjectWidth - 67
-    g2d.fillRect(60, 42, hp_full_width, 10)
+    val hp_full_width = getObjectWidth - 107
+    g2d.fillRect(100, 42, hp_full_width, 10)
     g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
     val hp_actual_width = hp_full_width * pokemon.getCurrentStats.getHP / pokemon.getStandardStats.getHP
-    g2d.fillRect(60, 42, hp_actual_width, 10)
+    g2d.fillRect(100, 42, hp_actual_width, 10)
+    if(pokemon.getEffectTracker.getNonPersistentEffects.size > 1)
+      println("Warning, attempting to display more than 1 persistent effect.")
+    pokemon.getEffectTracker.getPersistentEffects.foreach{
+      case Burn =>
+        g2d.setColor(Color.RED.darker())
+        g2d.fillRect(20, 40, 36, 14)
+        g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
+        g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
+        g2d.drawString("BRN", 23, 53)
+      case Paralyze =>
+        g2d.setColor(Color.YELLOW.darker())
+        g2d.fillRect(20, 40, 36, 14)
+        g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
+        g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
+        g2d.drawString("PAR", 23, 53)
+      case Sleep(_) =>
+        g2d.setColor(Color.GRAY)
+        g2d.fillRect(20, 40, 36, 14)
+        g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
+        g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
+        g2d.drawString("SLP", 23, 53)
+      case Frozen =>
+        g2d.setColor(new Color(52, 204, 255))
+        g2d.fillRect(20, 40, 36, 14)
+        g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
+        g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
+        g2d.drawString("FRZ", 23, 53)
+      case Poison(_, _) =>
+        g2d.setColor(new Color(106, 13, 173))
+        g2d.fillRect(20, 40, 36, 14)
+        g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
+        g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
+        g2d.drawString("PSN", 23, 53)
+    }
     if(displayHP) {
       g2d.setColor(BattleInfoBox.DEFAULT_FONT_COLOR)
       val hpString = "%d/%d".format(pokemon.getCurrentStats.getHP, pokemon.getStandardStats.getHP)
