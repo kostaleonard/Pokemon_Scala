@@ -36,7 +36,10 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     (wildPokemon.nonEmpty && wildPokemon.get.isKO)
 
   /** Wraps up the battle; resets stats and removes non-persistent effects. */
-  def endBattle(): Unit = player.getParty.resetAfterBattle()
+  def endBattle(): Unit = {
+    player.getParty.resetAfterBattle()
+    if(opponent.nonEmpty) opponent.get.getParty.resetOnHeal()
+  }
 
   /** Makes the player's move. */
   def makePlayerMove(move: Move): Array[MoveSpecification] = makePokemonMove(playerPokemon, opponentPokemon, move)
