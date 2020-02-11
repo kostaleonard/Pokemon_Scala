@@ -4,7 +4,8 @@ import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.move.{MoveDamage, Move, MoveEventGenerator, TryBurn}
 
 object Ember {
-  val BURN_CHANCE = 0.1
+  //val BURN_CHANCE = 0.1
+  val BURN_CHANCE = 1.0
 }
 
 class Ember extends Move {
