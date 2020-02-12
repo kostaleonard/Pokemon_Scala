@@ -21,7 +21,7 @@ class Ember extends Move {
   override def getPower: Option[Int] = Some(40)
 
   /** Returns the move's accuracy. */
-  override def getAccuracy: Double = 0.3 //1.0
+  override def getAccuracy: Double = 1.0
 
   /** Returns the move's description. */
   override def getDescription: String = "An attack that may inflict a burn."

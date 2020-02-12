@@ -3,10 +3,6 @@ package model.pokemon.move.bytype.poison
 import model.elementaltype.{ElementalType, PoisonType}
 import model.pokemon.move._
 
-object PoisonPowder {
-  val BURN_CHANCE = 0.1
-}
-
 class PoisonPowder extends Move {
   /** Returns the name of the move, in all caps. */
   override def getName: String = "POISONPOWDER"
