@@ -66,8 +66,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
       moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
         menuActive = false
-        //TODO these should be ordered based on speed--have Battle do this.
-        processNextMoveEvent(battle.makePlayerMove(move).toList ++ battle.makeOpponentMove().toList)
+        processNextMoveEvent(battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()))
         menuActive = true
         showTrainerMenu()
       })))

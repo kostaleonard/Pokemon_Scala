@@ -42,30 +42,48 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   }
 
   /** Makes the player's move. */
-  def makePlayerMove(move: Move): Array[MoveSpecification] = makePokemonMove(playerPokemon, opponentPokemon, move)
+  def makePlayerMove(move: Move): MoveSpecificationCollection = makePokemonMove(playerPokemon, opponentPokemon, move)
 
   /** Makes the opponent's move. */
-  def makeOpponentMove(): Array[MoveSpecification] = {
+  def makeOpponentMove(): MoveSpecificationCollection = {
     //TODO support for more opponent behaviors, not just random.
     val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
     makePokemonMove(opponentPokemon, playerPokemon, move)
   }
 
   /** Makes the move for the specified Pokemon. */
-  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): Array[MoveSpecification] = {
+  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): MoveSpecificationCollection = {
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
-    //processEvents(beforeMoveEffectEvents, movingPokemon, otherPokemon)
     //TODO I know the below is wrong because the after move effects get processed even if the move never happens.
     if(beforeMoveEffectEvents.contains(EndMove))
-      return createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon)
+      return MoveSpecificationCollection(
+        createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
+        Array.empty,
+        Array.empty
+      )
     val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
-    //processEvents(moveEvents, movingPokemon, otherPokemon)
     move.decrementPP
     val afterMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromAfterMoveEffects(movingPokemon,
       otherPokemon)
-    //processEvents(afterMoveEffectEvents, movingPokemon, otherPokemon)
-    createMoveSpecifications(beforeMoveEffectEvents ++ moveEvents ++ afterMoveEffectEvents, movingPokemon, otherPokemon)
+    MoveSpecificationCollection(
+      createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
+      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon),
+      createMoveSpecifications(afterMoveEffectEvents, movingPokemon, otherPokemon)
+    )
+  }
+
+  /** Returns a new List of MoveSpecifications in the correct order for battle.  */
+  def reorderMoveSpecifications(playerMoveSpecifications: MoveSpecificationCollection,
+                                opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {
+    if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
+      (playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs ++
+      opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs ++
+      playerMoveSpecifications.afterMoveSpecs ++ opponentMoveSpecifications.afterMoveSpecs).toList
+    else
+      (opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs ++
+      playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs ++
+      opponentMoveSpecifications.afterMoveSpecs ++ playerMoveSpecifications.afterMoveSpecs).toList
   }
 
   //TODO this should be in an AI class or something.
