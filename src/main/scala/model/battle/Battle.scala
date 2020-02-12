@@ -59,17 +59,13 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     if(beforeMoveEffectEvents.contains(EndMove))
       return MoveSpecificationCollection(
         createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
-        Array.empty,
         Array.empty
       )
     val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
     move.decrementPP
-    val afterMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromAfterMoveEffects(movingPokemon,
-      otherPokemon)
     MoveSpecificationCollection(
       createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
-      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon),
-      createMoveSpecifications(afterMoveEffectEvents, movingPokemon, otherPokemon)
+      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon)
     )
   }
 
@@ -78,12 +74,21 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
                                 opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {
     if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
       (playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs ++
-      opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs ++
-      playerMoveSpecifications.afterMoveSpecs ++ opponentMoveSpecifications.afterMoveSpecs).toList
+      opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs).toList
     else
       (opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs ++
-      playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs ++
-      opponentMoveSpecifications.afterMoveSpecs ++ playerMoveSpecifications.afterMoveSpecs).toList
+      playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs).toList
+  }
+
+  /** Returns the MoveSpecifications from the effects that happen after the moves. The opponent always receives the
+    * effects first. */
+  def getAfterMoveSpecifications: Array[MoveSpecification] = {
+    val opponentEffectEvents = opponentPokemon.getEffectTracker.getEventsFromAfterMoveEffects(opponentPokemon,
+      playerPokemon)
+    val playerEffectEvents = playerPokemon.getEffectTracker.getEventsFromAfterMoveEffects(playerPokemon,
+      opponentPokemon)
+    createMoveSpecifications(opponentEffectEvents, opponentPokemon, playerPokemon) ++
+    createMoveSpecifications(playerEffectEvents, playerPokemon, opponentPokemon)
   }
 
   //TODO this should be in an AI class or something.

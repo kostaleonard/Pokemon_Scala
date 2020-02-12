@@ -66,7 +66,8 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
       moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
         menuActive = false
-        processNextMoveEvent(battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()))
+        processNextMoveEvent(battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()),
+          () => processNextMoveEvent(battle.getAfterMoveSpecifications.toList, () => Unit))
         menuActive = true
         showTrainerMenu()
       })))
@@ -144,14 +145,17 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   }
 
   /** Recursively processes one battle event at a time. This allows messages and animations to callback. */
-  protected def processNextMoveEvent(events: List[MoveSpecification]): Unit = {
-    if(events.isEmpty) return
+  protected def processNextMoveEvent(events: List[MoveSpecification], finalCallback: () => Unit): Unit = {
+    if(events.isEmpty) {
+      finalCallback.apply()
+      return
+    }
     var recur_immediately = false
     events.head.moveEvent match {
       case DisplayMessage(message) =>
         battleMessage = Some(createBattleMessage(message, () => {
           battleMessage = None
-          processNextMoveEvent(events.tail)
+          processNextMoveEvent(events.tail, finalCallback)
         }))
       case PlayAnimation(path) =>
         println("Animation at %s".format(path)) //TODO play animation.
@@ -166,7 +170,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case _ => recur_immediately = true
     }
     events.head.moveEvent.doEvent(events.head.movingPokemon, events.head.otherPokemon)
-    if(recur_immediately) processNextMoveEvent(events.tail)
+    if(recur_immediately) processNextMoveEvent(events.tail, finalCallback)
   }
 
   /** Attempts to run away from the opponent. */
