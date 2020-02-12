@@ -160,7 +160,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case PlayAnimation(path) =>
         println("Animation at %s".format(path)) //TODO play animation.
         recur_immediately = true
-      case EndMove => return //TODO I'm not certain this is right.
+      //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
         else distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.

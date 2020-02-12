@@ -7,6 +7,7 @@ object MoveEvent {
   val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
   val DISPLAY_NOT_VERY_EFFECTIVE = DisplayMessage("It's not very effective...")
   val DISPLAY_SUPER_EFFECTIVE = DisplayMessage("It's super effective!")
+  val DISPLAY_BUT_IT_FAILED = DisplayMessage("But it failed...")
 
   /** Returns the DisplayMessage used when a move misses. */
   def getDisplayMessageMoveMissed(thisPokemonName: String): DisplayMessage =
@@ -23,6 +24,10 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon is hurt by its burn. */
   def getDisplayMessageHurtByBurn(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was hurt by its burn.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is poisoned. */
+  def getDisplayMessagePoisoned(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s was poisoned.".format(pokemonName))
 
   /** Returns the DisplayMessage used when a Pokemon is hurt by poison. */
   def getDisplayMessageHurtByPoison(pokemonName: String): DisplayMessage =
@@ -104,7 +109,7 @@ case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
-    otherPokemon.getEffectTracker.addEffect(Burn)
+    otherPokemon.getEffectTracker.addEffect(effect)
 }
 
 case object EndMove extends MoveEvent {
@@ -116,10 +121,10 @@ case object WorsenPoisonSelf extends MoveEvent {
   /** Replaces the Pokemon's Poison with Poison that has progressed one turn. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
     //TODO this seems ugly.
-    val poison = thisPokemon.getEffectTracker.getEffects.find(_ match{
+    val poison = thisPokemon.getEffectTracker.getEffects.find {
       case Poison(badly, turn) => true
       case _ => false
-    }).get.asInstanceOf[Poison]
+    }.get.asInstanceOf[Poison]
     thisPokemon.getEffectTracker.removeEffect(poison)
     thisPokemon.getEffectTracker.addEffect(poison.copy(turn = poison.turn + 1))
   }

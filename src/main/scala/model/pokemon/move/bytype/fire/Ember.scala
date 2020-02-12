@@ -1,11 +1,10 @@
 package model.pokemon.move.bytype.fire
 
 import model.elementaltype.{ElementalType, FireType}
-import model.pokemon.move.{MoveDamage, Move, MoveEventGenerator, TryBurn}
+import model.pokemon.move._
 
 object Ember {
-  //val BURN_CHANCE = 0.1
-  val BURN_CHANCE = 1.0
+  val BURN_CHANCE = 0.1
 }
 
 class Ember extends Move {
@@ -22,7 +21,7 @@ class Ember extends Move {
   override def getPower: Option[Int] = Some(40)
 
   /** Returns the move's accuracy. */
-  override def getAccuracy: Double = 1.0
+  override def getAccuracy: Double = 0.3 //1.0
 
   /** Returns the move's description. */
   override def getDescription: String = "An attack that may inflict a burn."
@@ -41,5 +40,6 @@ class Ember extends Move {
   override def isPhysical: Boolean = false
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveEventGenerator] = Array(MoveDamage(this), TryBurn(Ember.BURN_CHANCE))
+  override def getMoveActions: Array[MoveEventGenerator] =
+    Array(AccuracyCheck(getAccuracy), MoveDamage(this), TryBurn(Ember.BURN_CHANCE, false))
 }

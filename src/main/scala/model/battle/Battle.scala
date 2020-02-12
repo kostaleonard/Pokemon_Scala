@@ -55,13 +55,13 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): MoveSpecificationCollection = {
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
-    //TODO I know the below is wrong because the after move effects get processed even if the move never happens.
     if(beforeMoveEffectEvents.contains(EndMove))
       return MoveSpecificationCollection(
         createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
         Array.empty
       )
-    val moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
+    var moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
+    if(moveEvents.contains(EndMove)) moveEvents = moveEvents.take(moveEvents.indexOf(EndMove))
     move.decrementPP
     MoveSpecificationCollection(
       createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),

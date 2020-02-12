@@ -1,7 +1,7 @@
 package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
-import model.pokemon.move.{MoveDamage, Move, MoveEventGenerator}
+import model.pokemon.move.{AccuracyCheck, Move, MoveDamage, MoveEventGenerator}
 
 class Tackle extends Move {
   /** Returns the name of the move, in all caps. */
@@ -36,5 +36,5 @@ class Tackle extends Move {
   override def isPhysical: Boolean = true
 
   /** Returns the move's MoveActions in the order that they will be done. */
-  override def getMoveActions: Array[MoveEventGenerator] = Array(MoveDamage(this))
+  override def getMoveActions: Array[MoveEventGenerator] = Array(AccuracyCheck(getAccuracy), MoveDamage(this))
 }

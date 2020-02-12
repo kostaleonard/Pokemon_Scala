@@ -2,7 +2,7 @@ package model.pokemon.move
 
 import model.pokemon.Pokemon
 import model.pokemon.stat.BattleStats
-import model.statuseffect.{Burn, Frozen}
+import model.statuseffect.{Burn, Frozen, Poison}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -23,11 +23,18 @@ sealed trait MoveEventGenerator {
   def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent]
 }
 
+case class AccuracyCheck(accuracy: Double) extends MoveEventGenerator {
+  //TODO the move may miss or hit based on effects on either of the pokemon.
+  //TODO need to check accuracy stages.
+  /** Checks to see if the move hits. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    if(Random.nextDouble() > accuracy) List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName), EndMove)
+    else List.empty
+}
+
 case class MoveDamage(move: Move) extends MoveEventGenerator {
   /** Deals damage to the other pokemon. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
-    if(Random.nextDouble() > move.getAccuracy) return List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName))
-
     val result = ListBuffer.empty[MoveEvent]
 
     val targets = 1 //TODO if multiple targets, this is 0.75.
@@ -79,11 +86,21 @@ case class TryLowerStatOther(statKey: String, stages: Int) extends MoveEventGene
     }
 }
 
-case class TryBurn(probability: Double) extends MoveEventGenerator {
+case class TryBurn(probability: Double, displayFailure: Boolean) extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
     if(otherPokemon.getEffectTracker.getPersistentEffects.isEmpty && Random.nextDouble() < probability)
       List(MoveEvent.getDisplayMessageBurned(otherPokemon.getName), InflictEffectOnOpponent(Burn))
+    else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED)
+    else List.empty
+}
+
+case class TryPoison(probability: Double, displayFailure: Boolean, badly: Boolean) extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    if(otherPokemon.getEffectTracker.getPersistentEffects.isEmpty && Random.nextDouble() < probability)
+      List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName), InflictEffectOnOpponent(Poison(badly, 1)))
+    else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED)
     else List.empty
 }
 

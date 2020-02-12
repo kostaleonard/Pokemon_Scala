@@ -5,6 +5,7 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.fire.Ember
 import model.pokemon.move.bytype.normal.{Growl, Tackle}
+import model.pokemon.move.bytype.poison.PoisonPowder
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -49,7 +50,7 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete learnset.
     //1 -> new Tackle
-    1 -> new Ember
+    1 -> new PoisonPowder
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
