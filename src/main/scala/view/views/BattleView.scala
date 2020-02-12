@@ -97,7 +97,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected def tryLevelUpPokemon(pokemon: Pokemon, finalCallback: () => Unit): Unit =
     if (!pokemon.getLevelTracker.canLevelUp) finalCallback.apply()
     else {
-      pokemon.getLevelTracker.levelUp()
+      pokemon.levelUp()
       val nextCallback =
         if (pokemon.getMoveLearnedAtCurrentLevel.isEmpty) finalCallback
         else () => tryLearnMove(pokemon, pokemon.getMoveLearnedAtCurrentLevel.get, finalCallback)

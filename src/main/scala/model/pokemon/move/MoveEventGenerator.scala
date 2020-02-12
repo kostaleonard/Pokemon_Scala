@@ -2,7 +2,7 @@ package model.pokemon.move
 
 import model.pokemon.Pokemon
 import model.pokemon.stat.BattleStats
-import model.statuseffect.{Burn, Frozen, Poison}
+import model.statuseffect.{Burn, Frozen, Poison, Sleep}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -104,11 +104,19 @@ case class TryPoison(probability: Double, displayFailure: Boolean, badly: Boolea
     else List.empty
 }
 
+case class TrySleep(probability: Double, displayFailure: Boolean, turns: Int) extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    if(otherPokemon.getEffectTracker.getPersistentEffects.isEmpty && Random.nextDouble() < probability)
+      List(MoveEvent.getDisplayMessageFellAsleep(otherPokemon.getName), InflictEffectOnOpponent(Sleep(turns)))
+    else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED)
+    else List.empty
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
-    //TODO I legit don't remember if the message comes before the animation. Maybe swap later.
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
     //TODO get burn animation.
     result.append(PlayAnimation("TODO"))

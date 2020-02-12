@@ -105,6 +105,16 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   /** Returns the Pokemon's current level. */
   def getLevel: Int = levelTracker.getLevel
 
+  /** Increments the pokemon's level and increases stats. Note that this will reset stat stages, which is fine by me.
+    * As far as I'm concerned, if you level up in the middle of a battle, that's a get out of jail free card. */
+  def levelUp(): Unit = {
+    levelTracker.levelUp()
+    val hpBefore = currentStats.getHP
+    standardStats = Pokemon.getStandardStats(getBaseStats, ivStats, getLevel)
+    currentStats = new BattleStats(standardStats)
+    currentStats.setHP(hpBefore)
+  }
+
   /** Returns the IV stats for this pokemon. */
   def getIVStats: IVStats = ivStats
 

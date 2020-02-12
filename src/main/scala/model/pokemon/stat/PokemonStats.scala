@@ -95,4 +95,9 @@ class PokemonStats(protected var hp: Int,
   /** Returns the string representation of the object. */
   override def toString: String = "HP = %d\nATK = %d\nDEF = %d\nSPATK = %d\nSPDEF = %d\nSPD = %d".format(
     getHP, getAttack, getDefense, getSpecialAttack, getSpecialDefense, getSpeed)
+
+  /** Modifies the stats to match the given level. */
+  def setStatsToLevel(level: Int): Unit = {
+    //TODO
+  }
 }

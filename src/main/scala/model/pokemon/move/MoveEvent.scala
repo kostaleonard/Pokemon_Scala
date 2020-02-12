@@ -33,6 +33,10 @@ object MoveEvent {
   def getDisplayMessageHurtByPoison(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was hurt by poison.".format(pokemonName))
 
+  /** Returns the DisplayMessage used when a Pokemon is poisoned. */
+  def getDisplayMessageFellAsleep(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s fell asleep!".format(pokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon has thawed. */
   def getDisplayMessageThawed(pokemonName: String): DisplayMessage =
     DisplayMessage("%s has thawed out!".format(pokemonName))
