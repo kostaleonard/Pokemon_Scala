@@ -309,6 +309,21 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       g2d.drawString("%d/%d".format(move.getCurrentPP, move.getMaxPP), 400,
         BattleView.BATTLE_FOREGROUND_BOTTOM + heightStartThisMenuItem + (menuItemHeight * 3) / 4)
     }
+    val selectedMove = battle.getPlayerPokemon.getMoveList.getMoves(moveMenu.getSelectedMenuItem)
+    g2d.setColor(selectedMove.getType.getTypeColor)
+    g2d.fillRect(moveMenu.getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      400, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.setColor(Color.BLACK)
+    g2d.fillRect(moveMenu.getObjectWidth  - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(moveMenu.getObjectWidth  - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      400, BattleView.BORDER_THICKNESS)
+    g2d.fillRect(moveMenu.getObjectWidth + 400 - 2 * BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(moveMenu.getObjectWidth  - BattleView.BORDER_THICKNESS,
+      BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, 400, BattleView.BORDER_THICKNESS)
+    g2d.drawString(selectedMove.getType.toString, moveMenu.getObjectWidth + 10,
+      BattleView.BATTLE_FOREGROUND_BOTTOM + 30)
   }
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */

@@ -21,6 +21,9 @@ abstract class Menu[A <: MenuItem] extends Drawable {
   /** Returns the menu items. */
   def getMenuItems: ArrayBuffer[A] = menuItems
 
+  /** Returns the index of the selected menu item. */
+  def getSelectedMenuItem: Int = selectedMenuItem
+
   /** Adds a menu item to the menu. */
   def appendMenuItem(menuItem: A): Unit = menuItems.append(menuItem)
 

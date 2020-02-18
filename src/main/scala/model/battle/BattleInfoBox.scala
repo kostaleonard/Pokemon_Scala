@@ -3,6 +3,7 @@ package model.battle
 import java.awt.{Color, Font, Graphics2D}
 import java.awt.image.BufferedImage
 
+import model.elementaltype._
 import model.pokemon.Pokemon
 import model.statuseffect._
 import view.Drawable
@@ -81,31 +82,31 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
       println("Warning, attempting to display more than 1 persistent effect.")
     pokemon.getEffectTracker.getPersistentEffects.foreach{
       case Burn =>
-        g2d.setColor(Color.RED.darker())
+        g2d.setColor(FireType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)
         g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
         g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
         g2d.drawString("BRN", 23, 53)
       case Paralyze =>
-        g2d.setColor(Color.YELLOW.darker())
+        g2d.setColor(ElectricType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)
         g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
         g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
         g2d.drawString("PAR", 23, 53)
       case Sleep(_) =>
-        g2d.setColor(Color.GRAY)
+        g2d.setColor(NormalType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)
         g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
         g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
         g2d.drawString("SLP", 23, 53)
       case Frozen =>
-        g2d.setColor(new Color(52, 204, 255))
+        g2d.setColor(IceType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)
         g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
         g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)
         g2d.drawString("FRZ", 23, 53)
       case Poison(_, _) =>
-        g2d.setColor(new Color(106, 13, 173))
+        g2d.setColor(PoisonType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)
         g2d.setFont(BattleInfoBox.PERSISTENT_EFFECT_FONT)
         g2d.setColor(BattleInfoBox.PERSISTENT_EFFECT_FONT_COLOR)

@@ -1,5 +1,7 @@
 package model.elementaltype
 
+import java.awt.Color
+
 sealed trait ElementalType {
   /** Returns the string representation of this object. */
   override def toString: String = this match{
@@ -20,6 +22,27 @@ sealed trait ElementalType {
     case DragonType => "Dragon"
     case DarkType => "Dark"
     case SteelType => "Steel"
+    case _ => throw new UnsupportedOperationException("Unrecognized type.")
+  }
+
+  def getTypeColor: Color = this match {
+    case NormalType => Color.GRAY.brighter()
+    case FireType => Color.RED.darker()
+    case WaterType => Color.BLUE.brighter()
+    case ElectricType => Color.YELLOW.darker()
+    case GrassType => Color.GREEN.darker()
+    case IceType => new Color(52, 204, 255)
+    case FightingType => Color.MAGENTA //TODO
+    case PoisonType => new Color(106, 13, 173)
+    case GroundType => Color.MAGENTA //TODO
+    case FlyingType => Color.WHITE.darker()
+    case PsychicType => Color.MAGENTA //TODO
+    case BugType => Color.MAGENTA //TODO
+    case RockType => Color.MAGENTA //TODO
+    case GhostType => Color.MAGENTA //TODO
+    case DragonType => Color.MAGENTA //TODO
+    case DarkType => Color.GRAY.darker()
+    case SteelType => Color.MAGENTA //TODO
     case _ => throw new UnsupportedOperationException("Unrecognized type.")
   }
 
