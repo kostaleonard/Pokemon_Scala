@@ -6,7 +6,8 @@ import java.awt.image.BufferedImage
 import model.board.cells._
 import model.actor.{Actor, Trainer}
 import model.item.Item
-import view.{Drawable, View}
+import view.View
+import view.views.drawing.{Animation, Drawable}
 
 object Board {
   val TILE_SIZE = 64
@@ -37,7 +38,7 @@ object Board {
 }
 
 class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation: Option[Location] = None)
-  extends Drawable {
+  extends Animation {
   //TODO this would be a cool use case for a new data structure.
   //TODO maybe this is petty, but I really want to write a combinator for this so I don't have to call buildBoardObjectMap().
   /** The boardObjectMap provides an O(1) mapping to get the Location of any given BoardObject. It is the inverse
@@ -155,6 +156,9 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
 
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   def getPrescaledImage: Option[BufferedImage] = None
+
+  /** Returns true if the animation is complete. */
+  def isAnimationComplete: Boolean = false
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {

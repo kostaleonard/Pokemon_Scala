@@ -1,6 +1,6 @@
 package view.gui.menu
 
-import view.Drawable
+import view.views.drawing.Drawable
 
 import scala.collection.mutable.ArrayBuffer
 

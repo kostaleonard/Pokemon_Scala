@@ -119,7 +119,4 @@ class ImageMenu extends Menu[ImageItem] {
   //TODO prescaled images for imagemenu.
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   override def getPrescaledImage: Option[BufferedImage] = None
-
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = {}
 }

@@ -12,7 +12,8 @@ import model.pokemon.effect.EffectTracker
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.{BattleStats, IVStats, PokemonStats}
-import view.{Drawable, View}
+import view.View
+import view.views.drawing.Drawable
 
 import scala.util.Random
 
@@ -197,9 +198,6 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   override def getPrescaledImage: Option[BufferedImage] = throw new UnsupportedOperationException("Must call " +
     "getPrescaledImageFront or getPrescaledImageBack.")
-
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = {}
 
   /** Returns the object's front image. */
   def getImageFront: BufferedImage = prescaledImageFront

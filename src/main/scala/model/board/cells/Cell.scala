@@ -6,7 +6,7 @@ import model.board.{Board, BoardObject}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.species.MissingNo
-import view.Drawable
+import view.views.drawing.Drawable
 
 import scala.util.Random
 

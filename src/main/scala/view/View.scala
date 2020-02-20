@@ -1,7 +1,8 @@
 package view
 
-import controller.{ControllerMessage}
+import controller.ControllerMessage
 import model.Model
+import view.views.drawing.{Animation}
 
 import scala.collection.mutable.ListBuffer
 
@@ -21,7 +22,7 @@ object View {
     "%s/%s/%s".format(Model.RESOURCE_ROOT_DIRECTORY, IMAGE_DIRECTORY, imageFilename)
 }
 
-abstract class View(protected val model: Model) extends Drawable {
+abstract class View(protected val model: Model) extends Animation {
   protected val controllerMessages: ListBuffer[ControllerMessage] = ListBuffer.empty
   protected var inputFrozen: Boolean = false
 
@@ -39,6 +40,9 @@ abstract class View(protected val model: Model) extends Drawable {
 
   /** Returns the object's height. */
   override def getObjectHeight: Int = View.FRAME_DESIGN_HEIGHT
+
+  /** Returns true if the animation is complete. */
+  override def isAnimationComplete: Boolean = false
 
   /** The action taken when a key is pressed and the View is in focus. */
   def keyPressed(keyCode: Int): Unit

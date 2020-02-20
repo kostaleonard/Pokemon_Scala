@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage
 import model.elementaltype._
 import model.pokemon.Pokemon
 import model.statuseffect._
-import view.Drawable
 import view.gui.menu.BasicMenu
+import view.views.drawing.Drawable
 
 object BattleInfoBox {
   val SINGLE_OPPONENT_OFFSET_X = 20
@@ -139,7 +139,4 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
 
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   override def getPrescaledImage: Option[BufferedImage] = None
-
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = {}
 }

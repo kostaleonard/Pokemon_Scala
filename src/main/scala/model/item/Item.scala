@@ -14,7 +14,8 @@ object Item {
   def getPokeballImage: Image = ImageIO.read(new File(View.getSourcePath("frog.jpg")))
 }
 
-class Item extends BoardObject {
+//TODO this is messed up.
+abstract class Item extends BoardObject {
   protected val image: Image = Item.getPokeballImage
   protected val prescaledImage: BufferedImage = getPrescaledImage.get
 

@@ -34,7 +34,4 @@ class TallGrass extends Cell {
     g2d.dispose()
     Some(bufferedImage)
   }
-
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = {}
 }

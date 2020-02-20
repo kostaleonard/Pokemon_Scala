@@ -118,7 +118,6 @@ class Actor extends BoardObject {
     math.abs(drawOffsetX) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED &&
     math.abs(drawOffsetY) < Actor.ALMOST_DONE_MOVING_MULTIPLIER * Actor.MOVE_SPEED
 
-  //TODO turn off scaling here!
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     canvasImage = new BufferedImage(getObjectWidth, getObjectHeight, BufferedImage.TYPE_INT_ARGB)
@@ -137,19 +136,28 @@ class Actor extends BoardObject {
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {
+    super.advanceFrame()
     if(drawOffsetX > 0) drawOffsetX = 0 max (drawOffsetX - Actor.MOVE_SPEED)
     else if(drawOffsetX < 0) drawOffsetX = 0 min (drawOffsetX + Actor.MOVE_SPEED)
     if(drawOffsetY > 0) drawOffsetY = 0 max (drawOffsetY - Actor.MOVE_SPEED)
     else if(drawOffsetY < 0) drawOffsetY = 0 min (drawOffsetY + Actor.MOVE_SPEED)
     if(isMoving && !isAlmostDoneMoving) setWalkingAvatar()
     else setStandingAvatar()
-    if(!isMoving && executeAfterAnimation.nonEmpty){
+    if(!isMoving && animationCallback.nonEmpty){
       queuedMove = None
-      executeAfterAnimation.get.apply()
+      animationCallback.get.apply()
     }
     if(!isMoving && queuedMove.nonEmpty){
       queuedMove.get.apply()
       queuedMove = None
     }
   }
+
+  //TODO
+  /** Returns all of this Animation's images, in order. */
+  override def getFrames: Array[BufferedImage] = ???
+
+  //TODO
+  /** Returns all of this Animation's images, in order. */
+  override def getPrescaledFrames: Option[Array[BufferedImage]] = ???
 }

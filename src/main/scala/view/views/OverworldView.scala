@@ -39,7 +39,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
       val cell = model.getCurrentBoard.getCells.apply(newPlayerLoc.get.row)(newPlayerLoc.get.col)
       if(Random.nextDouble() < cell.getRandomEncounterChance){
         val battle = new Battle(playerCharacter, None, Some(cell.getRandomWildPokemon))
-        playerCharacter.queueFunctionAfterAnimation(
+        playerCharacter.setAnimationCallback(
           Some(() => queueRandomEncounter(battle)))
       }
     }
@@ -49,7 +49,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
   def queueRandomEncounter(battle: Battle): Unit = {
     inputFrozen = true
     randomEncounterAnimationStarted = true
-    queueFunctionAfterAnimation(Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
+    setAnimationCallback(Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
   }
 
   //TODO clean this up.
@@ -125,7 +125,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
     if(randomEncounterAnimationStarted) {
       randomEncounterAnimationFrame += 1
       if (randomEncounterAnimationFrame == OverworldView.RANDOM_ENCOUNTER_ANIMATION_FRAMES)
-        executeAfterAnimation.getOrElse(
+        animationCallback.getOrElse(
           throw new UnsupportedOperationException("Expected random encounter code, but found nothing.")
         ).apply()
     }

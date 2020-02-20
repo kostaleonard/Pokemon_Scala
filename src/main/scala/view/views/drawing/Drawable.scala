@@ -1,4 +1,4 @@
-package view
+package view.views.drawing
 
 import java.awt.image.BufferedImage
 
@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage
 trait Drawable {
   protected var drawOffsetX = 0
   protected var drawOffsetY = 0
-  protected var executeAfterAnimation: Option[() => Unit] = None
 
   /** Returns the Character's x offset for drawing. */
   def getDrawOffsetX: Int = drawOffsetX
@@ -17,12 +16,8 @@ trait Drawable {
   /** Sets the Character's x offset for drawing. */
   def setDrawOffsetX(off: Int): Unit = drawOffsetX = off
 
-  /** Sets the
-    *  Character's y offset for drawing. */
+  /** Sets the Character's y offset for drawing. */
   def setDrawOffsetY(off: Int): Unit = drawOffsetY = off
-
-  /** Specifies code to execute after animation is complete. */
-  def queueFunctionAfterAnimation(f: Option[() => Unit]): Unit = executeAfterAnimation = f
 
   /** Returns the object's width. */
   def getObjectWidth: Int
@@ -35,8 +30,4 @@ trait Drawable {
 
   /** Returns the object's image, already scaled. This is to speed up rendering. */
   def getPrescaledImage: Option[BufferedImage]
-
-  //TODO do I need an animation class? How can I make animations cleaner?
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  def advanceFrame(): Unit
 }
