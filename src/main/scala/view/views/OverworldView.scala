@@ -8,6 +8,8 @@ import model.Model
 import model.battle.Battle
 import model.board._
 import view.View
+import view.views.drawing.Animation
+import view.views.drawing.animations.RandomEncounterAnimation1
 
 import scala.util.Random
 
@@ -16,10 +18,14 @@ object OverworldView {
 }
 
 class OverworldView(override protected val model: Model) extends View(model) {
-  protected var randomEncounterAnimationStarted: Boolean = false
-  protected var randomEncounterAnimationFrame: Int = 0
+  protected var randomEncounterAnimation: Option[Animation] = None
   protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
     BufferedImage.TYPE_INT_ARGB)
+
+  //TODO randomly choose next random encounter animation.
+  /** Returns the animation that will play for the next random encounter. */
+  def getNextRandomEncounterAnimation(battle: Battle): Animation = new RandomEncounterAnimation1(
+    Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
 
   /** Returns the offset for centering the player. */
   def getCenteringOffset: Point = {
@@ -40,7 +46,10 @@ class OverworldView(override protected val model: Model) extends View(model) {
       if(Random.nextDouble() < cell.getRandomEncounterChance){
         val battle = new Battle(playerCharacter, None, Some(cell.getRandomWildPokemon))
         playerCharacter.setAnimationCallback(
-          Some(() => queueRandomEncounter(battle)))
+          Some(() => {
+            queueRandomEncounter(battle)
+            playerCharacter.setAnimationCallback(None)
+          }))
       }
     }
   }
@@ -48,8 +57,8 @@ class OverworldView(override protected val model: Model) extends View(model) {
   /** Starts the random encounter animation, and queues the view switch after this animation. */
   def queueRandomEncounter(battle: Battle): Unit = {
     inputFrozen = true
-    randomEncounterAnimationStarted = true
-    setAnimationCallback(Some(() => sendControllerMessage(SwitchViews(new BattleView(model, battle)))))
+    randomEncounterAnimation = Some(getNextRandomEncounterAnimation(battle))
+    randomEncounterAnimation.get.start()
   }
 
   //TODO clean this up.
@@ -107,11 +116,8 @@ class OverworldView(override protected val model: Model) extends View(model) {
     g2d.setColor(Color.BLACK)
     g2d.fillRect(0, 0, getObjectWidth, getObjectHeight)
     g2d.drawImage(boardImage, -centeringOffset.x, -centeringOffset.y, null)
-    if(randomEncounterAnimationStarted){
-      val offset = randomEncounterAnimationFrame * 3
-      g2d.fillRect(0, 0, offset, getObjectHeight)
-      g2d.fillRect(getObjectWidth - offset, 0, offset, getObjectHeight)
-    }
+    if(randomEncounterAnimation.nonEmpty)
+      g2d.drawImage(randomEncounterAnimation.get.getPrescaledImage.get, 0, 0, null)
     g2d.dispose()
     canvasImage
   }
@@ -122,12 +128,9 @@ class OverworldView(override protected val model: Model) extends View(model) {
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {
     model.getCurrentBoard.advanceFrame()
-    if(randomEncounterAnimationStarted) {
-      randomEncounterAnimationFrame += 1
-      if (randomEncounterAnimationFrame == OverworldView.RANDOM_ENCOUNTER_ANIMATION_FRAMES)
-        animationCallback.getOrElse(
-          throw new UnsupportedOperationException("Expected random encounter code, but found nothing.")
-        ).apply()
+    if(randomEncounterAnimation.nonEmpty){
+      randomEncounterAnimation.get.advanceFrame()
+      if(randomEncounterAnimation.get.isAnimationComplete) randomEncounterAnimation.get.makeAnimationCallback()
     }
   }
 }
