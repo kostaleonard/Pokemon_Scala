@@ -6,7 +6,8 @@ import java.io.File
 
 import javax.imageio.ImageIO
 
-object FrameByFrameAnimation {
+//TODO get rid of this class.
+object DirectoryAnimation {
   /** Returns the frames from the given directory. Throws an error if the path is not a directory, if it is an empty
     * directory, or if it does not exist. Files are sorted by name. */
   def getFramesFromSource(path: String): Array[BufferedImage] = {
@@ -28,27 +29,21 @@ object FrameByFrameAnimation {
     }
 }
 
-trait FrameByFrameAnimation extends Animation {
-  protected var currentFrameIndex = 0
+class DirectoryAnimation(path: String, targetWidth: Int, targetHeight: Int, callback: Option[() => Unit])
+  extends FrameByFrameAnimation {
+  protected val frames: Array[BufferedImage] = DirectoryAnimation.getFramesFromSource(path)
+  protected val prescaledFrames: Option[Array[BufferedImage]] = Some(
+    DirectoryAnimation.scaleFrames(frames, targetWidth, targetHeight))
 
-  /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
-  override def getImage: BufferedImage = getFrames(currentFrameIndex)
+  /** Returns the object's width. */
+  override def getObjectWidth: Int = targetWidth
 
-  /** Returns the object's image, already scaled. This is to speed up rendering. */
-  override def getPrescaledImage: Option[BufferedImage] = getPrescaledFrames match {
-    case Some(arr) => Some(arr(currentFrameIndex))
-    case None => None
-  }
-
-  /** Returns true if the animation is complete. */
-  override def isAnimationComplete: Boolean = currentFrameIndex >= getFrames.length - 1
-
-  /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = currentFrameIndex += 1
+  /** Returns the object's height. */
+  override def getObjectHeight: Int = targetHeight
 
   /** Returns all of this Animation's images, in order. */
-  def getFrames: Array[BufferedImage]
+  override def getFrames: Array[BufferedImage] = frames
 
   /** Returns all of this Animation's images, in order. */
-  def getPrescaledFrames: Option[Array[BufferedImage]]
+  override def getPrescaledFrames: Option[Array[BufferedImage]] = prescaledFrames
 }
