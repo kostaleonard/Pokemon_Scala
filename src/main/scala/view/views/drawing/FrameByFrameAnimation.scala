@@ -17,6 +17,16 @@ object FrameByFrameAnimation {
     d.listFiles.filter(_.isFile).sortBy(_.getName).map(ImageIO.read)
   }
 
+  //TODO this could consume a lot of memory.
+  /** Returns the frames from the given directory, with the repeat array defining how many times each image in the
+    * directory should be repeated. */
+  def getFramesFromSourceWithDuration(path: String, repeat: Array[Int]): Array[BufferedImage] = {
+    val rawFrames = getFramesFromSource(path)
+    if(rawFrames.length != repeat.length) throw new UnsupportedOperationException("Repeat array length must match " +
+      "the number of images in the directory.")
+    rawFrames.zip(repeat).flatMap(pair => Array.fill(pair._2)(pair._1))
+  }
+
   /** Returns the frames scaled to the given width and height. */
   def scaleFrames(frames: Array[BufferedImage], targetWidth: Int, targetHeight: Int): Array[BufferedImage] =
     frames.map{ frame =>
