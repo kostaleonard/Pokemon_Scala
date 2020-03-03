@@ -46,18 +46,18 @@ object Actor {
   //TODO is it going to cause problems, putting all this in memory?
   /** The map of all frame numbers to their avatars. These are all of the images needed to render the player. */
   val playerAvatarMap: scala.collection.immutable.Map[Int, Image] = scala.collection.immutable.Map(
-    PLAYER_SOUTH -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south.png"))),
-    PLAYER_SOUTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_left.png"))),
-    PLAYER_SOUTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_south_walk_right.png"))),
-    PLAYER_EAST -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east.png"))),
-    PLAYER_EAST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east_walk_left.png"))),
-    PLAYER_EAST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_east_walk_right.png"))),
-    PLAYER_NORTH -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north.png"))),
-    PLAYER_NORTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north_walk_left.png"))),
-    PLAYER_NORTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_north_walk_right.png"))),
-    PLAYER_WEST -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west.png"))),
-    PLAYER_WEST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west_walk_left.png"))),
-    PLAYER_WEST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/player_west_walk_right.png")))
+    PLAYER_SOUTH -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_south.png"))),
+    PLAYER_SOUTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_south_walk_left.png"))),
+    PLAYER_SOUTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_south_walk_right.png"))),
+    PLAYER_EAST -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_east.png"))),
+    PLAYER_EAST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_east_walk_left.png"))),
+    PLAYER_EAST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_east_walk_right.png"))),
+    PLAYER_NORTH -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_north.png"))),
+    PLAYER_NORTH_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_north_walk_left.png"))),
+    PLAYER_NORTH_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_north_walk_right.png"))),
+    PLAYER_WEST -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_west.png"))),
+    PLAYER_WEST_WALK_LEFT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_west_walk_left.png"))),
+    PLAYER_WEST_WALK_RIGHT -> ImageIO.read(new File(View.getSourcePath("sprites/player/all_frames/player_west_walk_right.png")))
   )
 }
 
