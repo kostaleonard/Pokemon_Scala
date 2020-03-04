@@ -154,9 +154,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     }
     var recur_immediately = false
     events.head.moveEvent match {
-      case DisplayMessage(message) =>
+      case DisplayMessage(message, waitToClear) =>
         battleMessage = Some(createBattleMessage(message, () => {
-          battleMessage = None
+          if(!waitToClear) battleMessage = None
           processNextMoveEvent(events.tail, finalCallback)
         }))
       case PlayAnimationFromSource(path) =>
@@ -165,6 +165,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case PlayHPBarAnimation(animationPokemon, newHP) =>
         val callback = () => {
           hpBarAnimation = None
+          battleMessage = None
           processNextMoveEvent(events.tail, finalCallback)
         }
         val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else

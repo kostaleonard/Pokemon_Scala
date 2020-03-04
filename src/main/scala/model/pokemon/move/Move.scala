@@ -48,7 +48,7 @@ abstract class Move {
   /** Returns the MoveEvents that are the result of thisPokemon using the move on otherPokemon.
     * I just want to say, it was pretty painful figuring out these type annotations. */
   def getEventsFromMove(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
-    DisplayMessage("%s used %s!".format(thisPokemon.getName, getName)) +:
+    DisplayMessage("%s used %s!".format(thisPokemon.getName, getName), true) +:
       getMoveActions.flatMap{ action =>
         var newHPSelf = thisPokemon.getCurrentStats.getHP
         var newHPOther = otherPokemon.getCurrentStats.getHP
