@@ -44,6 +44,12 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
   protected val canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
     BufferedImage.TYPE_INT_ARGB)
 
+  /** Returns true if HP is displayed. */
+  def isHPDisplayed: Boolean = displayHP
+
+  /** Returns true if XP is displayed. */
+  def isXPDisplayed: Boolean = displayXP
+
   /** Returns the object's width. */
   override def getObjectWidth: Int = width
 

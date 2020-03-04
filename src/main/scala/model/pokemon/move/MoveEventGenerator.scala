@@ -13,7 +13,7 @@ object MoveEventGenerator {
   def willDamageKO(pokemon: Pokemon, damage: Int): Boolean = pokemon.getCurrentStats.getHP <= damage
 
   /** Returns the list of MoveEvents used when a Pokemon KOs. */
-  def getKOEvents(pokemon: Pokemon, isOther: Boolean): List[MoveEvent] = List(PlayAnimation(FAINT_ANIMATION_PATH),
+  def getKOEvents(pokemon: Pokemon, isOther: Boolean): List[MoveEvent] = List(PlayAnimationFromSource(FAINT_ANIMATION_PATH),
     MoveEvent.getDisplayMessageFainted(pokemon.getName), if(isOther) FaintOther else FaintSelf)
 }
 
@@ -59,7 +59,7 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
       ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
       ) * modifier).toInt
 
-    result.append(PlayAnimation(move.getAnimationPath))
+    result.append(PlayAnimationFromSource(move.getAnimationPath))
     result.append(DealDamageToOpponent(damage))
     if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
     if(typeEffectiveness == 0) result.append(
@@ -79,7 +79,7 @@ case class TryLowerStatOther(statKey: String, stages: Int) extends MoveEventGene
       List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
     else {
       val result = ListBuffer.empty[MoveEvent]
-      result.append(PlayAnimation("TODO"))
+      result.append(PlayAnimationFromSource("TODO"))
       result.append(LowerStatOther(statKey, stages))
       result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
       result.toList
@@ -119,7 +119,7 @@ case object TurnlyBurnDamage extends MoveEventGenerator {
     val result = ListBuffer.empty[MoveEvent]
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
     //TODO get burn animation.
-    result.append(PlayAnimation("TODO"))
+    result.append(PlayAnimationFromSource("TODO"))
     val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt //TODO magic numbers
     result.append(DealDamageToSelf(damage))
     if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
@@ -134,7 +134,7 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveEventGenerator {
     val result = ListBuffer.empty[MoveEvent]
     result.append(MoveEvent.getDisplayMessageHurtByPoison(thisPokemon.getName))
     //TODO get poison animation.
-    result.append(PlayAnimation("TODO"))
+    result.append(PlayAnimationFromSource("TODO"))
     val damage = (thisPokemon.getStandardStats.getHP * portionMaxHP).toInt
     result.append(DealDamageToSelf(damage))
     result.append(WorsenPoisonSelf)
@@ -164,6 +164,6 @@ case object TurnlyTryThaw extends MoveEventGenerator {
     if(Random.nextDouble() < Frozen.THAW_CHANCE)
       List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemoveFrozenSelf)
     else
-      List(PlayAnimation("TODO"), MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), EndMove) //TODO get frozen animation.
+      List(PlayAnimationFromSource("TODO"), MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), EndMove) //TODO get frozen animation.
   }
 }

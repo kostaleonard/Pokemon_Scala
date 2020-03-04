@@ -78,7 +78,13 @@ case class DisplayMessage(message: String) extends MoveEvent {
 }
 
 //TODO animations--how to show which animation to play?
-case class PlayAnimation(path: String) extends MoveEvent {
+case class PlayAnimationFromSource(path: String) extends MoveEvent {
+  /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
+    * to the user. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
+case class PlayHPBarAnimation(pokemon: Pokemon, newHP: Int) extends MoveEvent {
   /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
     * to the user. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}

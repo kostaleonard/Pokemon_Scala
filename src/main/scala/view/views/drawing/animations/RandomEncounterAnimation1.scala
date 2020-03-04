@@ -17,13 +17,13 @@ class RandomEncounterAnimation1(callback: Option[() => Unit]) extends Animation 
   protected var currentFrame = 0
 
   /** Returns the object's width. */
-  def getObjectWidth: Int = View.FRAME_DESIGN_WIDTH
+  override def getObjectWidth: Int = View.FRAME_DESIGN_WIDTH
 
   /** Returns the object's height. */
-  def getObjectHeight: Int = View.FRAME_DESIGN_HEIGHT
+  override def getObjectHeight: Int = View.FRAME_DESIGN_HEIGHT
 
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
-  def getImage: BufferedImage = {
+  override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
     g2d.setColor(Color.BLACK)
     val offset = currentFrame * 4
@@ -34,11 +34,11 @@ class RandomEncounterAnimation1(callback: Option[() => Unit]) extends Animation 
   }
 
   /** Returns the object's image, already scaled. This is to speed up rendering. */
-  def getPrescaledImage: Option[BufferedImage] = Some(getImage)
+  override def getPrescaledImage: Option[BufferedImage] = Some(getImage)
 
   /** Returns true if the animation is complete. */
-  def isAnimationComplete: Boolean = currentFrame >= RandomEncounterAnimation1.ANIMATION_FRAMES
+  override def isAnimationComplete: Boolean = currentFrame >= RandomEncounterAnimation1.ANIMATION_FRAMES
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  def advanceFrame(): Unit = if(running) currentFrame += 1
+  override def advanceFrame(): Unit = if(running) currentFrame += 1
 }

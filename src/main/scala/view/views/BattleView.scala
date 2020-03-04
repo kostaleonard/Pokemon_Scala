@@ -13,6 +13,7 @@ import model.pokemon.move._
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
+import view.views.drawing.animations.HPBarAnimation
 
 import scala.collection.mutable.ListBuffer
 
@@ -45,6 +46,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   setupMoveMenu()
   protected var currentMenu: BasicMenu = trainerMenu
   protected var menuActive: Boolean = true
+  protected var hpBarAnimation: Option[HPBarAnimation] = None
 
   /** Ends the battle and returns the player to the Overworld. */
   def endBattle(): Unit = {
@@ -157,9 +159,18 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           battleMessage = None
           processNextMoveEvent(events.tail, finalCallback)
         }))
-      case PlayAnimation(path) =>
+      case PlayAnimationFromSource(path) =>
         println("Animation at %s".format(path)) //TODO play animation.
         recur_immediately = true
+      case PlayHPBarAnimation(animationPokemon, newHP) =>
+        val callback = () => {
+          hpBarAnimation = None
+          processNextMoveEvent(events.tail, finalCallback)
+        }
+        val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else
+          opponentPokemonInfoBox
+        hpBarAnimation = Some(new HPBarAnimation(Some(callback), infoBox, animationPokemon, newHP))
+        hpBarAnimation.get.start()
       //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
@@ -326,6 +337,15 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       BattleView.BATTLE_FOREGROUND_BOTTOM + 30)
   }
 
+  /** Draws the HP bar animation. */
+  def drawHPBarAnimation(g2d: Graphics2D): Unit = {
+    val startX = if(hpBarAnimation.get.getPokemon == battle.getPlayerPokemon) BattleInfoBox.SINGLE_PLAYER_OFFSET_X else
+      BattleInfoBox.SINGLE_OPPONENT_OFFSET_X
+    val startY = if(hpBarAnimation.get.getPokemon == battle.getPlayerPokemon) BattleInfoBox.SINGLE_PLAYER_OFFSET_Y else
+      BattleInfoBox.SINGLE_OPPONENT_OFFSET_Y
+    g2d.drawImage(hpBarAnimation.get.getImage, startX, startY,null)
+  }
+
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
@@ -346,6 +366,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     if(battleMessage.nonEmpty) drawBattleMessage(g2d)
     else if(menuActive && currentMenu == trainerMenu) drawTrainerMenu(g2d)
     else if(menuActive && currentMenu == moveMenu) drawMoveMenu(g2d)
+    if(hpBarAnimation.nonEmpty && !hpBarAnimation.get.isAnimationComplete) drawHPBarAnimation(g2d)
     g2d.dispose()
     canvasImage
   }
@@ -362,5 +383,10 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   }
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
-  override def advanceFrame(): Unit = {}
+  override def advanceFrame(): Unit = {
+    if(hpBarAnimation.nonEmpty) {
+      hpBarAnimation.get.advanceFrame()
+      if(hpBarAnimation.get.isAnimationComplete) hpBarAnimation.get.makeAnimationCallback()
+    }
+  }
 }

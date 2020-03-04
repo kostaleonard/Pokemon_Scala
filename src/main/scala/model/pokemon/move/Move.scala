@@ -45,10 +45,23 @@ abstract class Move {
   /** Returns the chance of a critical hit. Subclasses may override. */
   def getCriticalHitChance: Double = Move.BASE_CRITICAL_HIT_CHANCE
 
-  /** Returns the MoveEvents that are the result of thisPokemon using the move on otherPokemon. */
+  /** Returns the MoveEvents that are the result of thisPokemon using the move on otherPokemon.
+    * I just want to say, it was pretty painful figuring out these type annotations. */
   def getEventsFromMove(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
     DisplayMessage("%s used %s!".format(thisPokemon.getName, getName)) +:
-      getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
+      getMoveActions.flatMap{ action =>
+        var newHPSelf = thisPokemon.getCurrentStats.getHP
+        var newHPOther = otherPokemon.getCurrentStats.getHP
+        action.getResults(thisPokemon, otherPokemon).flatMap {
+          case DealDamageToSelf(amount) =>
+            newHPSelf = (thisPokemon.getCurrentStats.getHP - amount) max 0
+            Array(PlayHPBarAnimation(thisPokemon, newHPSelf), DealDamageToSelf(amount)): Array[MoveEvent]
+          case DealDamageToOpponent(amount) =>
+            newHPOther = (otherPokemon.getCurrentStats.getHP - amount) max 0
+            Array(PlayHPBarAnimation(otherPokemon, newHPOther), DealDamageToOpponent(amount)): Array[MoveEvent]
+          case other => Array(other): Array[MoveEvent]
+        }
+      }
 
   /** Returns the name of the move, in all caps. */
   def getName: String
