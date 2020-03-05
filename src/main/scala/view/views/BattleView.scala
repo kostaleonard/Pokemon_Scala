@@ -13,6 +13,7 @@ import model.pokemon.move._
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
+import view.views.drawing.Animation
 import view.views.drawing.animations.HPBarAnimation
 
 import scala.collection.mutable.ListBuffer
@@ -70,7 +71,8 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         menuActive = false
         processNextMoveEvent(battle.addHPBarAnimations(
           battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove())),
-          () => processNextMoveEvent(battle.addHPBarAnimations(battle.getAfterMoveSpecifications.toList), () => Unit))
+          () => processNextMoveEvent(battle.addHPBarAnimations(battle.getAfterMoveSpecifications.toList),
+            () => battleMessage = None))
         menuActive = true
         showTrainerMenu()
       })))
@@ -155,9 +157,8 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     }
     var recur_immediately = false
     events.head.moveEvent match {
-      case DisplayMessage(message, waitToClear) =>
+      case DisplayMessage(message) =>
         battleMessage = Some(createBattleMessage(message, () => {
-          if(!waitToClear) battleMessage = None
           processNextMoveEvent(events.tail, finalCallback)
         }))
       case PlayAnimationFromSource(path) =>
@@ -166,7 +167,6 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case PlayHPBarAnimation(animationPokemon, newHP) =>
         val callback = () => {
           hpBarAnimation = None
-          battleMessage = None
           processNextMoveEvent(events.tail, finalCallback)
         }
         val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else
@@ -197,7 +197,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   }
 
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = keyCode match{
+  override def keyPressed(keyCode: Int): Unit = if(hpBarAnimation.isEmpty) keyCode match{
     case KeyMappings.UP_KEY => if(menuActive) currentMenu.scrollUp()
     case KeyMappings.DOWN_KEY => if(menuActive) currentMenu.scrollDown()
     case KeyMappings.A_KEY =>
