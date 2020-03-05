@@ -69,6 +69,18 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     )
   }
 
+  /** Returns a List of MoveSpecifications that has HP bar animations added for display purposes. */
+  def addHPBarAnimations(moveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
+    moveSpecifications.flatMap{
+      case MoveSpecification(DealDamageToOpponent(amount), movingPokemon, otherPokemon) =>
+        Array(MoveSpecification(PlayHPBarAnimation(otherPokemon, amount), movingPokemon, otherPokemon),
+          MoveSpecification(DealDamageToOpponent(amount), movingPokemon, otherPokemon))
+      case MoveSpecification(DealDamageToSelf(amount), movingPokemon, otherPokemon) =>
+        Array(MoveSpecification(PlayHPBarAnimation(movingPokemon, amount), movingPokemon, otherPokemon),
+          MoveSpecification(DealDamageToSelf(amount), movingPokemon, otherPokemon))
+      case other => Array(other)
+  }
+
   /** Returns a new List of MoveSpecifications in the correct order for battle.  */
   def reorderMoveSpecifications(playerMoveSpecifications: MoveSpecificationCollection,
                                 opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {

@@ -68,8 +68,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
       moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
         menuActive = false
-        processNextMoveEvent(battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()),
-          () => processNextMoveEvent(battle.getAfterMoveSpecifications.toList, () => Unit))
+        processNextMoveEvent(battle.addHPBarAnimations(
+          battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove())),
+          () => processNextMoveEvent(battle.addHPBarAnimations(battle.getAfterMoveSpecifications.toList), () => Unit))
         menuActive = true
         showTrainerMenu()
       })))

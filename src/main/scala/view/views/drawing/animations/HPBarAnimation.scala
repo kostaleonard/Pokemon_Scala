@@ -11,7 +11,7 @@ object HPBarAnimation {
   val ANIMATION_FRAMES = 120
 }
 
-class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox, pokemon: Pokemon, newHP: Int)
+class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox, pokemon: Pokemon, amount: Int)
   extends Animation {
   setAnimationCallback(callback)
   protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
@@ -35,8 +35,8 @@ class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox,
     g2d.fillRect(100, 42, hp_full_width, 10)
     //g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
     g2d.setColor(Color.MAGENTA)
-    val drawHP = pokemon.getCurrentStats.getHP - (pokemon.getCurrentStats.getHP - newHP) *
-      (currentFrame.toDouble / HPBarAnimation.ANIMATION_FRAMES)
+    val drawHP = (pokemon.getCurrentStats.getHP - amount *
+      (currentFrame.toDouble / HPBarAnimation.ANIMATION_FRAMES)) max 0
     val hp_actual_width = (hp_full_width * drawHP / pokemon.getStandardStats.getHP).toInt
     g2d.fillRect(100, 42, hp_actual_width, 10)
     if(battleInfoBox.isHPDisplayed) {

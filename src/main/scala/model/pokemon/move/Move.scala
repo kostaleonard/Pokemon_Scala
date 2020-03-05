@@ -49,19 +49,7 @@ abstract class Move {
     * I just want to say, it was pretty painful figuring out these type annotations. */
   def getEventsFromMove(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
     DisplayMessage("%s used %s!".format(thisPokemon.getName, getName), true) +:
-      getMoveActions.flatMap{ action =>
-        var newHPSelf = thisPokemon.getCurrentStats.getHP
-        var newHPOther = otherPokemon.getCurrentStats.getHP
-        action.getResults(thisPokemon, otherPokemon).flatMap {
-          case DealDamageToSelf(amount) =>
-            newHPSelf = (thisPokemon.getCurrentStats.getHP - amount) max 0
-            Array(PlayHPBarAnimation(thisPokemon, newHPSelf), DealDamageToSelf(amount)): Array[MoveEvent]
-          case DealDamageToOpponent(amount) =>
-            newHPOther = (otherPokemon.getCurrentStats.getHP - amount) max 0
-            Array(PlayHPBarAnimation(otherPokemon, newHPOther), DealDamageToOpponent(amount)): Array[MoveEvent]
-          case other => Array(other): Array[MoveEvent]
-        }
-      }
+      getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
 
   /** Returns the name of the move, in all caps. */
   def getName: String
