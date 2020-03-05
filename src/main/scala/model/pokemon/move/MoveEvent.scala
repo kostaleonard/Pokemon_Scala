@@ -71,7 +71,7 @@ sealed trait MoveEvent {
   def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit
 }
 
-case class DisplayMessage(message: String, waitToClear: Boolean = false) extends MoveEvent {
+case class DisplayMessage(message: String) extends MoveEvent {
   /** DisplayMessage changes nothing in the model, but is used to send a message to the view. This message will be sent
     * to the user. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
