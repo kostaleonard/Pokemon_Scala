@@ -13,6 +13,7 @@ import model.pokemon.move._
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
+import view.views.drawing.Animation
 import view.views.drawing.animations.{EXPBarAnimation, HPBarAnimation}
 
 import scala.collection.mutable.ListBuffer
@@ -48,6 +49,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var menuActive: Boolean = true
   protected var hpBarAnimation: Option[HPBarAnimation] = None
   protected var expBarAnimation: Option[EXPBarAnimation] = None
+  protected var currentAnimation: Option[Animation] = None
 
   /** Ends the battle and returns the player to the Overworld. */
   def endBattle(): Unit = {
@@ -115,11 +117,13 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     println("EXP animation")
     val callback = () => {
       expBarAnimation = None
+      currentAnimation = None
       pokemon.getLevelTracker.gainExp(amount)
       finalCallback.apply()
     }
-
     expBarAnimation = Some(new EXPBarAnimation(Some(callback), playerPokemonInfoBox, pokemon, amount))
+    if(currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
+    currentAnimation = expBarAnimation
     expBarAnimation.get.start()
   }
 
@@ -172,11 +176,14 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case PlayHPBarAnimation(animationPokemon, amount) =>
         val callback = () => {
           hpBarAnimation = None
+          currentAnimation = None
           processNextMoveEvent(events.tail, finalCallback)
         }
         val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else
           opponentPokemonInfoBox
         hpBarAnimation = Some(new HPBarAnimation(Some(callback), infoBox, animationPokemon, amount))
+        if(currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
+        currentAnimation = hpBarAnimation
         hpBarAnimation.get.start()
       //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
@@ -202,7 +209,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   }
 
   /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = if(hpBarAnimation.isEmpty) keyCode match{
+  override def keyPressed(keyCode: Int): Unit = if(currentAnimation.isEmpty) keyCode match{
     case KeyMappings.UP_KEY => if(menuActive) currentMenu.scrollUp()
     case KeyMappings.DOWN_KEY => if(menuActive) currentMenu.scrollDown()
     case KeyMappings.A_KEY =>
@@ -353,6 +360,13 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     g2d.drawImage(hpBarAnimation.get.getImage, startX, startY,null)
   }
 
+  /** Draws the EXP bar animation. */
+  def drawEXPBarAnimation(g2d: Graphics2D): Unit = {
+    val startX = BattleInfoBox.SINGLE_PLAYER_OFFSET_X
+    val startY = BattleInfoBox.SINGLE_PLAYER_OFFSET_Y
+    g2d.drawImage(expBarAnimation.get.getImage, startX, startY, null)
+  }
+
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
@@ -374,6 +388,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     else if(menuActive && currentMenu == trainerMenu) drawTrainerMenu(g2d)
     else if(menuActive && currentMenu == moveMenu) drawMoveMenu(g2d)
     if(hpBarAnimation.nonEmpty && !hpBarAnimation.get.isAnimationComplete) drawHPBarAnimation(g2d)
+    if(expBarAnimation.nonEmpty && !expBarAnimation.get.isAnimationComplete) drawEXPBarAnimation(g2d)
     g2d.dispose()
     canvasImage
   }
@@ -391,9 +406,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = {
-    if(hpBarAnimation.nonEmpty) {
-      hpBarAnimation.get.advanceFrame()
-      if(hpBarAnimation.get.isAnimationComplete) hpBarAnimation.get.makeAnimationCallback()
+    if(currentAnimation.nonEmpty) {
+      currentAnimation.get.advanceFrame()
+      if(currentAnimation.get.isAnimationComplete) currentAnimation.get.makeAnimationCallback()
     }
   }
 }

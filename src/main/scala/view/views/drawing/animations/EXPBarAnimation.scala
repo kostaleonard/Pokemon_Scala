@@ -30,6 +30,7 @@ class EXPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
+    g2d.setFont(BattleInfoBox.HP_FONT)
     g2d.setColor(Color.BLACK)
     g2d.fillRect(0, getObjectHeight - 14, getObjectWidth, 14)
     g2d.setColor(BattleInfoBox.HP_FONT_COLOR)
