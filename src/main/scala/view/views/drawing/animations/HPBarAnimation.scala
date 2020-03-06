@@ -33,16 +33,19 @@ class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox,
     g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
     val hp_full_width = getObjectWidth - 107
     g2d.fillRect(100, 42, hp_full_width, 10)
-    //g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
-    g2d.setColor(Color.MAGENTA)
+    g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
     val drawHP = (pokemon.getCurrentStats.getHP - amount *
       (currentFrame.toDouble / HPBarAnimation.ANIMATION_FRAMES)) max 0
     val hp_actual_width = (hp_full_width * drawHP / pokemon.getStandardStats.getHP).toInt
     g2d.fillRect(100, 42, hp_actual_width, 10)
     if(battleInfoBox.isHPDisplayed) {
-      g2d.setColor(BattleInfoBox.DEFAULT_FONT_COLOR)
+      //TODO why does this font look slightly off during animation?
+      g2d.setFont(BattleInfoBox.HP_FONT)
       val hpString = "%d/%d".format(drawHP.toInt, pokemon.getStandardStats.getHP)
       val hpWidth = g2d.getFontMetrics(BattleInfoBox.HP_FONT).stringWidth(hpString)
+      g2d.setColor(BattleInfoBox.DEFAULT_BACKGROUND_COLOR)
+      g2d.fillRect(BattleInfoBox.BASE_SIZE_X - hpWidth - 6, 54, hpWidth, 18)
+      g2d.setColor(BattleInfoBox.DEFAULT_FONT_COLOR)
       g2d.drawString(hpString, BattleInfoBox.BASE_SIZE_X - hpWidth - 6, 68)
     }
     g2d.dispose()
