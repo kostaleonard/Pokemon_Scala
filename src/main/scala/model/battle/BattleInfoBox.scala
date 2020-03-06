@@ -79,11 +79,11 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
     g2d.setFont(BattleInfoBox.HP_FONT)
     g2d.drawString("HP", 63, 53)
     g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-    val hp_full_width = getObjectWidth - 107
-    g2d.fillRect(100, 42, hp_full_width, 10)
+    val hpFullWidth = getObjectWidth - 107
+    g2d.fillRect(100, 42, hpFullWidth, 10)
     g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
-    val hp_actual_width = hp_full_width * pokemon.getCurrentStats.getHP / pokemon.getStandardStats.getHP
-    g2d.fillRect(100, 42, hp_actual_width, 10)
+    val hpActualWidth = hpFullWidth * pokemon.getCurrentStats.getHP / pokemon.getStandardStats.getHP
+    g2d.fillRect(100, 42, hpActualWidth, 10)
     if(pokemon.getEffectTracker.getNonPersistentEffects.size > 1)
       println("Warning, attempting to display more than 1 persistent effect.")
     pokemon.getEffectTracker.getPersistentEffects.foreach{
@@ -129,15 +129,15 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
       g2d.fillRect(0, getObjectHeight - 14, getObjectWidth, 14)
       g2d.setColor(BattleInfoBox.HP_FONT_COLOR)
       g2d.drawString("EXP", BattleInfoBox.BORDER_THICKNESS * 2, 87)
-      val exp_full_width = getObjectWidth - 39
+      val expFullWidth = getObjectWidth - 39
       g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-      g2d.fillRect(37, getObjectHeight - 12, exp_full_width, 10)
+      g2d.fillRect(37, getObjectHeight - 12, expFullWidth, 10)
       //TODO make this more efficient by reusing references?
-      val exp_actual_width = exp_full_width min (exp_full_width * pokemon.getLevelTracker.getExperienceAtCurrentLevel /
+      val expActualWidth = expFullWidth min (expFullWidth * pokemon.getLevelTracker.getExperienceAtCurrentLevel /
         (pokemon.getLevelTracker.getTotalExperienceForNextLevel -
           pokemon.getLevelTracker.getTotalExperienceForCurrentLevel))
       g2d.setColor(BattleInfoBox.XP_FILL_COLOR)
-      g2d.fillRect(37, getObjectHeight - 12, exp_actual_width, 10)
+      g2d.fillRect(37, getObjectHeight - 12, expActualWidth, 10)
     }
     g2d.dispose()
     canvasImage

@@ -13,8 +13,7 @@ import model.pokemon.move._
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
-import view.views.drawing.Animation
-import view.views.drawing.animations.HPBarAnimation
+import view.views.drawing.animations.{EXPBarAnimation, HPBarAnimation}
 
 import scala.collection.mutable.ListBuffer
 
@@ -48,6 +47,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var currentMenu: BasicMenu = trainerMenu
   protected var menuActive: Boolean = true
   protected var hpBarAnimation: Option[HPBarAnimation] = None
+  protected var expBarAnimation: Option[EXPBarAnimation] = None
 
   /** Ends the battle and returns the player to the Overworld. */
   def endBattle(): Unit = {
@@ -113,10 +113,15 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Runs the experience gain animation, then makes the callback. */
   protected def runExpGainAnimation(pokemon: Pokemon, amount: Int, finalCallback: () => Unit): Unit = {
     println("EXP animation")
-    pokemon.getLevelTracker.gainExp(amount)
-    finalCallback.apply()
-  }
+    val callback = () => {
+      expBarAnimation = None
+      pokemon.getLevelTracker.gainExp(amount)
+      finalCallback.apply()
+    }
 
+    expBarAnimation = Some(new EXPBarAnimation(Some(callback), playerPokemonInfoBox, pokemon, amount))
+    expBarAnimation.get.start()
+  }
 
   /** Adds the given amount of experience to the pokemon, then makes the callback. */
   protected def gainExperience(pokemon: Pokemon, showMessage: Boolean, amount: Int, finalCallback: () => Unit): Unit = {
@@ -164,14 +169,14 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       case PlayAnimationFromSource(path) =>
         println("Animation at %s".format(path)) //TODO play animation.
         recur_immediately = true
-      case PlayHPBarAnimation(animationPokemon, newHP) =>
+      case PlayHPBarAnimation(animationPokemon, amount) =>
         val callback = () => {
           hpBarAnimation = None
           processNextMoveEvent(events.tail, finalCallback)
         }
         val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else
           opponentPokemonInfoBox
-        hpBarAnimation = Some(new HPBarAnimation(Some(callback), infoBox, animationPokemon, newHP))
+        hpBarAnimation = Some(new HPBarAnimation(Some(callback), infoBox, animationPokemon, amount))
         hpBarAnimation.get.start()
       //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>

@@ -7,11 +7,11 @@ import model.battle.BattleInfoBox
 import model.pokemon.Pokemon
 import view.views.drawing.Animation
 
-object HPBarAnimation {
+object EXPBarAnimation {
   val ANIMATION_FRAMES = 120
 }
 
-class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox, pokemon: Pokemon, amount: Int)
+class EXPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox, pokemon: Pokemon, amount: Int)
   extends Animation {
   setAnimationCallback(callback)
   protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
@@ -30,24 +30,21 @@ class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox,
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
+    g2d.setColor(Color.BLACK)
+    g2d.fillRect(0, getObjectHeight - 14, getObjectWidth, 14)
+    g2d.setColor(BattleInfoBox.HP_FONT_COLOR)
+    g2d.drawString("EXP", BattleInfoBox.BORDER_THICKNESS * 2, 87)
+    val expFullWidth = getObjectWidth - 39
     g2d.setColor(BattleInfoBox.HP_BACKGROUND_COLOR)
-    val hpFullWidth = getObjectWidth - 107
-    g2d.fillRect(100, 42, hpFullWidth, 10)
-    g2d.setColor(BattleInfoBox.HP_FILL_COLOR)
-    val drawHP = (pokemon.getCurrentStats.getHP - amount *
-      (currentFrame.toDouble / HPBarAnimation.ANIMATION_FRAMES)) max 0
-    val hpActualWidth = (hpFullWidth * drawHP / pokemon.getStandardStats.getHP).toInt
-    g2d.fillRect(100, 42, hpActualWidth, 10)
-    if(battleInfoBox.isHPDisplayed) {
-      //TODO why does this font look slightly off during animation?
-      g2d.setFont(BattleInfoBox.HP_FONT)
-      val hpString = "%d/%d".format(drawHP.toInt, pokemon.getStandardStats.getHP)
-      val hpWidth = g2d.getFontMetrics(BattleInfoBox.HP_FONT).stringWidth(hpString)
-      g2d.setColor(BattleInfoBox.DEFAULT_BACKGROUND_COLOR)
-      g2d.fillRect(BattleInfoBox.BASE_SIZE_X - hpWidth - 6, 54, hpWidth, 18)
-      g2d.setColor(BattleInfoBox.DEFAULT_FONT_COLOR)
-      g2d.drawString(hpString, BattleInfoBox.BASE_SIZE_X - hpWidth - 6, 68)
-    }
+    g2d.fillRect(37, getObjectHeight - 12, expFullWidth, 10)
+    val drawEXP = (pokemon.getLevelTracker.getExperienceAtCurrentLevel + amount *
+      (currentFrame.toDouble / EXPBarAnimation.ANIMATION_FRAMES)) min
+      (pokemon.getLevelTracker.getTotalExperienceForNextLevel - pokemon.getLevelTracker.getTotalExperienceForCurrentLevel)
+    val expActualWidth = expFullWidth min (expFullWidth * drawEXP /
+      (pokemon.getLevelTracker.getTotalExperienceForNextLevel -
+        pokemon.getLevelTracker.getTotalExperienceForCurrentLevel)).toInt
+    g2d.setColor(BattleInfoBox.XP_FILL_COLOR)
+    g2d.fillRect(37, getObjectHeight - 12, expActualWidth, 10)
     g2d.dispose()
     canvasImage
   }
@@ -56,7 +53,7 @@ class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox,
   override def getPrescaledImage: Option[BufferedImage] = Some(getImage)
 
   /** Returns true if the animation is complete. */
-  override def isAnimationComplete: Boolean = currentFrame >= HPBarAnimation.ANIMATION_FRAMES
+  override def isAnimationComplete: Boolean = currentFrame >= EXPBarAnimation.ANIMATION_FRAMES
 
   /** Progresses animations by one frame. Parent objects should call on all child objects they render. */
   override def advanceFrame(): Unit = if(running) currentFrame += 1
