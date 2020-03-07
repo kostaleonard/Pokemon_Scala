@@ -2,6 +2,7 @@ package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
 import model.pokemon.move.{AccuracyCheck, Move, MoveDamage, MoveEventGenerator}
+import view.views.drawing.Animation
 
 class Scratch extends Move {
   /** Returns the name of the move, in all caps. */
@@ -22,8 +23,8 @@ class Scratch extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scratches the foe with sharp claws."
 
-  /** Returns the path to the move's animation. */
-  def getAnimationPath: String = "TODO"
+  /** Returns the move's animation. */
+  override def getAnimation: Animation = Move.getPlaceholderAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = NormalType

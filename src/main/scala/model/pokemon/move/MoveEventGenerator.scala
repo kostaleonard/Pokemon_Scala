@@ -59,7 +59,7 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
       ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
       ) * modifier).toInt
 
-    result.append(PlayAnimationFromSource(move.getAnimationPath))
+    result.append(PlayAnimation(move.getAnimation))
     result.append(DealDamageToOpponent(damage))
     if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
     if(typeEffectiveness == 0) result.append(

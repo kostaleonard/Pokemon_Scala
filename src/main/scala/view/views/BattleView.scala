@@ -49,6 +49,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var menuActive: Boolean = true
   protected var hpBarAnimation: Option[HPBarAnimation] = None
   protected var expBarAnimation: Option[EXPBarAnimation] = None
+  protected var moveAnimation: Option[Animation] = None
   protected var currentAnimation: Option[Animation] = None
 
   /** Ends the battle and returns the player to the Overworld. */
@@ -114,7 +115,6 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Runs the experience gain animation, then makes the callback. */
   protected def runExpGainAnimation(pokemon: Pokemon, amount: Int, finalCallback: () => Unit): Unit = {
-    println("EXP animation")
     val callback = () => {
       expBarAnimation = None
       currentAnimation = None
@@ -170,9 +170,18 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         battleMessage = Some(createBattleMessage(message, () => {
           processNextMoveEvent(events.tail, finalCallback)
         }))
-      case PlayAnimationFromSource(path) =>
-        println("Animation at %s".format(path)) //TODO play animation.
-        recur_immediately = true
+      case PlayAnimation(animation) =>
+        println("Move animation starting")
+        val callback = () => {
+          moveAnimation = None
+          currentAnimation = None
+          processNextMoveEvent(events.tail, finalCallback)
+        }
+        animation.setAnimationCallback(Some(callback))
+        moveAnimation = Some(animation)
+        if(currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
+        currentAnimation = moveAnimation
+        moveAnimation.get.start()
       case PlayHPBarAnimation(animationPokemon, amount) =>
         val callback = () => {
           hpBarAnimation = None
@@ -367,6 +376,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     g2d.drawImage(expBarAnimation.get.getImage, startX, startY, null)
   }
 
+  /** Draws the move animation. */
+  def drawMoveAnimation(g2d: Graphics2D): Unit = g2d.drawImage(moveAnimation.get.getImage, 0, 0, null)
+
   /** Returns the object's image, which should be drawn on the canvasImage. This image may be scaled later. */
   override def getImage: BufferedImage = {
     val g2d = canvasImage.getGraphics.asInstanceOf[Graphics2D]
@@ -389,6 +401,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     else if(menuActive && currentMenu == moveMenu) drawMoveMenu(g2d)
     if(hpBarAnimation.nonEmpty && !hpBarAnimation.get.isAnimationComplete) drawHPBarAnimation(g2d)
     if(expBarAnimation.nonEmpty && !expBarAnimation.get.isAnimationComplete) drawEXPBarAnimation(g2d)
+    if(moveAnimation.nonEmpty && !moveAnimation.get.isAnimationComplete) drawMoveAnimation(g2d)
     g2d.dispose()
     canvasImage
   }

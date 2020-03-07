@@ -62,7 +62,7 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
       )
     var moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
     if(moveEvents.contains(EndMove)) moveEvents = moveEvents.take(moveEvents.indexOf(EndMove))
-    move.decrementPP
+    move.decrementPP()
     MoveSpecificationCollection(
       createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
       createMoveSpecifications(moveEvents, movingPokemon, otherPokemon)

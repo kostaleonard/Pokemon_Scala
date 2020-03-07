@@ -8,7 +8,7 @@ import model.pokemon.Pokemon
 import view.views.drawing.Animation
 
 object HPBarAnimation {
-  val ANIMATION_FRAMES = 120
+  val ANIMATION_FRAMES = 60
 }
 
 class HPBarAnimation(callback: Option[() => Unit], battleInfoBox: BattleInfoBox, pokemon: Pokemon, amount: Int)

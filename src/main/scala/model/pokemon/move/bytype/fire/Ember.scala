@@ -2,6 +2,8 @@ package model.pokemon.move.bytype.fire
 
 import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.move._
+import view.views.drawing.Animation
+import view.views.drawing.animations.EmberAnimation
 
 object Ember {
   val BURN_CHANCE = 0.1
@@ -26,8 +28,8 @@ class Ember extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "An attack that may inflict a burn."
 
-  /** Returns the path to the move's animation. */
-  def getAnimationPath: String = "TODO"
+  /** Returns the move's animation. */
+  override def getAnimation: Animation = new EmberAnimation(None)
 
   /** Returns the move's type. */
   override def getType: ElementalType = FireType

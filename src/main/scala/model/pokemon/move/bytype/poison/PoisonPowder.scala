@@ -2,6 +2,7 @@ package model.pokemon.move.bytype.poison
 
 import model.elementaltype.{ElementalType, PoisonType}
 import model.pokemon.move._
+import view.views.drawing.Animation
 
 class PoisonPowder extends Move {
   /** Returns the name of the move, in all caps. */
@@ -22,8 +23,8 @@ class PoisonPowder extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scatters a toxic powder that may poison the foe."
 
-  /** Returns the path to the move's animation. */
-  def getAnimationPath: String = "TODO"
+  /** Returns the move's animation. */
+  override def getAnimation: Animation = Move.getPlaceholderAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = PoisonType

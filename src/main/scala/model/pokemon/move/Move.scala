@@ -2,17 +2,22 @@ package model.pokemon.move
 
 import model.elementaltype.ElementalType
 import model.pokemon.Pokemon
+import view.views.drawing.Animation
+import view.views.drawing.animations.EmberAnimation
 
 object Move {
   val BASE_CRITICAL_HIT_CHANCE = 0.0625
 
   /** Returns standard max max PP for a given max PP. These are more like PP guidelines than laws. */
   def getMaxMaxPP(maxPP: Int): Int = maxPP * 8 / 5
+
+  /** Returns a placeholder animation for moves whose animations have not yet been implemented. */
+  def getPlaceholderAnimation: Animation = new EmberAnimation(None)
 }
 
 abstract class Move {
-  protected var maxPP = getInitialMaxPP
-  protected var currentPP = getMaxPP
+  protected var maxPP: Int = getInitialMaxPP
+  protected var currentPP: Int = getMaxPP
 
   /** Returns the current move PP. */
   def getCurrentPP: Int = currentPP
@@ -21,7 +26,7 @@ abstract class Move {
   def getMaxPP: Int = maxPP
 
   /** Sets the current PP to the max PP. */
-  def replenishPP: Unit = currentPP = maxPP
+  def replenishPP(): Unit = currentPP = maxPP
 
   /** Changes the maximum PP for this move. */
   def setMaxPP(value: Int): Unit =
@@ -37,7 +42,7 @@ abstract class Move {
     getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
 
   /** Lowers the current PP. */
-  def decrementPP: Unit = currentPP -= 1
+  def decrementPP(): Unit = currentPP -= 1
 
   /** Returns true if the current move has enough PP to be used. */
   def canUse: Boolean = currentPP > 0
@@ -69,8 +74,8 @@ abstract class Move {
   /** Returns the move's description. */
   def getDescription: String
 
-  /** Returns the path to the move's animation. */
-  def getAnimationPath: String
+  /** Returns the move's animation. */
+  def getAnimation: Animation
 
   /** Returns the move's type. */
   def getType: ElementalType

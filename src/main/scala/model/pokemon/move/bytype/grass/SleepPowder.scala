@@ -2,6 +2,7 @@ package model.pokemon.move.bytype.grass
 
 import model.elementaltype.{ElementalType, GrassType}
 import model.pokemon.move._
+import view.views.drawing.Animation
 
 import scala.util.Random
 
@@ -29,8 +30,8 @@ class SleepPowder extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scatters a powder that may cause the foe to sleep."
 
-  /** Returns the path to the move's animation. */
-  def getAnimationPath: String = "TODO"
+  /** Returns the move's animation. */
+  override def getAnimation: Animation = Move.getPlaceholderAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = GrassType

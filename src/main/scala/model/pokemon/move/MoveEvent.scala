@@ -2,6 +2,7 @@ package model.pokemon.move
 
 import model.pokemon.Pokemon
 import model.statuseffect._
+import view.views.drawing.Animation
 
 object MoveEvent {
   val DISPLAY_CRITICAL_HIT = DisplayMessage("Critical hit!")
@@ -77,7 +78,12 @@ case class DisplayMessage(message: String) extends MoveEvent {
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 
-//TODO animations--how to show which animation to play?
+case class PlayAnimation(animation: Animation) extends MoveEvent {
+  /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
+    * to the user. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
 case class PlayAnimationFromSource(path: String) extends MoveEvent {
   /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
     * to the user. */
