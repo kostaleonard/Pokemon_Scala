@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage
 
 import controller.{KeyMappings, SwitchViews}
 import model.Model
+import model.actor.PlayerCharacter
 import model.battle.Battle
 import model.board._
 import view.View
@@ -52,6 +53,20 @@ class OverworldView(override protected val model: Model) extends View(model) {
     randomEncounterAnimation.get.start()
   }
 
+  /** Returns the callback given to the playerCharacter on a move, based on the encounter. */
+  protected def getPlayerAnimationCallbackOnMove(encounter: Option[Battle], playerCharacter: PlayerCharacter):
+  Option[() => Unit] = {
+    if (encounter.nonEmpty) Some(() => {
+        queueRandomEncounter(encounter.get)
+        playerCharacter.setAnimationCallback(None)
+        playerCharacter.clearEncounterMap()
+      })
+    else Some(() => {
+      playerCharacter.setAnimationCallback(None)
+      playerCharacter.clearEncounterMap()
+    })
+  }
+
   /** The action taken when a movement key is pressed. */
   def movementKeyPressed(keyCode: Int): Unit = {
     val direction: Direction = keyCode match {
@@ -69,32 +84,13 @@ class OverworldView(override protected val model: Model) extends View(model) {
     if(!playerCharacter.isMoving && !playerCharacter.hasAnimationCallback) {
       val encounter = playerCharacter.getEncounterMap(destinationLoc)
       model.sendPlayerInDirection(direction)
-      if (encounter.nonEmpty) playerCharacter.setAnimationCallback(
-        Some(() => {
-          queueRandomEncounter(encounter.get)
-          playerCharacter.setAnimationCallback(None)
-          playerCharacter.clearEncounterMap()
-        }))
-      else playerCharacter.setAnimationCallback(Some(() => {
-        playerCharacter.setAnimationCallback(None)
-        playerCharacter.clearEncounterMap()
-      }))
+      playerCharacter.setAnimationCallback(getPlayerAnimationCallbackOnMove(encounter, playerCharacter))
     }
     else if (playerCharacter.isAlmostDoneMoving && !playerCharacter.hasAnimationCallback) playerCharacter.queueMove(
       () => {
         val encounter = playerCharacter.getEncounterMap(destinationLoc)
         model.sendPlayerInDirection(direction)
-        if(encounter.nonEmpty) playerCharacter.setAnimationCallback(
-          Some(() => {
-            queueRandomEncounter(encounter.get)
-            playerCharacter.setAnimationCallback(None)
-            playerCharacter.clearEncounterMap()
-          }))
-        else playerCharacter.setAnimationCallback(
-          Some(() => {
-            playerCharacter.setAnimationCallback(None)
-            playerCharacter.clearEncounterMap()
-          }))
+        playerCharacter.setAnimationCallback(getPlayerAnimationCallbackOnMove(encounter, playerCharacter))
       })
   }
 
