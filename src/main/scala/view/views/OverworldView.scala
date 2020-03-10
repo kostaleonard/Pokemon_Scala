@@ -69,8 +69,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
     if(!playerCharacter.isMoving && !playerCharacter.hasAnimationCallback) {
       val encounter = playerCharacter.getEncounterMap(destinationLoc)
       model.sendPlayerInDirection(direction)
-
-      if(encounter.nonEmpty) playerCharacter.setAnimationCallback(
+      if (encounter.nonEmpty) playerCharacter.setAnimationCallback(
         Some(() => {
           queueRandomEncounter(encounter.get)
           playerCharacter.setAnimationCallback(None)
@@ -81,17 +80,22 @@ class OverworldView(override protected val model: Model) extends View(model) {
         playerCharacter.clearEncounterMap()
       }))
     }
-      /*
-    else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+    else if (playerCharacter.isAlmostDoneMoving && !playerCharacter.hasAnimationCallback) playerCharacter.queueMove(
       () => {
-        model.sendPlayerInDirection(direction, randomEncounter)
-        if(randomEncounter.nonEmpty) playerCharacter.setAnimationCallback(
+        val encounter = playerCharacter.getEncounterMap(destinationLoc)
+        model.sendPlayerInDirection(direction)
+        if(encounter.nonEmpty) playerCharacter.setAnimationCallback(
           Some(() => {
-            queueRandomEncounter(randomEncounter.get)
+            queueRandomEncounter(encounter.get)
             playerCharacter.setAnimationCallback(None)
+            playerCharacter.clearEncounterMap()
+          }))
+        else playerCharacter.setAnimationCallback(
+          Some(() => {
+            playerCharacter.setAnimationCallback(None)
+            playerCharacter.clearEncounterMap()
           }))
       })
-      */
   }
 
   /** The action taken when a key is pressed and the View is in focus. */
