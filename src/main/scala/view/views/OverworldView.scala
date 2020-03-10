@@ -37,21 +37,15 @@ class OverworldView(override protected val model: Model) extends View(model) {
     )
   }
 
-  /** Tries to start a random encounter from the cell on which the player is standing. */
-  protected def tryStartRandomEncounter(): Unit = {
-    val playerCharacter = model.getPlayerCharacter
-    val newPlayerLoc = model.getPlayerLocation
-    if(newPlayerLoc.nonEmpty){
-      val cell = model.getCurrentBoard.getCells.apply(newPlayerLoc.get.row)(newPlayerLoc.get.col)
-      if(Random.nextDouble() < cell.getRandomEncounterChance){
-        val battle = new Battle(playerCharacter, None, Some(cell.getRandomWildPokemon))
-        playerCharacter.setAnimationCallback(
-          Some(() => {
-            queueRandomEncounter(battle)
-            playerCharacter.setAnimationCallback(None)
-          }))
-      }
+  /** Tries to start a random encounter from the given cell. */
+  protected def tryStartRandomEncounter(location: Location): Option[Battle] = {
+    println("Trying random encounter")
+    val cell = model.getCurrentBoard.getCells.apply(location.row)(location.col)
+    if(Random.nextDouble() < cell.getRandomEncounterChance) {
+      val battle = new Battle(model.getPlayerCharacter, None, Some(cell.getRandomWildPokemon))
+      Some(battle)
     }
+    else None
   }
 
   /** Starts the random encounter animation, and queues the view switch after this animation. */
@@ -61,42 +55,56 @@ class OverworldView(override protected val model: Model) extends View(model) {
     randomEncounterAnimation.get.start()
   }
 
-  //TODO clean this up.
-  /** The action taken when a key is pressed and the View is in focus. */
-  override def keyPressed(keyCode: Int): Unit = if(!inputFrozen) {
-    val playerCharacter = model.getPlayerCharacter
-    val playerLoc = model.getPlayerLocation
-    keyCode match {
-      case KeyMappings.DOWN_KEY =>
-        if (!playerCharacter.isMoving) {
-          playerLoc.map(_ => model.sendPlayerInDirection(South))
-          tryStartRandomEncounter()
-        }
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(South)))
-      case KeyMappings.UP_KEY =>
-        if (!playerCharacter.isMoving){
-          playerLoc.map(_ => model.sendPlayerInDirection(North))
-          tryStartRandomEncounter()
-        }
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(North)))
-      case KeyMappings.LEFT_KEY =>
-        if (!playerCharacter.isMoving){
-          playerLoc.map(_ => model.sendPlayerInDirection(West))
-          tryStartRandomEncounter()
-        }
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(West)))
-      case KeyMappings.RIGHT_KEY =>
-        if (!playerCharacter.isMoving){
-          playerLoc.map(_ => model.sendPlayerInDirection(East))
-          tryStartRandomEncounter()
-        }
-        else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
-          () => playerLoc.map(_ => model.sendPlayerInDirection(East)))
-      case _ => ;
+  /** The action taken when a movement key is pressed. */
+  def movementKeyPressed(keyCode: Int): Unit = {
+    val direction: Direction = keyCode match {
+      case KeyMappings.DOWN_KEY => South
+      case KeyMappings.UP_KEY => North
+      case KeyMappings.LEFT_KEY => West
+      case KeyMappings.RIGHT_KEY => East
     }
+    val playerCharacter = model.getPlayerCharacter
+    val destinationLoc = model.getCurrentBoard.getActorDestination(playerCharacter, direction)
+    if(!playerCharacter.getEncounterMap.contains(destinationLoc)) {
+      val randomEncounter = tryStartRandomEncounter(destinationLoc)
+      playerCharacter.addEncounterMapping(destinationLoc, randomEncounter)
+    }
+    if(!playerCharacter.isMoving && !playerCharacter.hasAnimationCallback) {
+      val encounter = playerCharacter.getEncounterMap(destinationLoc)
+      model.sendPlayerInDirection(direction, encounter)
+      println(playerCharacter.getEncounterMap)
+
+      if(encounter.nonEmpty) playerCharacter.setAnimationCallback(
+        Some(() => {
+          queueRandomEncounter(encounter.get)
+          playerCharacter.setAnimationCallback(None)
+          playerCharacter.clearEncounterMap()
+        }))
+      else playerCharacter.setAnimationCallback(Some(() => {
+        playerCharacter.setAnimationCallback(None)
+        playerCharacter.clearEncounterMap()
+      }))
+    }
+      /*
+    else if (playerCharacter.isAlmostDoneMoving) playerCharacter.queueMove(
+      () => {
+        model.sendPlayerInDirection(direction, randomEncounter)
+        if(randomEncounter.nonEmpty) playerCharacter.setAnimationCallback(
+          Some(() => {
+            queueRandomEncounter(randomEncounter.get)
+            playerCharacter.setAnimationCallback(None)
+          }))
+      })
+      */
+  }
+
+  /** The action taken when a key is pressed and the View is in focus. */
+  override def keyPressed(keyCode: Int): Unit = if(!inputFrozen) keyCode match {
+    case KeyMappings.DOWN_KEY => movementKeyPressed(keyCode)
+    case KeyMappings.UP_KEY => movementKeyPressed(keyCode)
+    case KeyMappings.LEFT_KEY => movementKeyPressed(keyCode)
+    case KeyMappings.RIGHT_KEY => movementKeyPressed(keyCode)
+    case _ => ;
   }
 
   /** The action taken when a key is released and the View is in focus. */

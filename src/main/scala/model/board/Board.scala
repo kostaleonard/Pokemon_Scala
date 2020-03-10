@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage
 
 import model.board.cells._
 import model.actor.{Actor, Trainer}
+import model.battle.Battle
 import model.item.Item
 import view.View
 import view.views.drawing.{Animation, Drawable}
@@ -91,8 +92,24 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   def isValidLocation(loc: Location): Boolean = loc.row >= 0 && loc.col >= 0 &&
     loc.row < cells.length && loc.col < cells.head.length
 
+  /** Returns the destination of the actor's movement in a given direction. */
+  def getActorDestination(actor: Actor, direction: Direction): Location = {
+    val actorLoc = getBoardObjectLocation(actor)
+    if(actorLoc.isEmpty) throw new UnsupportedOperationException("Actor not found on board.")
+    if(actor.getFacingDirection != direction) actorLoc.get
+    else {
+      val destination = direction match {
+        case North => Location(actorLoc.get.row - 1, actorLoc.get.col)
+        case East => Location(actorLoc.get.row, actorLoc.get.col + 1)
+        case South => Location(actorLoc.get.row + 1, actorLoc.get.col)
+        case West => Location(actorLoc.get.row, actorLoc.get.col - 1)
+      }
+      if (isValidLocation(destination)) destination else actorLoc.get
+    }
+  }
+
   /** Moves the actor in the given direction. */
-  protected def moveActor(actor: Actor, direction: Direction): Unit = {
+  protected def moveActor(actor: Actor, direction: Direction, encounter: Option[Battle]): Unit = {
     val actorLoc = getBoardObjectLocation(actor)
     if(actorLoc.isEmpty) throw new UnsupportedOperationException("Actor not found on board.")
     val destination = direction match {
@@ -117,9 +134,10 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
 
   /** Sends the actor in the given direction. If they are not facing this direction, performs a turn; if they are,
     * performs a move. */
-  def sendActorInDirection(actor: Actor, direction: Direction): Unit = {
+  def sendActorInDirection(actor: Actor, direction: Direction, encounter: Option[Battle]): Unit = {
     if(actor.isMoving) throw new UnsupportedOperationException("Cannot move actor when they are already moving.")
-    if(actor.getFacingDirection == direction) moveActor(actor, direction) else turnActor(actor, direction)
+    if(actor.getFacingDirection == direction) moveActor(actor, direction, encounter)
+    else turnActor(actor, direction)
   }
 
   /** Returns the object's width. */

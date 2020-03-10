@@ -4,6 +4,7 @@ import java.io._
 
 import model.board._
 import model.actor.PlayerCharacter
+import model.battle.Battle
 import model.party.Party
 import model.pokemon.exp.LevelTracker
 import model.pokemon.species.MissingNo
@@ -79,8 +80,8 @@ class Model(protected val profileName: String) extends Serializable {
 
   /** Sends the player in the given direction. If they are not facing this direction, performs a turn; if they are,
     * performs a move. */
-  def sendPlayerInDirection(direction: Direction): Unit = {
-    currentBoard.sendActorInDirection(playerCharacter, direction)
+  def sendPlayerInDirection(direction: Direction, encounter: Option[Battle]): Unit = {
+    currentBoard.sendActorInDirection(playerCharacter, direction, encounter)
     currentBoard.setCenteredLocation(getPlayerLocation.get)
   }
 

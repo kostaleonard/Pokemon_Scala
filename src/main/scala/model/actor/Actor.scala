@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 
 import javax.imageio.ImageIO
+import model.battle.Battle
 import model.board._
 import view.View
 
@@ -69,6 +70,8 @@ class Actor extends BoardObject {
   protected var queuedMove: Option[() => Unit] = None
   protected var facingDirection: Direction = South
   protected var onLeftFoot: Boolean = true
+  protected val encounterMap: scala.collection.mutable.Map[Location, Option[Battle]] =
+    scala.collection.mutable.Map.empty
 
   /** Returns the player's current avatar. */
   def getAvatar: Image = Actor.playerAvatarMap(avatarFrame)
@@ -112,6 +115,19 @@ class Actor extends BoardObject {
   /** Returns true if the character is moving. */
   def isMoving: Boolean = drawOffsetX != 0 || drawOffsetY != 0
 
+  /** Returns true if the actor has a pending callback, and thus cannot move. */
+  def hasAnimationCallback: Boolean = animationCallback.nonEmpty
+
+  /** Returns the encounter map. */
+  def getEncounterMap: scala.collection.mutable.Map[Location, Option[Battle]] = encounterMap
+
+  /** Adds a mapping to the encounter map. */
+  def addEncounterMapping(location: Location, encounter: Option[Battle]): Unit =
+    encounterMap += (location -> encounter)
+
+  /** Empties the encounter map. */
+  def clearEncounterMap(): Unit = encounterMap.clear()
+
   /** Returns true if the character is almost done moving so that the next move can be scheduled. This is just for
     * player quality of life. */
   def isAlmostDoneMoving: Boolean =
@@ -147,7 +163,7 @@ class Actor extends BoardObject {
       queuedMove = None
       animationCallback.get.apply()
     }
-    if(!isMoving && queuedMove.nonEmpty){
+    else if(!isMoving && queuedMove.nonEmpty){
       queuedMove.get.apply()
       queuedMove = None
     }
