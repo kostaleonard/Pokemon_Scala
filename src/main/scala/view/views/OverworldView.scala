@@ -39,12 +39,9 @@ class OverworldView(override protected val model: Model) extends View(model) {
 
   /** Tries to start a random encounter from the given cell. */
   protected def tryStartRandomEncounter(location: Location): Option[Battle] = {
-    println("Trying random encounter")
     val cell = model.getCurrentBoard.getCells.apply(location.row)(location.col)
-    if(Random.nextDouble() < cell.getRandomEncounterChance) {
-      val battle = new Battle(model.getPlayerCharacter, None, Some(cell.getRandomWildPokemon))
-      Some(battle)
-    }
+    if(Random.nextDouble() < cell.getRandomEncounterChance)
+      Some(new Battle(model.getPlayerCharacter, None, Some(cell.getRandomWildPokemon)))
     else None
   }
 
@@ -71,8 +68,7 @@ class OverworldView(override protected val model: Model) extends View(model) {
     }
     if(!playerCharacter.isMoving && !playerCharacter.hasAnimationCallback) {
       val encounter = playerCharacter.getEncounterMap(destinationLoc)
-      model.sendPlayerInDirection(direction, encounter)
-      println(playerCharacter.getEncounterMap)
+      model.sendPlayerInDirection(direction)
 
       if(encounter.nonEmpty) playerCharacter.setAnimationCallback(
         Some(() => {

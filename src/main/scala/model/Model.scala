@@ -80,8 +80,8 @@ class Model(protected val profileName: String) extends Serializable {
 
   /** Sends the player in the given direction. If they are not facing this direction, performs a turn; if they are,
     * performs a move. */
-  def sendPlayerInDirection(direction: Direction, encounter: Option[Battle]): Unit = {
-    currentBoard.sendActorInDirection(playerCharacter, direction, encounter)
+  def sendPlayerInDirection(direction: Direction): Unit = {
+    currentBoard.sendActorInDirection(playerCharacter, direction)
     currentBoard.setCenteredLocation(getPlayerLocation.get)
   }
 

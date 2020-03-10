@@ -109,7 +109,7 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
   }
 
   /** Moves the actor in the given direction. */
-  protected def moveActor(actor: Actor, direction: Direction, encounter: Option[Battle]): Unit = {
+  protected def moveActor(actor: Actor, direction: Direction): Unit = {
     val actorLoc = getBoardObjectLocation(actor)
     if(actorLoc.isEmpty) throw new UnsupportedOperationException("Actor not found on board.")
     val destination = direction match {
@@ -134,9 +134,9 @@ class Board(protected val cells: Array[Array[Cell]], protected val spawnLocation
 
   /** Sends the actor in the given direction. If they are not facing this direction, performs a turn; if they are,
     * performs a move. */
-  def sendActorInDirection(actor: Actor, direction: Direction, encounter: Option[Battle]): Unit = {
+  def sendActorInDirection(actor: Actor, direction: Direction): Unit = {
     if(actor.isMoving) throw new UnsupportedOperationException("Cannot move actor when they are already moving.")
-    if(actor.getFacingDirection == direction) moveActor(actor, direction, encounter)
+    if(actor.getFacingDirection == direction) moveActor(actor, direction)
     else turnActor(actor, direction)
   }
 
