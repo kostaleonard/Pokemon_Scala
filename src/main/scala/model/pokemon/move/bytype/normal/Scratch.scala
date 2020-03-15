@@ -1,7 +1,7 @@
 package model.pokemon.move.bytype.normal
 
 import model.elementaltype.{ElementalType, NormalType}
-import model.pokemon.move.{AccuracyCheck, Move, MoveDamage, MoveEventGenerator}
+import model.pokemon.move._
 import view.views.drawing.Animation
 
 class Scratch extends Move {

@@ -38,6 +38,6 @@ class PoisonPowder extends Move {
 
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
-    Array(AccuracyCheck(getAccuracy), TryPoison(1.0, true, false))
+    Array(AccuracyCheck(getAccuracy), TryPoison(1.0, true, false, Some(getAnimation)))
 }
 

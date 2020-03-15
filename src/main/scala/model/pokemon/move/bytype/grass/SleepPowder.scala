@@ -46,6 +46,6 @@ class SleepPowder extends Move {
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
     Array(AccuracyCheck(getAccuracy), TrySleep(1.0, true,
-      Random.nextInt(SleepPowder.MAX_TURNS - SleepPowder.MIN_TURNS) + SleepPowder.MIN_TURNS))
+      Random.nextInt(SleepPowder.MAX_TURNS - SleepPowder.MIN_TURNS) + SleepPowder.MIN_TURNS, Some(getAnimation)))
 }
 
