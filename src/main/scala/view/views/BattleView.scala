@@ -171,7 +171,6 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           processNextMoveEvent(events.tail, finalCallback)
         }))
       case PlayAnimation(animation) =>
-        println("Move animation starting")
         val callback = () => {
           moveAnimation = None
           currentAnimation = None

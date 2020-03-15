@@ -13,6 +13,12 @@ object Move {
 
   /** Returns a placeholder animation for moves whose animations have not yet been implemented. */
   def getPlaceholderAnimation: Animation = new EmberAnimation(None)
+
+  /** Returns the turnly poison animation. */
+  def getTurnlyPoisonAnimation: Animation = getPlaceholderAnimation
+
+  /** Returns the turnly poison animation. */
+  def getTurnlyBurnAnimation: Animation = getPlaceholderAnimation
 }
 
 abstract class Move {

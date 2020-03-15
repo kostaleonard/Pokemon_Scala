@@ -136,8 +136,7 @@ case object TurnlyBurnDamage extends MoveEventGenerator {
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
     result.append(MoveEvent.getDisplayMessageHurtByBurn(thisPokemon.getName))
-    //TODO get burn animation.
-    result.append(PlayAnimationFromSource("TODO"))
+    result.append(PlayAnimation(Move.getTurnlyBurnAnimation))
     val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt //TODO magic numbers
     result.append(DealDamageToSelf(damage))
     if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
@@ -151,8 +150,7 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveEventGenerator {
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     val result = ListBuffer.empty[MoveEvent]
     result.append(MoveEvent.getDisplayMessageHurtByPoison(thisPokemon.getName))
-    //TODO get poison animation.
-    result.append(PlayAnimationFromSource("TODO"))
+    result.append(PlayAnimation(Move.getTurnlyPoisonAnimation))
     val damage = (thisPokemon.getStandardStats.getHP * portionMaxHP).toInt
     result.append(DealDamageToSelf(damage))
     result.append(WorsenPoisonSelf)
