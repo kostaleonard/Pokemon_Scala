@@ -51,6 +51,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   protected var expBarAnimation: Option[EXPBarAnimation] = None
   protected var moveAnimation: Option[Animation] = None
   protected var currentAnimation: Option[Animation] = None
+  protected var waitingOnUserInput: Option[() => Unit] = None
 
   /** Ends the battle and returns the player to the Overworld. */
   def endBattle(): Unit = {
@@ -214,9 +215,10 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
-        else distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.
+        else distributeExperience(() => waitingOnUserInput = Some(() => endBattle())) //TODO if this is a trainer battle, it's a little more complicated.
       case FaintOther =>
-        if(events.head.movingPokemon == battle.getPlayerPokemon) distributeExperience(() => endBattle()) //TODO if this is a trainer battle, it's a little more complicated.
+        if(events.head.movingPokemon == battle.getPlayerPokemon) distributeExperience(() =>
+          waitingOnUserInput = Some(() => endBattle())) //TODO if this is a trainer battle, it's a little more complicated.
         else ??? //TODO player pokemon faints.
       case _ => recur_immediately = true
     }
@@ -239,7 +241,8 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     case KeyMappings.UP_KEY => if(menuActive) currentMenu.scrollUp()
     case KeyMappings.DOWN_KEY => if(menuActive) currentMenu.scrollDown()
     case KeyMappings.A_KEY =>
-      if(battleMessage.nonEmpty && battleMessage.get.isOnLastPage(BattleView.BATTLE_MESSAGE_LINES_PER_PAGE))
+      if(waitingOnUserInput.nonEmpty) waitingOnUserInput.get.apply()
+      else if(battleMessage.nonEmpty && battleMessage.get.isOnLastPage(BattleView.BATTLE_MESSAGE_LINES_PER_PAGE))
         battleMessage.get.callbackOnMessageComplete.apply()
       else if(battleMessage.nonEmpty) advanceBattleMessage()
       else if(menuActive) currentMenu.makeSelection()
