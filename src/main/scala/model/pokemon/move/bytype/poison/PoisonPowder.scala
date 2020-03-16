@@ -23,8 +23,11 @@ class PoisonPowder extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scatters a toxic powder that may poison the foe."
 
-  /** Returns the move's animation. */
-  override def getAnimation: Animation = Move.getPlaceholderAnimation
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Animation = Move.getPlaceholderPlayerAnimation
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Animation = Move.getPlaceholderOpponentAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = PoisonType
@@ -38,6 +41,6 @@ class PoisonPowder extends Move {
 
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
-    Array(AccuracyCheck(getAccuracy), TryPoison(1.0, true, false, Some(getAnimation)))
+    Array(AccuracyCheck(getAccuracy), TryPoison(1.0, true, false, Some(this)))
 }
 

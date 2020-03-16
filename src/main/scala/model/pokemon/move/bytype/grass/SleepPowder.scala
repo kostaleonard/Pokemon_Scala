@@ -30,8 +30,11 @@ class SleepPowder extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scatters a powder that may cause the foe to sleep."
 
-  /** Returns the move's animation. */
-  override def getAnimation: Animation = Move.getPlaceholderAnimation
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Animation = Move.getPlaceholderPlayerAnimation
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Animation = Move.getPlaceholderOpponentAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = GrassType
@@ -46,6 +49,6 @@ class SleepPowder extends Move {
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
     Array(AccuracyCheck(getAccuracy), TrySleep(1.0, true,
-      Random.nextInt(SleepPowder.MAX_TURNS - SleepPowder.MIN_TURNS) + SleepPowder.MIN_TURNS, Some(getAnimation)))
+      Random.nextInt(SleepPowder.MAX_TURNS - SleepPowder.MIN_TURNS) + SleepPowder.MIN_TURNS, Some(this)))
 }
 

@@ -23,8 +23,11 @@ class Scratch extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Scratches the foe with sharp claws."
 
-  /** Returns the move's animation. */
-  override def getAnimation: Animation = Move.getPlaceholderAnimation
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Animation = Move.getPlaceholderPlayerAnimation
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Animation = Move.getPlaceholderOpponentAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = NormalType

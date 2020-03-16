@@ -86,7 +86,7 @@ class BattleInfoBox(pokemon: Pokemon, isPlayerPokemon: Boolean) extends Drawable
     g2d.fillRect(100, 42, hpActualWidth, 10)
     if(pokemon.getEffectTracker.getNonPersistentEffects.size > 1)
       println("Warning, attempting to display more than 1 persistent effect.")
-    pokemon.getEffectTracker.getPersistentEffects.foreach{
+    pokemon.getEffectTracker.getPersistentEffect.foreach{
       case Burn =>
         g2d.setColor(FireType.getTypeColor)
         g2d.fillRect(20, 40, 36, 14)

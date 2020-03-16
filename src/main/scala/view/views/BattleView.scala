@@ -158,6 +158,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     distributeNextExperience(pokemonGainingExp)
   }
 
+  //TODO honestly this is pretty ugly.
   /** Recursively processes one battle event at a time. This allows messages and animations to callback. */
   protected def processNextMoveEvent(events: List[MoveSpecification], finalCallback: () => Unit): Unit = {
     if(events.isEmpty) {
@@ -170,17 +171,34 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         battleMessage = Some(createBattleMessage(message, () => {
           processNextMoveEvent(events.tail, finalCallback)
         }))
-      case PlayAnimation(animation) =>
+      case PlayMoveAnimation(move) =>
         val callback = () => {
           moveAnimation = None
           currentAnimation = None
           processNextMoveEvent(events.tail, finalCallback)
         }
+        val animation = if(events.head.movingPokemon == battle.getPlayerPokemon) move.getPlayerAnimation
+        else move.getOpponentAnimation
         animation.setAnimationCallback(Some(callback))
         moveAnimation = Some(animation)
         if(currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
         currentAnimation = moveAnimation
         moveAnimation.get.start()
+      case PlayEffectAnimation(effect) =>
+        val callback = () => {
+          moveAnimation = None
+          currentAnimation = None
+          processNextMoveEvent(events.tail, finalCallback)
+        }
+        val animation = if(events.head.movingPokemon == battle.getPlayerPokemon) effect.getPlayerAnimation
+        else effect.getOpponentAnimation
+        if(animation.nonEmpty) {
+          animation.get.setAnimationCallback(Some(callback))
+          moveAnimation = Some(animation.get)
+          if (currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
+          currentAnimation = moveAnimation
+          moveAnimation.get.start()
+        }
       case PlayHPBarAnimation(animationPokemon, amount) =>
         val callback = () => {
           hpBarAnimation = None

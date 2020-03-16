@@ -1,7 +1,8 @@
 package model.statuseffect
 
 import model.pokemon.Pokemon
-import model.pokemon.move.{TurnlyTryThaw, MoveEventGenerator, TurnlyBurnDamage, TurnlyPoisonDamage}
+import model.pokemon.move._
+import view.views.drawing.Animation
 
 sealed trait StatusEffect extends Ordered[StatusEffect] {
   val SLEEP_ORDER = -3
@@ -31,6 +32,12 @@ sealed trait StatusEffect extends Ordered[StatusEffect] {
   //TODO this method does not seem to require these arguments.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator]
+
+  /** Returns the move's animation from the player perspective. */
+  def getPlayerAnimation: Option[Animation]
+
+  /** Returns the move's animation from the opponent perspective. */
+  def getOpponentAnimation: Option[Animation]
 }
 
 sealed trait PersistentEffect extends StatusEffect {
@@ -75,6 +82,12 @@ case object Burn extends PersistentEffect {
 
   /** Returns an empty List. Burn does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
 }
 
 case object Paralyze extends PersistentEffect {
@@ -105,6 +118,12 @@ case object Paralyze extends PersistentEffect {
 
   /** Returns an empty List. Paralyze does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
 }
 
 case class Sleep(turnsRemaining: Int) extends PersistentEffect {
@@ -135,6 +154,12 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
 
   /** Returns an empty List. Sleep does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
 }
 
 case object Frozen extends PersistentEffect {
@@ -162,6 +187,12 @@ case object Frozen extends PersistentEffect {
 
   /** Returns an empty List. Frozen does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
 }
 
 //TODO could add another constructor arg to keep track of step % NUM_STEPS_TO_DAMAGE.
@@ -195,4 +226,10 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
   //TODO poison should damage pokemon every 4 steps.
   /** TODO. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
 }

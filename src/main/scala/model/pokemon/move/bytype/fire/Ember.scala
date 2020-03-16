@@ -28,8 +28,11 @@ class Ember extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "An attack that may inflict a burn."
 
-  /** Returns the move's animation. */
-  override def getAnimation: Animation = new EmberAnimation(None)
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Animation = new EmberAnimation(true, None)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Animation = new EmberAnimation(false, None)
 
   /** Returns the move's type. */
   override def getType: ElementalType = FireType

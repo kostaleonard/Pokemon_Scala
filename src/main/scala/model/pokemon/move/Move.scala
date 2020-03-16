@@ -11,14 +11,17 @@ object Move {
   /** Returns standard max max PP for a given max PP. These are more like PP guidelines than laws. */
   def getMaxMaxPP(maxPP: Int): Int = maxPP * 8 / 5
 
-  /** Returns a placeholder animation for moves whose animations have not yet been implemented. */
-  def getPlaceholderAnimation: Animation = new EmberAnimation(None)
+  /** Returns a placeholder animation for moves whose animations have not yet been implemented. From player POV. */
+  def getPlaceholderPlayerAnimation: Animation = new EmberAnimation(true, None)
+
+  /** Returns a placeholder animation for moves whose animations have not yet been implemented. From opponent POV. */
+  def getPlaceholderOpponentAnimation: Animation = new EmberAnimation(false, None)
 
   /** Returns the turnly poison animation. */
-  def getTurnlyPoisonAnimation: Animation = getPlaceholderAnimation
+  def getTurnlyPoisonAnimation: Animation = ???
 
   /** Returns the turnly poison animation. */
-  def getTurnlyBurnAnimation: Animation = getPlaceholderAnimation
+  def getTurnlyBurnAnimation: Animation = ???
 }
 
 abstract class Move {
@@ -80,8 +83,11 @@ abstract class Move {
   /** Returns the move's description. */
   def getDescription: String
 
-  /** Returns the move's animation. */
-  def getAnimation: Animation
+  /** Returns the move's animation from the player perspective. */
+  def getPlayerAnimation: Animation
+
+  /** Returns the move's animation from the opponent perspective. */
+  def getOpponentAnimation: Animation
 
   /** Returns the move's type. */
   def getType: ElementalType

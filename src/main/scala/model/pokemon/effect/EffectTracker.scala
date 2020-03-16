@@ -11,14 +11,22 @@ class EffectTracker {
   def getEffects: Set[StatusEffect] = effects
 
   /** Returns the Set of persistent effects. */
-  def getPersistentEffects: Set[PersistentEffect] = effects.filter(_.isPersistent).asInstanceOf[Set[PersistentEffect]]
+  def getPersistentEffect: Option[PersistentEffect] = effects.filter(_.isPersistent).toList
+    .asInstanceOf[List[PersistentEffect]] match {
+    case List() => None
+    case List(effect) => Some(effect)
+    case _ => throw new UnsupportedOperationException("Too many persistent effects; max 1.")
+  }
 
   /** Returns the Set of non-persistent effects. */
   def getNonPersistentEffects: Set[NonPersistentEffect] = effects.filterNot(_.isPersistent)
     .asInstanceOf[Set[NonPersistentEffect]]
 
   /** Adds the effect if not already present. */
-  def addEffect(effect: StatusEffect): Unit = effects += effect
+  def addEffect(effect: StatusEffect): Unit =
+    if(effect.isPersistent && getPersistentEffect.nonEmpty) throw new UnsupportedOperationException(
+      "Cannot add second persistent effect.")
+    else effects += effect
 
   /** Removes the effect if present. */
   def removeEffect(effect: StatusEffect): Unit = effects -= effect

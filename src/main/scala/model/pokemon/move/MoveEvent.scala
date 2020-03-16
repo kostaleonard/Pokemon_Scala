@@ -78,7 +78,13 @@ case class DisplayMessage(message: String) extends MoveEvent {
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 
-case class PlayAnimation(animation: Animation) extends MoveEvent {
+case class PlayMoveAnimation(move: Move) extends MoveEvent {
+  /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
+    * to the user. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
+case class PlayEffectAnimation(effect: StatusEffect) extends MoveEvent {
   /** PlayAnimation changes nothing in the model, but is used to send a message to the view. This message will be sent
     * to the user. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
@@ -162,5 +168,5 @@ case object DecrementSleepCounterSelf extends MoveEvent {
 case object RemoveFrozenSelf extends MoveEvent {
   /** Removes the Frozen status effect from this Pokemon */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker.removeEffect(
-    thisPokemon.getEffectTracker.getPersistentEffects.find(_.getIdentifier == Frozen.getIdentifier).get)
+    thisPokemon.getEffectTracker.getPersistentEffect.find(_.getIdentifier == Frozen.getIdentifier).get)
 }

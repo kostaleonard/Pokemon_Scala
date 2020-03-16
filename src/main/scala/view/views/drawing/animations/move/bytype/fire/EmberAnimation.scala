@@ -18,7 +18,7 @@ object EmberAnimation {
     "sprites/moves/EMBER/flame2.png")))
 }
 
-class EmberAnimation(callback: Option[() => Unit])
+class EmberAnimation(fromPlayerPOV: Boolean, callback: Option[() => Unit])
   extends Animation {
   setAnimationCallback(callback)
   protected var canvasImage: BufferedImage = new BufferedImage(getObjectWidth, getObjectHeight,
@@ -38,7 +38,8 @@ class EmberAnimation(callback: Option[() => Unit])
     drawOffsetX = currentFrame * 3
     drawOffsetY = currentFrame / 2
     val fireImage = if((currentFrame / 10) % 2 == 0) EmberAnimation.FIRE_IMAGE_1 else EmberAnimation.FIRE_IMAGE_2
-    g2d.drawImage(fireImage, 625 + drawOffsetX, 210 - drawOffsetY, null)
+    if(fromPlayerPOV) g2d.drawImage(fireImage, 625 + drawOffsetX, 210 - drawOffsetY, null)
+    else g2d.drawImage(fireImage, 100 + drawOffsetX, 360 - drawOffsetY, null)
     g2d.dispose()
     canvasImage
   }

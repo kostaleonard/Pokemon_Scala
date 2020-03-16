@@ -23,8 +23,11 @@ class Tackle extends Move {
   /** Returns the move's description. */
   override def getDescription: String = "Charges the foe with a full-body tackle."
 
-  /** Returns the move's animation. */
-  override def getAnimation: Animation = Move.getPlaceholderAnimation
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Animation = Move.getPlaceholderPlayerAnimation
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Animation = Move.getPlaceholderOpponentAnimation
 
   /** Returns the move's type. */
   override def getType: ElementalType = NormalType
