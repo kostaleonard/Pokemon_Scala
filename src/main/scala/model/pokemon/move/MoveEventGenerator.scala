@@ -111,7 +111,7 @@ case class TryPoison(probability: Double, displayFailure: Boolean, badly: Boolea
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
     if(otherPokemon.getEffectTracker.getPersistentEffect.isEmpty && Random.nextDouble() < probability) {
       val animationEvents = if(moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
-      animationEvents ++ List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName),
+      animationEvents ++ List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName, badly),
         InflictEffectOnOpponent(Poison(badly, 1)))
     }
     else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove)

@@ -27,8 +27,9 @@ object MoveEvent {
     DisplayMessage("%s was hurt by its burn.".format(pokemonName))
 
   /** Returns the DisplayMessage used when a Pokemon is poisoned. */
-  def getDisplayMessagePoisoned(pokemonName: String): DisplayMessage =
-    DisplayMessage("%s was poisoned.".format(pokemonName))
+  def getDisplayMessagePoisoned(pokemonName: String, badly: Boolean): DisplayMessage =
+    if(badly) DisplayMessage("%s was badly poisoned.".format(pokemonName))
+    else DisplayMessage("%s was poisoned.".format(pokemonName))
 
   /** Returns the DisplayMessage used when a Pokemon is hurt by poison. */
   def getDisplayMessageHurtByPoison(pokemonName: String): DisplayMessage =
