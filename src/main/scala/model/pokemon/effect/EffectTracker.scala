@@ -34,6 +34,9 @@ class EffectTracker {
   /** Removes all non-persistent effects. */
   def removeNonPersistentEffects(): Unit = getNonPersistentEffects.foreach(removeEffect)
 
+  /** Removes the persistent effect, if there is one. */
+  def removePersistentEffect(): Unit = getPersistentEffect.foreach(removeEffect)
+
   /** Removes all effects. */
   def clearEffects(): Unit = effects = Set.empty
 

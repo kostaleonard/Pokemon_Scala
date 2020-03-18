@@ -161,16 +161,22 @@ case class TurnlyPoisonDamage(portionMaxHP: Double) extends MoveEventGenerator {
   }
 }
 
-case object TurnlySleep extends MoveEventGenerator {
+case class TurnlySleep(turnsRemaining: Int) extends MoveEventGenerator {
   /** Decrements the sleep counter and sends a message if the Pokemon is fast asleep, or wakes up.
    *  In special cases, the Pokemon can still move. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
-    //TODO TurnlySleep
     val result = ListBuffer.empty[MoveEvent]
-    //TODO try wake up
-    result.append(DecrementSleepCounterSelf)
-    //TODO more stuff
-
+    if(turnsRemaining == 0){
+      result.append(MoveEvent.getDisplayMessageWokeUp(thisPokemon.getName))
+      result.append(RemovePersistentEffectSelf)
+    }
+    else{
+      result.append(MoveEvent.getDisplayMessageFastAsleep(thisPokemon.getName))
+      val effect = thisPokemon.getEffectTracker.getPersistentEffect.get
+      result.append(PlayEffectAnimation(effect))
+      result.append(DecrementSleepCounterSelf)
+      result.append(EndMove)
+    }
     result.toList
   }
 }
@@ -179,7 +185,7 @@ case object TurnlyTryThaw extends MoveEventGenerator {
   /** Tries to thaw the Pokemon. On failure, prevents this Pokemon from moving because it is frozen. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     if(Random.nextDouble() < Frozen.THAW_CHANCE)
-      List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemoveFrozenSelf)
+      List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemovePersistentEffectSelf)
     else
       List(PlayAnimationFromSource("TODO"), MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), EndMove) //TODO get frozen animation.
   }

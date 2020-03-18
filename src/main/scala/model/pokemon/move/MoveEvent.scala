@@ -35,9 +35,17 @@ object MoveEvent {
   def getDisplayMessageHurtByPoison(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was hurt by poison.".format(pokemonName))
 
-  /** Returns the DisplayMessage used when a Pokemon is poisoned. */
+  /** Returns the DisplayMessage used when a Pokemon falls asleep. */
   def getDisplayMessageFellAsleep(pokemonName: String): DisplayMessage =
     DisplayMessage("%s fell asleep!".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is fast asleep. */
+  def getDisplayMessageFastAsleep(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s is fast asleep.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon wakes up. */
+  def getDisplayMessageWokeUp(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s woke up!".format(pokemonName))
 
   /** Returns the DisplayMessage used when a Pokemon has thawed. */
   def getDisplayMessageThawed(pokemonName: String): DisplayMessage =
@@ -143,11 +151,7 @@ case object EndMove extends MoveEvent {
 case object WorsenPoisonSelf extends MoveEvent {
   /** Replaces the Pokemon's Poison with Poison that has progressed one turn. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
-    //TODO this seems ugly.
-    val poison = thisPokemon.getEffectTracker.getEffects.find {
-      case Poison(badly, turn) => true
-      case _ => false
-    }.get.asInstanceOf[Poison]
+    val poison = thisPokemon.getEffectTracker.getPersistentEffect.get.asInstanceOf[Poison]
     thisPokemon.getEffectTracker.removeEffect(poison)
     thisPokemon.getEffectTracker.addEffect(poison.copy(turn = poison.turn + 1))
   }
@@ -156,18 +160,15 @@ case object WorsenPoisonSelf extends MoveEvent {
 case object DecrementSleepCounterSelf extends MoveEvent {
   /** Replaces the Pokemon's Sleep with Sleep that has progressed one turn. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
-    val sleep = thisPokemon.getEffectTracker.getEffects.find(_ match{
-      case Sleep(turnsRemaining) => true
-      case _ => false
-    }).get.asInstanceOf[Sleep]
+    val sleep = thisPokemon.getEffectTracker.getPersistentEffect.get.asInstanceOf[Sleep]
     thisPokemon.getEffectTracker.removeEffect(sleep)
-    //TODO only add back if turnsRemaining > 1, but either way you need to display a message saying that the Pokemon is fast asleep or that it woke up.
+    if(sleep.turnsRemaining == 0) throw new UnsupportedOperationException("Sleep counter already expired.")
     thisPokemon.getEffectTracker.addEffect(sleep.copy(turnsRemaining = sleep.turnsRemaining - 1))
   } 
 }
 
-case object RemoveFrozenSelf extends MoveEvent {
-  /** Removes the Frozen status effect from this Pokemon */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker.removeEffect(
-    thisPokemon.getEffectTracker.getPersistentEffect.find(_.getIdentifier == Frozen.getIdentifier).get)
+case object RemovePersistentEffectSelf extends MoveEvent {
+  /** Replaces the Pokemon's Sleep with Sleep that has progressed one turn. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker
+    .removePersistentEffect()
 }

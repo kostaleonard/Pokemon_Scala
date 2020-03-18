@@ -74,11 +74,12 @@ case object Burn extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = false
 
-  /** Returns an empty List. Burn does not have any initial effects. */
+  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
-  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List(TurnlyBurnDamage)
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(TurnlyBurnDamage)
 
   /** Returns an empty List. Burn does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
@@ -109,12 +110,14 @@ case object Paralyze extends PersistentEffect {
 
   //TODO this has to happen at the start of every battle. Probably need to add that functionality to PersistentEffect.
   //TODO lower Pokemon speed.
-  /** Returns an empty List. Paralyze lowers the Pokemon's speed by 50%. */
+  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. Paralyze lowers the
+    * Pokemon's speed by 50%. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
 
   //TODO see if Pokemon can move.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
-  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List(TurnlyTryThaw)
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(TurnlyTryThaw)
 
   /** Returns an empty List. Paralyze does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
@@ -145,12 +148,12 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
-  /** Returns an empty List. */
+  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
 
-  //TODO see if Pokemon wakes up.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
-  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List(TurnlyTryThaw)
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(TurnlySleep(turnsRemaining))
 
   /** Returns an empty List. Sleep does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
@@ -179,7 +182,7 @@ case object Frozen extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
-  /** Returns an empty List. Frozen does not have any initial effects. */
+  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
@@ -213,7 +216,7 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = false
 
-  /** Returns an empty List. Poison does not have any initial effects. */
+  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
   override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
 
   //TODO the turn has to reset after every battle somehow.

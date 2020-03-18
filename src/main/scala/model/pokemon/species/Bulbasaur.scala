@@ -4,6 +4,7 @@ import model.elementaltype.{ElementalType, GrassType, PoisonType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.grass.SleepPowder
 import model.pokemon.move.bytype.normal.{Growl, Tackle}
 import model.pokemon.move.bytype.poison.{PoisonPowder, Toxic}
 import model.pokemon.move.{Move, MoveList}
@@ -50,7 +51,7 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete learnset.
     //1 -> new Tackle
-    1 -> new Toxic
+    1 -> new SleepPowder
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
