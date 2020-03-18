@@ -78,44 +78,46 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
   }
 }
 
-case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option[Move])
-  extends MoveEventGenerator {
+case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option[Move]) extends MoveEventGenerator {
   /** Lowers the opponent's given stat by the given number of stages. */
-  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(otherPokemon.getCurrentStats.getStage(statKey) == BattleStats.MIN_STAGE)
-      List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
-    else {
-      val result = ListBuffer.empty[MoveEvent]
-      if(moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
-      result.append(LowerStatOther(statKey, stages))
-      result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
-      result.toList
-    }
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getCurrentStats.getStage(statKey) > BattleStats.MIN_STAGE
+    val result = ListBuffer.empty[MoveEvent]
+    if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
+    result.append(LowerStatOther(statKey, stages))
+    result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
+    val eventsIfTrue = result.toList
+    val eventsIfFalse = List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
+    List(TryOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+  }
 }
 
 case class TryBurn(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
   extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
-  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(otherPokemon.getEffectTracker.getPersistentEffect.isEmpty && Random.nextDouble() < probability){
-      val animationEvents = if(moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
-      animationEvents ++ List(MoveEvent.getDisplayMessageBurned(otherPokemon.getName), InflictEffectOnOpponent(Burn))
-    }
-    else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove)
-    else List.empty
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getEffectTracker.getPersistentEffect.isEmpty &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageBurned(otherPokemon.getName),
+      InflictEffectOnOpponent(Burn))
+    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
+    List(TryOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+  }
 }
 
 case class TryPoison(probability: Double, displayFailure: Boolean, badly: Boolean, moveToAnimate: Option[Move])
   extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
-  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(otherPokemon.getEffectTracker.getPersistentEffect.isEmpty && Random.nextDouble() < probability) {
-      val animationEvents = if(moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
-      animationEvents ++ List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName, badly),
-        InflictEffectOnOpponent(Poison(badly, 1)))
-    }
-    else if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove)
-    else List.empty
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getEffectTracker.getPersistentEffect.isEmpty &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName, badly),
+      InflictEffectOnOpponent(Poison(badly, 1)))
+    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
+    List(TryOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+  }
 }
 
 case class TrySleep(probability: Double, displayFailure: Boolean, turns: Int, moveToAnimate: Option[Move])

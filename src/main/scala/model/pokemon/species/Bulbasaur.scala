@@ -51,7 +51,7 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete learnset.
     //1 -> new Tackle
-    1 -> new SleepPowder
+    1 -> new Toxic
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
