@@ -108,6 +108,6 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   protected def chooseRandomMove(moves: Array[Move]): Move = moves(Random.nextInt(moves.length))
 
   /** Returns an Array of MoveSpecifications to match the events. */
-  protected def createMoveSpecifications(events: Array[MoveEvent], movingPokemon: Pokemon, otherPokemon: Pokemon):
+  def createMoveSpecifications(events: Array[MoveEvent], movingPokemon: Pokemon, otherPokemon: Pokemon):
     Array[MoveSpecification] = events.map(MoveSpecification(_, movingPokemon, otherPokemon))
 }

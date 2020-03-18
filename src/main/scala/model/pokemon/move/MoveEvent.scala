@@ -137,6 +137,13 @@ case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
     otherPokemon.getCurrentStats.incrementStage(statKey, -1 * stages)
 }
 
+case class TryOrFailEvent(successCheck: () => Boolean, eventsIfTrue: List[MoveEvent], eventsIfFalse: List[MoveEvent],
+                          movingPokemon: Pokemon, otherPokemon: Pokemon) extends MoveEvent {
+  /** Does nothing. The code processing events should make the success check. If successful, execute the first events;
+    * if false, execute the second. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
