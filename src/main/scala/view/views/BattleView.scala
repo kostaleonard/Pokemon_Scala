@@ -74,7 +74,8 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
       moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
         menuActive = false
         processNextMoveEvent(battle.addHPBarAnimations(
-          battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove())),
+          battle.checkForEndMove(
+          battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()))),
           () => processNextMoveEvent(battle.addHPBarAnimations(battle.getAfterMoveSpecifications.toList),
             () => battleMessage = None))
         menuActive = true
@@ -217,7 +218,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         val moveSpecifications =
           if(successCheck.apply()) battle.createMoveSpecifications(eventsIfTrue.toArray, movingPokemon, otherPokemon)
           else battle.createMoveSpecifications(eventsIfFalse.toArray, movingPokemon, otherPokemon)
-          processNextMoveEvent(moveSpecifications.toList ++ events.tail, finalCallback)
+          processNextMoveEvent(battle.checkForEndMove(moveSpecifications.toList ++ events.tail), finalCallback)
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
         else distributeExperience(() => waitingOnUserInput = Some(() => endBattle())) //TODO if this is a trainer battle, it's a little more complicated.
@@ -412,6 +413,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     val playerPokemonImage = battle.getPlayerPokemon.getPrescaledImageBack.get
     g2d.drawImage(opponentPokemonImage, 575, 85, null)
     g2d.drawImage(playerPokemonImage, 50, 192, null)
+    //TODO this double draws the HP numbers for some reason.
     g2d.drawImage(playerPokemonInfoBox.getImage, BattleInfoBox.SINGLE_PLAYER_OFFSET_X,
       BattleInfoBox.SINGLE_PLAYER_OFFSET_Y, null)
     g2d.drawImage(opponentPokemonInfoBox.getImage, BattleInfoBox.SINGLE_OPPONENT_OFFSET_X,

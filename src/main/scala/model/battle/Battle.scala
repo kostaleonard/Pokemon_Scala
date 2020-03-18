@@ -81,6 +81,25 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
       case other => Array(other)
   }
 
+  /** Returns a new list of move specifications, removing events as necessary if an EndMove or EndMoveOther signal was
+    * sent. */
+  def checkForEndMove(orderedMoveSpecifications: List[MoveSpecification]): List[MoveSpecification] = {
+    var endMovePlayer = false
+    var endMoveOpponent = false
+    orderedMoveSpecifications.filter { specification =>
+      if(specification.moveEvent == EndMove && specification.movingPokemon == playerPokemon)
+        endMovePlayer = true
+      else if(specification.moveEvent == EndMove && specification.movingPokemon == opponentPokemon)
+        endMoveOpponent = true
+      else if(specification.moveEvent == EndMoveOther && specification.otherPokemon == playerPokemon)
+        endMovePlayer = true
+      else if(specification.moveEvent == EndMoveOther && specification.otherPokemon == opponentPokemon)
+        endMoveOpponent = true
+      (specification.movingPokemon == playerPokemon && !endMovePlayer) ||
+        (specification.movingPokemon == opponentPokemon && !endMoveOpponent)
+    }
+  }
+
   /** Returns a new List of MoveSpecifications in the correct order for battle.  */
   def reorderMoveSpecifications(playerMoveSpecifications: MoveSpecificationCollection,
                                 opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {

@@ -155,6 +155,11 @@ case object EndMove extends MoveEvent {
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = Unit
 }
 
+case object EndMoveOther extends MoveEvent {
+  /** Does nothing. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = Unit
+}
+
 case object WorsenPoisonSelf extends MoveEvent {
   /** Replaces the Pokemon's Poison with Poison that has progressed one turn. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {

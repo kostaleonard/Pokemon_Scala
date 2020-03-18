@@ -5,7 +5,9 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
 import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.grass.SleepPowder
 import model.pokemon.move.bytype.normal.{Growl, Scratch, Tackle}
+import model.pokemon.move.bytype.poison.PoisonPowder
 import model.pokemon.stat.PokemonStats
 
 object MissingNo {
@@ -53,8 +55,8 @@ class MissingNo(override protected val levelTracker: LevelTracker)
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete MissingNo's learnset.
     0 -> new Scratch,
-    1 -> new Ember,
-    2 -> new Growl,
+    1 -> new SleepPowder,
+    2 -> new Ember,
     3 -> new Tackle
   )
 

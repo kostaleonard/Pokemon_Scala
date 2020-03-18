@@ -128,7 +128,7 @@ case class TrySleep(probability: Double, displayFailure: Boolean, turns: Int, mo
       Random.nextDouble() < probability
     val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
     val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageFellAsleep(otherPokemon.getName),
-      InflictEffectOnOpponent(Sleep(turns)))
+      InflictEffectOnOpponent(Sleep(turns)), EndMoveOther)
     val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
     List(TryOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
   }
