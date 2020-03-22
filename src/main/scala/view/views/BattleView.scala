@@ -168,6 +168,13 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     distributeNextExperience(pokemonGainingExp)
   }
 
+  /** Returns the callback that ends animations. */
+  protected def getEndAnimationCallback(events: List[MoveSpecification], finalCallback: () => Unit): () => Unit = () => {
+    moveAnimation = None
+    currentAnimation = None
+    processNextMoveEvent(events.tail, finalCallback)
+  }
+
   //TODO honestly this is pretty ugly.
   /** Recursively processes one battle event at a time. This allows messages and animations to callback. */
   protected def processNextMoveEvent(events: List[MoveSpecification], finalCallback: () => Unit): Unit = {
@@ -182,11 +189,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           processNextMoveEvent(events.tail, finalCallback)
         }))
       case PlayMoveAnimation(move) =>
-        val callback = () => {
-          moveAnimation = None
-          currentAnimation = None
-          processNextMoveEvent(events.tail, finalCallback)
-        }
+        val callback = getEndAnimationCallback(events, finalCallback)
         val animation = if(events.head.movingPokemon == battle.getPlayerPokemon) move.getPlayerAnimation
         else move.getOpponentAnimation
         animation.setAnimationCallback(Some(callback))
@@ -195,11 +198,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         currentAnimation = moveAnimation
         moveAnimation.get.start()
       case PlayEffectAnimation(effect) =>
-        val callback = () => {
-          moveAnimation = None
-          currentAnimation = None
-          processNextMoveEvent(events.tail, finalCallback)
-        }
+        val callback = getEndAnimationCallback(events, finalCallback)
         val animation = if(events.head.movingPokemon == battle.getPlayerPokemon) effect.getPlayerAnimation
         else effect.getOpponentAnimation
         if(animation.nonEmpty) {
@@ -210,18 +209,13 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           moveAnimation.get.start()
         }
       case PlayHPBarAnimation(animationPokemon, amount) =>
-        val callback = () => {
-          hpBarAnimation = None
-          currentAnimation = None
-          processNextMoveEvent(events.tail, finalCallback)
-        }
+        val callback = getEndAnimationCallback(events, finalCallback)
         val infoBox = if(animationPokemon == battle.getPlayerPokemon) playerPokemonInfoBox else
           opponentPokemonInfoBox
         hpBarAnimation = Some(new HPBarAnimation(Some(callback), infoBox, animationPokemon, amount))
         if(currentAnimation.nonEmpty) throw new UnsupportedOperationException("Cannot replace current animation.")
         currentAnimation = hpBarAnimation
         hpBarAnimation.get.start()
-      //case EndMove => return //TODO I'm not certain this is right.
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
         else distributeExperience(() => waitingOnUserInput = Some(() => endBattle())) //TODO if this is a trainer battle, it's a little more complicated.
