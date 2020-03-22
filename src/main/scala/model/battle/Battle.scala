@@ -41,32 +41,45 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     if(opponent.nonEmpty) opponent.get.getParty.resetOnHeal()
   }
 
+  /** Returns a random move from the opponent pokemon. */
+  def getRandomOpponentMove: Move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
+
   /** Makes the player's move. */
-  def makePlayerMove(move: Move): MoveSpecificationCollection = makePokemonMove(playerPokemon, opponentPokemon, move)
+  def getPlayerMoveSpecifications(move: Move): List[MoveSpecification] =
+    getMoveSpecifications(playerPokemon, opponentPokemon, move)
 
   /** Makes the opponent's move. */
-  def makeOpponentMove(): MoveSpecificationCollection = {
-    //TODO support for more opponent behaviors, not just random.
-    val move = chooseRandomMove(opponentPokemon.getMoveList.getUsableMoves)
-    makePokemonMove(opponentPokemon, playerPokemon, move)
-  }
+  def getOpponentMoveSpecifications(move: Move): List[MoveSpecification] =
+    getMoveSpecifications(opponentPokemon, playerPokemon, move)
+
+  /** Returns the finalized list of MoveSpecifications to be used in battle. */
+  protected def cleanMoveSpecifications(moveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
+    addHPBarAnimations(moveSpecifications)
 
   /** Makes the move for the specified Pokemon. */
-  protected def makePokemonMove(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move): MoveSpecificationCollection = {
+  protected def getMoveSpecifications(movingPokemon: Pokemon, otherPokemon: Pokemon, move: Move):
+  List[MoveSpecification] = {
     val beforeMoveEffectEvents = movingPokemon.getEffectTracker.getEventsFromBeforeMoveEffects(movingPokemon,
       otherPokemon)
     if(beforeMoveEffectEvents.contains(EndMove))
-      return MoveSpecificationCollection(
-        createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
-        Array.empty
-      )
+      return cleanMoveSpecifications(createMoveSpecifications(
+        beforeMoveEffectEvents, movingPokemon, otherPokemon).toList)
     var moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
     if(moveEvents.contains(EndMove)) moveEvents = moveEvents.take(moveEvents.indexOf(EndMove))
+    //TODO this has side-effects! This should be somewhere else.
     move.decrementPP()
-    MoveSpecificationCollection(
-      createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon),
-      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon)
-    )
+    cleanMoveSpecifications((createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon) ++
+      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon)).toList)
+  }
+
+  //TODO probably make a MoveChoice trait for this so that you can handle it right. Moves are MoveChoices, but so are using Items and running away.
+  /** Returns the first mover (the player or opponent pokemon) based on current speed and any special moves chosen. */
+  def getBattleOrder(playerMove: Move, opponentMove: Move): (Pokemon, Pokemon) = (playerMove, opponentMove) match {
+    case (_, _) =>
+      if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
+        (playerPokemon, opponentPokemon)
+      else
+        (opponentPokemon, playerPokemon)
   }
 
   /** Returns a List of MoveSpecifications that has HP bar animations added for display purposes. */
@@ -100,6 +113,7 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     }
   }
 
+  //TODO not sure this should exist.
   /** Returns a new list of move specifications, regenerating move events when specified by move events. */
   def checkForRegenerateMove(orderedMoveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
     if(!orderedMoveSpecifications.map(_.moveEvent).contains(RegenerateMoveEventsOther)) orderedMoveSpecifications

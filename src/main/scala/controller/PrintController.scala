@@ -39,17 +39,19 @@ object PrintController {
     val playerCharacter = new PlayerCharacter(new Party(ListBuffer(playerPokemon)))
     val battle = new Battle(playerCharacter, None, Some(opponentPokemon))
     playerPokemon.getMoveList.getMoves.foreach(println)
-
+    //TODO this test code got broken in a refactor.
+    /*
     while(!battle.isOver){
       println("Choose a move.")
       playerPokemon.getMoveList.getMoves.zipWithIndex.foreach(tup => println("%d.%s".format(tup._2, tup._1.getName)))
       val chosenIndex = scala.io.StdIn.readInt()
       //battle.makePlayerMove(playerPokemon.getMoveList.getUsableMoves.head)
-      battle.makePlayerMove(playerPokemon.getMoveList.getMoves(chosenIndex))
+      battle.getPlayerMoveSpecifications(playerPokemon.getMoveList.getMoves(chosenIndex))
       println("Opponent: %d/%d".format(opponentPokemon.getCurrentStats.getHP, opponentPokemon.getStandardStats.getHP))
-      if(!opponentPokemon.isKO) battle.makeOpponentMove
+      if(!opponentPokemon.isKO) battle.getOpponentMoveSpecifications
       println("Player: %d/%d".format(playerPokemon.getCurrentStats.getHP, playerPokemon.getStandardStats.getHP))
       println
     }
+    */
   }
 }

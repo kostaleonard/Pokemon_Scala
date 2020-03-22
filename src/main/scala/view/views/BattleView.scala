@@ -70,14 +70,20 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Sets up the move menu. */
   protected def setupMoveMenu(): Unit = {
-    battle.getPlayerPokemon.getMoveList.getMoves.foreach(move =>
-      moveMenu.appendMenuItem(BasicMenuItem(move.getName, GuiAction(() => {
+    battle.getPlayerPokemon.getMoveList.getMoves.foreach(playerMove =>
+      moveMenu.appendMenuItem(BasicMenuItem(playerMove.getName, GuiAction(() => {
         menuActive = false
-        processNextMoveEvent(battle.addHPBarAnimations(
-          battle.checkForEndMove(
-          battle.reorderMoveSpecifications(battle.makePlayerMove(move), battle.makeOpponentMove()))),
-          () => processNextMoveEvent(battle.addHPBarAnimations(battle.getAfterMoveSpecifications.toList),
-            () => battleMessage = None))
+        val opponentMove = battle.getRandomOpponentMove
+        val battleOrder = battle.getBattleOrder(playerMove, opponentMove)
+        val firstMoveSpecifications =
+          if(battleOrder._1 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
+          else battle.getOpponentMoveSpecifications(opponentMove)
+        processNextMoveEvent(firstMoveSpecifications, () => {
+          val secondMoveSpecifications =
+            if(battleOrder._2 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
+            else battle.getOpponentMoveSpecifications(opponentMove)
+          processNextMoveEvent(secondMoveSpecifications, () => battleMessage = None)
+        })
         menuActive = true
         showTrainerMenu()
       })))
