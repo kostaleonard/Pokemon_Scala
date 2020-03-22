@@ -66,10 +66,9 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
         beforeMoveEffectEvents, movingPokemon, otherPokemon).toList)
     var moveEvents = move.getEventsFromMove(movingPokemon, otherPokemon)
     if(moveEvents.contains(EndMove)) moveEvents = moveEvents.take(moveEvents.indexOf(EndMove))
-    //TODO this has side-effects! This should be somewhere else.
-    move.decrementPP()
-    cleanMoveSpecifications((createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon) ++
-      createMoveSpecifications(moveEvents, movingPokemon, otherPokemon)).toList)
+    cleanMoveSpecifications(
+      (createMoveSpecifications(beforeMoveEffectEvents, movingPokemon, otherPokemon) ++
+      createMoveSpecifications(DecrementPP(move) +: moveEvents, movingPokemon, otherPokemon)).toList)
   }
 
   //TODO probably make a MoveChoice trait for this so that you can handle it right. Moves are MoveChoices, but so are using Items and running away.
@@ -83,7 +82,7 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   }
 
   /** Returns a List of MoveSpecifications that has HP bar animations added for display purposes. */
-  def addHPBarAnimations(moveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
+  protected def addHPBarAnimations(moveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
     moveSpecifications.flatMap{
       case MoveSpecification(DealDamageToOpponent(amount), movingPokemon, otherPokemon) =>
         Array(MoveSpecification(PlayHPBarAnimation(otherPokemon, amount), movingPokemon, otherPokemon),
@@ -94,54 +93,15 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
       case other => Array(other)
   }
 
-  /** Returns a new list of move specifications, removing events as necessary if an EndMove or EndMoveOther signal was
-    * sent. */
-  def checkForEndMove(orderedMoveSpecifications: List[MoveSpecification]): List[MoveSpecification] = {
-    var endMovePlayer = false
-    var endMoveOpponent = false
-    orderedMoveSpecifications.filter { specification =>
-      if(specification.moveEvent == EndMove && specification.movingPokemon == playerPokemon)
-        endMovePlayer = true
-      else if(specification.moveEvent == EndMove && specification.movingPokemon == opponentPokemon)
-        endMoveOpponent = true
-      else if(specification.moveEvent == EndMoveOther && specification.otherPokemon == playerPokemon)
-        endMovePlayer = true
-      else if(specification.moveEvent == EndMoveOther && specification.otherPokemon == opponentPokemon)
-        endMoveOpponent = true
-      (specification.movingPokemon == playerPokemon && !endMovePlayer) ||
-        (specification.movingPokemon == opponentPokemon && !endMoveOpponent)
-    }
-  }
-
-  //TODO not sure this should exist.
-  /** Returns a new list of move specifications, regenerating move events when specified by move events. */
-  def checkForRegenerateMove(orderedMoveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
-    if(!orderedMoveSpecifications.map(_.moveEvent).contains(RegenerateMoveEventsOther)) orderedMoveSpecifications
-    else {
-      val eventsBeforeRegeneration = orderedMoveSpecifications.takeWhile(_.moveEvent != RegenerateMoveEventsOther)
-      ???
-  }
-
-  /** Returns a new List of MoveSpecifications in the correct order for battle.  */
-  def reorderMoveSpecifications(playerMoveSpecifications: MoveSpecificationCollection,
-                                opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {
-    if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
-      (playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs ++
-      opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs).toList
-    else
-      (opponentMoveSpecifications.beforeMoveSpecs ++ opponentMoveSpecifications.duringMoveSpecs ++
-      playerMoveSpecifications.beforeMoveSpecs ++ playerMoveSpecifications.duringMoveSpecs).toList
-  }
-
   /** Returns the MoveSpecifications from the effects that happen after the moves. The opponent always receives the
     * effects first. */
-  def getAfterMoveSpecifications: Array[MoveSpecification] = {
+  def getAfterMoveSpecifications: List[MoveSpecification] = {
     val opponentEffectEvents = opponentPokemon.getEffectTracker.getEventsFromAfterMoveEffects(opponentPokemon,
       playerPokemon)
     val playerEffectEvents = playerPokemon.getEffectTracker.getEventsFromAfterMoveEffects(playerPokemon,
       opponentPokemon)
-    createMoveSpecifications(opponentEffectEvents, opponentPokemon, playerPokemon) ++
-    createMoveSpecifications(playerEffectEvents, playerPokemon, opponentPokemon)
+    cleanMoveSpecifications((createMoveSpecifications(opponentEffectEvents, opponentPokemon, playerPokemon) ++
+      createMoveSpecifications(playerEffectEvents, playerPokemon, opponentPokemon)).toList)
   }
 
   //TODO this should be in an AI class or something.
@@ -149,6 +109,6 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
   protected def chooseRandomMove(moves: Array[Move]): Move = moves(Random.nextInt(moves.length))
 
   /** Returns an Array of MoveSpecifications to match the events. */
-  def createMoveSpecifications(events: Array[MoveEvent], movingPokemon: Pokemon, otherPokemon: Pokemon):
+  protected def createMoveSpecifications(events: Array[MoveEvent], movingPokemon: Pokemon, otherPokemon: Pokemon):
     Array[MoveSpecification] = events.map(MoveSpecification(_, movingPokemon, otherPokemon))
 }

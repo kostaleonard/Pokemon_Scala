@@ -88,7 +88,8 @@ case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option
     result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
     val eventsIfTrue = result.toList
     val eventsIfFalse = List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
-    List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }
 }
 
@@ -101,8 +102,9 @@ case class TryBurn(probability: Double, displayFailure: Boolean, moveToAnimate: 
     val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
     val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageBurned(otherPokemon.getName),
       InflictEffectOnOpponent(Burn))
-    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
-    List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }
 }
 
@@ -115,8 +117,9 @@ case class TryPoison(probability: Double, displayFailure: Boolean, badly: Boolea
     val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
     val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessagePoisoned(otherPokemon.getName, badly),
       InflictEffectOnOpponent(Poison(badly, 1)))
-    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
-    List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    val eventsIfFalse = if (displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }
 }
 
@@ -128,9 +131,10 @@ case class TrySleep(probability: Double, displayFailure: Boolean, turns: Int, mo
       Random.nextDouble() < probability
     val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
     val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageFellAsleep(otherPokemon.getName),
-      InflictEffectOnOpponent(Sleep(turns)), RegenerateMoveEventsOther)
-    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED, EndMove) else List.empty
-    List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+      InflictEffectOnOpponent(Sleep(turns)))
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }
 }
 

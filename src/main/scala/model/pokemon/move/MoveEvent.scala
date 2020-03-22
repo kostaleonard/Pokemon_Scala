@@ -147,16 +147,15 @@ case class SucceedOrFailEvent(successCheck: () => Boolean,
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 
-case object RegenerateMoveEventsOther extends MoveEvent {
-  /** Signals that the other pokemon must regenerate its move events because something has changed (e.g., the pokemon
-    * has fallen asleep). */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
-}
-
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
     otherPokemon.getEffectTracker.addEffect(effect)
+}
+
+case class DecrementPP(move: Move) extends MoveEvent {
+  /** Decrements the move's PP. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = move.decrementPP()
 }
 
 case object EndMove extends MoveEvent {

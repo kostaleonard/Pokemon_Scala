@@ -82,7 +82,9 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           val secondMoveSpecifications =
             if(battleOrder._2 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
             else battle.getOpponentMoveSpecifications(opponentMove)
-          processNextMoveEvent(secondMoveSpecifications, () => battleMessage = None)
+          processNextMoveEvent(secondMoveSpecifications, () => {
+           processNextMoveEvent(battle.getAfterMoveSpecifications, () => battleMessage = None)
+          })
         })
         menuActive = true
         showTrainerMenu()
@@ -220,11 +222,6 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         currentAnimation = hpBarAnimation
         hpBarAnimation.get.start()
       //case EndMove => return //TODO I'm not certain this is right.
-      case SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, movingPokemon, otherPokemon) =>
-        val moveSpecifications =
-          if(successCheck.apply()) battle.createMoveSpecifications(eventsIfTrue.toArray, movingPokemon, otherPokemon)
-          else battle.createMoveSpecifications(eventsIfFalse.toArray, movingPokemon, otherPokemon)
-          processNextMoveEvent(battle.checkForEndMove(moveSpecifications.toList ++ events.tail), finalCallback)
       case FaintSelf =>
         if(events.head.movingPokemon == battle.getPlayerPokemon) ??? //TODO player pokemon faints.
         else distributeExperience(() => waitingOnUserInput = Some(() => endBattle())) //TODO if this is a trainer battle, it's a little more complicated.

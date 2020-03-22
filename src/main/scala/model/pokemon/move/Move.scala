@@ -51,7 +51,9 @@ abstract class Move {
     getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
 
   /** Lowers the current PP. */
-  def decrementPP(): Unit = currentPP -= 1
+  def decrementPP(): Unit =
+    if(currentPP == 0) throw new UnsupportedOperationException("Cannot decrement PP below 0")
+    else currentPP -= 1
 
   /** Returns true if the current move has enough PP to be used. */
   def canUse: Boolean = currentPP > 0
