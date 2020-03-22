@@ -214,7 +214,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
         currentAnimation = hpBarAnimation
         hpBarAnimation.get.start()
       //case EndMove => return //TODO I'm not certain this is right.
-      case TryOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, movingPokemon, otherPokemon) =>
+      case SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, movingPokemon, otherPokemon) =>
         val moveSpecifications =
           if(successCheck.apply()) battle.createMoveSpecifications(eventsIfTrue.toArray, movingPokemon, otherPokemon)
           else battle.createMoveSpecifications(eventsIfFalse.toArray, movingPokemon, otherPokemon)

@@ -137,10 +137,19 @@ case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
     otherPokemon.getCurrentStats.incrementStage(statKey, -1 * stages)
 }
 
-case class TryOrFailEvent(successCheck: () => Boolean, eventsIfTrue: List[MoveEvent], eventsIfFalse: List[MoveEvent],
-                          movingPokemon: Pokemon, otherPokemon: Pokemon) extends MoveEvent {
+case class SucceedOrFailEvent(successCheck: () => Boolean,
+                              eventsIfTrue: List[MoveEvent],
+                              eventsIfFalse: List[MoveEvent],
+                              movingPokemon: Pokemon,
+                              otherPokemon: Pokemon) extends MoveEvent {
   /** Does nothing. The code processing events should make the success check. If successful, execute the first events;
     * if false, execute the second. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
+}
+
+case object RegenerateMoveEventsOther extends MoveEvent {
+  /** Signals that the other pokemon must regenerate its move events because something has changed (e.g., the pokemon
+    * has fallen asleep). */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 

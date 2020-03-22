@@ -100,6 +100,14 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
     }
   }
 
+  /** Returns a new list of move specifications, regenerating move events when specified by move events. */
+  def checkForRegenerateMove(orderedMoveSpecifications: List[MoveSpecification]): List[MoveSpecification] =
+    if(!orderedMoveSpecifications.map(_.moveEvent).contains(RegenerateMoveEventsOther)) orderedMoveSpecifications
+    else {
+      val eventsBeforeRegeneration = orderedMoveSpecifications.takeWhile(_.moveEvent != RegenerateMoveEventsOther)
+      ???
+  }
+
   /** Returns a new List of MoveSpecifications in the correct order for battle.  */
   def reorderMoveSpecifications(playerMoveSpecifications: MoveSpecificationCollection,
                                 opponentMoveSpecifications: MoveSpecificationCollection): List[MoveSpecification] = {
