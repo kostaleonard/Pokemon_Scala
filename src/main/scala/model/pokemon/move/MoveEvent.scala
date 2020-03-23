@@ -47,6 +47,10 @@ object MoveEvent {
   def getDisplayMessageWokeUp(pokemonName: String): DisplayMessage =
     DisplayMessage("%s woke up!".format(pokemonName))
 
+  /** Returns the DisplayMessage used when a Pokemon is frozen solid. */
+  def getDisplayMessageFrozen(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s is frozen.".format(pokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon has thawed. */
   def getDisplayMessageThawed(pokemonName: String): DisplayMessage =
     DisplayMessage("%s has thawed out!".format(pokemonName))

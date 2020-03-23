@@ -53,7 +53,7 @@ sealed trait PersistentEffect extends StatusEffect {
   def getIdentifier: String
 
   /** Returns the List of MoveActions executed every 4 steps while the Pokemon has this StatusEffect. */
-  def getOutOfBattleAction: List[MoveEventGenerator]
+  def onFourSteps: List[MoveEventGenerator]
 }
 
 sealed trait NonPersistentEffect extends StatusEffect {
@@ -87,7 +87,7 @@ case object Burn extends PersistentEffect {
     List(TurnlyBurnDamage)
 
   /** Returns an empty List. Burn does not have any outside of battle effects. */
-  override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+  override def onFourSteps: List[MoveEventGenerator] = List.empty
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
@@ -124,7 +124,7 @@ case object Paralyze extends PersistentEffect {
     List(TurnlyParalysisCheck)
 
   /** Returns an empty List. Paralyze does not have any outside of battle effects. */
-  override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+  override def onFourSteps: List[MoveEventGenerator] = List.empty
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
@@ -163,7 +163,7 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
     List(TurnlySleep(turnsRemaining))
 
   /** Returns an empty List. Sleep does not have any outside of battle effects. */
-  override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+  override def onFourSteps: List[MoveEventGenerator] = List.empty
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
@@ -196,10 +196,11 @@ case object Frozen extends PersistentEffect {
   override def onEffectRemove(pokemon: Pokemon): Unit = Unit
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
-  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List(TurnlyTryThaw)
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(TurnlyTryThaw)
 
   /** Returns an empty List. Frozen does not have any outside of battle effects. */
-  override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+  override def onFourSteps: List[MoveEventGenerator] = List.empty
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
@@ -241,7 +242,7 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
 
   //TODO poison should damage pokemon every 4 steps.
   /** TODO. */
-  override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
+  override def onFourSteps: List[MoveEventGenerator] = List.empty
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)

@@ -153,6 +153,21 @@ case class TryParalyze(probability: Double, displayFailure: Boolean, moveToAnima
   }
 }
 
+case class TryFreeze(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
+  extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getEffectTracker.getPersistentEffect.isEmpty &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageFrozen(otherPokemon.getName),
+      InflictEffectOnOpponent(Frozen))
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -219,6 +234,6 @@ case object TurnlyTryThaw extends MoveEventGenerator {
     if(Random.nextDouble() < Frozen.THAW_CHANCE)
       List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemovePersistentEffectSelf)
     else
-      List(PlayAnimationFromSource("TODO"), MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), EndMove) //TODO get frozen animation.
+      List(MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), PlayEffectAnimation(Frozen), EndMove)
   }
 }
