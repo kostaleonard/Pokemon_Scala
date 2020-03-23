@@ -2,7 +2,7 @@ package model.pokemon.move
 
 import model.pokemon.Pokemon
 import model.pokemon.stat.BattleStats
-import model.statuseffect.{Burn, Frozen, Poison, Sleep}
+import model.statuseffect._
 import view.views.drawing.Animation
 
 import scala.collection.mutable.ListBuffer
@@ -138,6 +138,21 @@ case class TrySleep(probability: Double, displayFailure: Boolean, turns: Int, mo
   }
 }
 
+case class TryParalyze(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
+  extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getEffectTracker.getPersistentEffect.isEmpty &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageParalyzed(otherPokemon.getName),
+      InflictEffectOnOpponent(Paralyze))
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -185,6 +200,16 @@ case class TurnlySleep(turnsRemaining: Int) extends MoveEventGenerator {
       result.append(EndMove)
     }
     result.toList
+  }
+}
+
+case object TurnlyParalysisCheck extends MoveEventGenerator {
+  /** Checks if the pokemon can move. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    if(Random.nextDouble() < Paralyze.NO_MOVE_CHANCE)
+      List(MoveEvent.getDisplayMessageFullyParalyzed(thisPokemon.getName), PlayEffectAnimation(Paralyze), EndMove)
+    else
+      List.empty
   }
 }
 

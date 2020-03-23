@@ -55,6 +55,14 @@ object MoveEvent {
   def getDisplayMessageFrozenSolid(pokemonName: String): DisplayMessage =
     DisplayMessage("%s is frozen solid.".format(pokemonName))
 
+  /** Returns the DisplayMessage used when a Pokemon is paralyzed. */
+  def getDisplayMessageParalyzed(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s was paralyzed.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is fully paralyzed and cannot move. */
+  def getDisplayMessageFullyParalyzed(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s is fully paralyzed.".format(pokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon's stat won't go lower. */
   def getDisplayMessageStatWillNotGoLower(pokemonName: String, statName: String): DisplayMessage =
     DisplayMessage("%s's %s won't go any lower!".format(pokemonName, statName))
@@ -149,8 +157,10 @@ case class SucceedOrFailEvent(successCheck: () => Boolean,
 
 case class InflictEffectOnOpponent(effect: StatusEffect) extends MoveEvent {
   /** Inflicts the given effect to the opponent. */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
     otherPokemon.getEffectTracker.addEffect(effect)
+    effect.onEffectAdd(otherPokemon)
+  }
 }
 
 case class DecrementPP(move: Move) extends MoveEvent {

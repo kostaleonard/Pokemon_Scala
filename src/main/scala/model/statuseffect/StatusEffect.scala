@@ -25,9 +25,11 @@ sealed trait StatusEffect extends Ordered[StatusEffect] {
   /** Returns true if the status effect is persistent. */
   def isPersistent: Boolean
 
-  //TODO this method does not seem to require these arguments.
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
-  def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator]
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  def onEffectAdd(pokemon: Pokemon): Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  def onEffectRemove(pokemon: Pokemon): Unit
 
   //TODO this method does not seem to require these arguments.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
@@ -62,7 +64,7 @@ sealed trait NonPersistentEffect extends StatusEffect {
 case object Burn extends PersistentEffect {
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "BRN"
-  
+
   /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
   override def isInitialActionRecurrent: Boolean = false
 
@@ -74,8 +76,11 @@ case object Burn extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = false
 
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
-  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = pokemon.getCurrentStats.setBurned(true)
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = pokemon.getCurrentStats.setBurned(false)
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
@@ -96,7 +101,7 @@ case object Paralyze extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "PAR"
-  
+
   /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
   override def isInitialActionRecurrent: Boolean = true
 
@@ -108,16 +113,15 @@ case object Paralyze extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
-  //TODO this has to happen at the start of every battle. Probably need to add that functionality to PersistentEffect.
-  //TODO lower Pokemon speed.
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. Paralyze lowers the
-    * Pokemon's speed by 50%. */
-  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = pokemon.getCurrentStats.setParalyzed(true)
 
-  //TODO see if Pokemon can move.
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = pokemon.getCurrentStats.setParalyzed(false)
+
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
-    List(TurnlyTryThaw)
+    List(TurnlyParalysisCheck)
 
   /** Returns an empty List. Paralyze does not have any outside of battle effects. */
   override def getOutOfBattleAction: List[MoveEventGenerator] = List.empty
@@ -135,7 +139,7 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "SLP"
- 
+
   //TODO pretty sure about this boolean value.
   /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
   override def isInitialActionRecurrent: Boolean = false
@@ -148,8 +152,11 @@ case class Sleep(turnsRemaining: Int) extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
-  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = Unit
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
@@ -170,7 +177,7 @@ case object Frozen extends PersistentEffect {
 
   /** Returns the name of the status effect. */
   override def getIdentifier: String = "FRZ"
-  
+
   /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
   override def isInitialActionRecurrent: Boolean = false
 
@@ -182,8 +189,11 @@ case object Frozen extends PersistentEffect {
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = true
 
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
-  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = Unit
 
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List(TurnlyTryThaw)
@@ -209,15 +219,18 @@ case class Poison(badly: Boolean, turn: Int) extends PersistentEffect {
     * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
     * after. This is just convention, and is actually controlled by isBeforeMove. */
   def getOrder: Int = POISON_ORDER
-  
+
   /** Returns true if getInitialActions should be performed every time the Pokemon first appears in battle. */
   override def isInitialActionRecurrent: Boolean = false
 
   /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
   def isBeforeMove: Boolean = false
 
-  /** Returns the List of MoveActions executed when the Pokemon receives this StatusEffect. */
-  override def getInitialActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] = List.empty
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = Unit
 
   //TODO the turn has to reset after every battle somehow.
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */

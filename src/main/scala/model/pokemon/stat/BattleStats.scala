@@ -30,9 +30,8 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
     PokemonStats.SPDEF_KEY -> 0,
     PokemonStats.SPD_KEY -> 0
   )
-
-  /** Changes the stats to match the given stats map. Called, for example, when resting or using a Pokemon Center. */
-  def returnToBaseline(): Unit = baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
+  private var isParalyzed: Boolean = false
+  private var isBurned: Boolean = false
 
   /** Returns true if the Pokemon is KO, false otherwise. */
   def isKO: Boolean = getStat(PokemonStats.HP_KEY) == 0
@@ -61,11 +60,25 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
     * baseline independently. Could call setStage, but this is just faster. */
   protected def resetStagesNoStatUpdate(): Unit = statStages.keys.foreach(statStages(_) = 0)
 
+  /** Returns all the stats as a Map. Checks status conditions. */
+  override def getStatsMap: Map[String, Int] =
+    if(isParalyzed) super.getStatsMap.updated(PokemonStats.SPD_KEY, super.getStatsMap(PokemonStats.SPD_KEY) / 2)
+    else if(isBurned) super.getStatsMap.updated(PokemonStats.ATK_KEY, super.getStatsMap(PokemonStats.ATK_KEY) / 2)
+    else super.getStatsMap
+
+  /** Sets the stats of this pokemon to reflect paralyzed status. */
+  def setParalyzed(b: Boolean): Unit = isParalyzed = b
+
+  /** Sets the stats of this pokemon to reflect burned status. */
+  def setBurned(b: Boolean): Unit = isBurned = b
+
   /** Resets all stats to their baseline levels and resets all stages. This is what gets called when you heal at a
     * Pokemon Center. */
   def resetOnHeal(): Unit = {
     resetStagesNoStatUpdate()
     baselineStats.getStatsMap.foreach(pair => setStat(pair._1, pair._2))
+    isParalyzed = false
+    isBurned = false
   }
 
   /** Resets all stats except HP to their baseline levels and resets all stat stages. This is what gets called when you
