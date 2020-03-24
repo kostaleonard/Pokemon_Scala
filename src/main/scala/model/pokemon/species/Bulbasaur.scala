@@ -4,7 +4,7 @@ import model.elementaltype.{ElementalType, GrassType, PoisonType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.fire.Ember
-import model.pokemon.move.bytype.grass.{SleepPowder, StunSpore, VineWhip}
+import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.normal.{Growl, Tackle}
 import model.pokemon.move.bytype.poison.{PoisonPowder, Toxic}
 import model.pokemon.move.{Move, MoveList}
@@ -52,7 +52,11 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
     //TODO correct/complete learnset.
     1 -> new Tackle,
     4 -> new Growl,
-    10 -> new VineWhip
+    7 -> new LeechSeed,
+    10 -> new VineWhip,
+    14 -> new PoisonPowder,
+    15 -> new SleepPowder,
+    20 -> new RazorLeaf
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

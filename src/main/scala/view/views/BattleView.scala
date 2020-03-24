@@ -83,7 +83,12 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
             if(battleOrder._2 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
             else battle.getOpponentMoveSpecifications(opponentMove)
           processNextMoveEvent(secondMoveSpecifications, () => {
-           processNextMoveEvent(battle.getAfterMoveSpecifications, () => battleMessage = None)
+            val afterMoveSpecifications = battle.getAfterMoveSpecifications
+            if(afterMoveSpecifications.nonEmpty) waitingOnUserInput = Some(() => {
+              waitingOnUserInput = None
+              processNextMoveEvent(afterMoveSpecifications, () => battleMessage = None)
+            })
+            else battleMessage = None
           })
         })
         menuActive = true

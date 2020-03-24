@@ -55,10 +55,10 @@ class MissingNo(override protected val levelTracker: LevelTracker)
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete MissingNo's learnset.
+    -1 -> new Tackle,
     0 -> new LeechSeed,
     1 -> new AbsoluteZero,
-    2 -> new Scratch,
-    3 -> new Tackle
+    2 -> new Scratch
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
