@@ -90,6 +90,12 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
       case MoveSpecification(DealDamageToSelf(amount), movingPokemon, otherPokemon) =>
         Array(MoveSpecification(PlayHPBarAnimation(movingPokemon, amount), movingPokemon, otherPokemon),
           MoveSpecification(DealDamageToSelf(amount), movingPokemon, otherPokemon))
+      case MoveSpecification(HealOther(amount), movingPokemon, otherPokemon) =>
+        Array(MoveSpecification(PlayHPBarAnimation(otherPokemon, -amount), movingPokemon, otherPokemon),
+          MoveSpecification(HealOther(amount), movingPokemon, otherPokemon))
+      case MoveSpecification(HealSelf(amount), movingPokemon, otherPokemon) =>
+        Array(MoveSpecification(PlayHPBarAnimation(otherPokemon, -amount), movingPokemon, otherPokemon),
+          MoveSpecification(HealSelf(amount), movingPokemon, otherPokemon))
       case other => Array(other)
   }
 

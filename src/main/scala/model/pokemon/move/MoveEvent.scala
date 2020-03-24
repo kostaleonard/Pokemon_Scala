@@ -67,6 +67,14 @@ object MoveEvent {
   def getDisplayMessageFullyParalyzed(pokemonName: String): DisplayMessage =
     DisplayMessage("%s is fully paralyzed.".format(pokemonName))
 
+  /** Returns the DisplayMessage used when a Pokemon is hit by leech seed. */
+  def getDisplayMessageSeeded(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s was seeded.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is hurt by leech seed. */
+  def getDisplayMessageHurtByLeechSeed(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s's HP was drained by LEECH SEED.".format(pokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon's stat won't go lower. */
   def getDisplayMessageStatWillNotGoLower(pokemonName: String, statName: String): DisplayMessage =
     DisplayMessage("%s's %s won't go any lower!".format(pokemonName, statName))
@@ -131,6 +139,16 @@ case class DealDamageToOpponent(amount: Int) extends MoveEvent {
 case class DealDamageToSelf(amount: Int) extends MoveEvent {
   /** Deals damage to this Pokemon. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.takeDamage(amount)
+}
+
+case class HealOther(amount: Int) extends MoveEvent {
+  /** Heals the opponent. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = otherPokemon.healDamage(amount)
+}
+
+case class HealSelf(amount: Int) extends MoveEvent {
+  /** Heals the opponent. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.healDamage(amount)
 }
 
 case object FaintOther extends MoveEvent {

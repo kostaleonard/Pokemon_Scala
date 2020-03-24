@@ -168,6 +168,21 @@ case class TryFreeze(probability: Double, displayFailure: Boolean, moveToAnimate
   }
 }
 
+case class TrySeeded(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
+  extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => !otherPokemon.getEffectTracker.contains(Seeded) &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageSeeded(otherPokemon.getName),
+      InflictEffectOnOpponent(Seeded))
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -245,5 +260,20 @@ case object ThawFrozenOther extends MoveEventGenerator {
       List(MoveEvent.getDisplayMessageThawed(otherPokemon.getName), RemovePersistentEffectOther)
     else
       List.empty
+  }
+}
+
+case object TurnlySeededDamage extends MoveEventGenerator {
+  /** Steals 1/8th the current Pokemon's max HP. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+    result.append(PlayEffectAnimation(Seeded))
+    val damage = (thisPokemon.getStandardStats.getHP / 8.0).toInt //TODO magic numbers
+    result.append(DealDamageToSelf(damage))
+    result.append(HealOther(damage))
+    result.append(MoveEvent.getDisplayMessageHurtByLeechSeed(thisPokemon.getName))
+    if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(thisPokemon, false)
+    result.toList
   }
 }

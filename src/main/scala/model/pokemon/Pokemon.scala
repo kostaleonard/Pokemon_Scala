@@ -131,6 +131,9 @@ abstract class Pokemon(protected val levelTracker: LevelTracker) extends Drawabl
   /** Decrements the current HP by the given amount. */
   def takeDamage(amount: Int): Unit = currentStats.takeDamage(amount)
 
+  /** Increments the current HP by the given amount. */
+  def healDamage(amount: Int): Unit = currentStats.healDamage(amount)
+
   //TODO this should honestly not be accessible, and the methods from EffectTracker should be abstracted one level up. Don't want people to see the secret sauce beneath. But I don't really feel like rewriting those methods right now, in case things change significantly.
   /** Returns the EffectTracker. */
   def getEffectTracker: EffectTracker = effectTracker

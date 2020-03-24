@@ -39,6 +39,10 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
   /** Lowers HP by the given amount. */
   def takeDamage(amount: Int): Unit = setStat(PokemonStats.HP_KEY, (getStat(PokemonStats.HP_KEY) - amount) max 0)
 
+  /** Increases HP by the given amount. */
+  def healDamage(amount: Int): Unit = setStat(PokemonStats.HP_KEY, (getStat(PokemonStats.HP_KEY) + amount)
+    min baselineStats.getHP)
+
   /** Returns the stage of the given staged stat. */
   def getStage(statKey: String): Int = statStages.getOrElse(statKey,
     throw new UnsupportedOperationException("No such staged stat: %s".format(statKey)))
