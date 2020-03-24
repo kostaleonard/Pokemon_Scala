@@ -202,7 +202,21 @@ case object DecrementSleepCounterSelf extends MoveEvent {
 }
 
 case object RemovePersistentEffectSelf extends MoveEvent {
-  /** Replaces the Pokemon's Sleep with Sleep that has progressed one turn. */
-  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = thisPokemon.getEffectTracker
-    .removePersistentEffect()
+  /** Removes the pokemon's persistent effect. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    val effect = thisPokemon.getEffectTracker.getPersistentEffect
+    if(effect.isEmpty) throw new UnsupportedOperationException("Cannot remove empty effect.")
+    thisPokemon.getEffectTracker.removePersistentEffect()
+    effect.get.onEffectRemove(thisPokemon)
+  }
+}
+
+case object RemovePersistentEffectOther extends MoveEvent {
+  /** Removes the pokemon's persistent effect. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    val effect = otherPokemon.getEffectTracker.getPersistentEffect
+    if(effect.isEmpty) throw new UnsupportedOperationException("Cannot remove empty effect.")
+    otherPokemon.getEffectTracker.removePersistentEffect()
+    effect.get.onEffectRemove(otherPokemon)
+  }
 }

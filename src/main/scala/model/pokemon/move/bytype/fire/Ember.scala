@@ -46,5 +46,5 @@ class Ember extends Move {
 
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
-    Array(AccuracyCheck(getAccuracy), MoveDamage(this), TryBurn(Ember.BURN_CHANCE, false, None))
+    Array(AccuracyCheck(getAccuracy), MoveDamage(this), TryBurn(Ember.BURN_CHANCE, false, None), ThawFrozenOther)
 }

@@ -237,3 +237,13 @@ case object TurnlyTryThaw extends MoveEventGenerator {
       List(MoveEvent.getDisplayMessageFrozenSolid(thisPokemon.getName), PlayEffectAnimation(Frozen), EndMove)
   }
 }
+
+case object ThawFrozenOther extends MoveEventGenerator {
+  /** Thaws the other Pokemon. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    if(otherPokemon.getEffectTracker.getPersistentEffect.contains(Frozen))
+      List(MoveEvent.getDisplayMessageThawed(otherPokemon.getName), RemovePersistentEffectOther)
+    else
+      List.empty
+  }
+}
