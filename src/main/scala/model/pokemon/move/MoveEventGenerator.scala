@@ -63,7 +63,7 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
 
     val damage = ((
       ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
-      ) * modifier).toInt
+      ) * modifier).toInt max 1
 
     result.append(PlayMoveAnimation(move))
     result.append(DealDamageToOpponent(damage))
