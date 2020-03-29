@@ -109,15 +109,18 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
           battle.getPlayerPokemon.getEffectTracker.removeEffect(UsingMultiMove(moves))
           if(moves.tail.nonEmpty) battle.getPlayerPokemon.getEffectTracker.addEffect(UsingMultiMove(moves.tail))
           doMove(moves.head)
-        case _ => battleMessage = None
+        case _ => endMoveSequence()
+    }
+    def endMoveSequence(): Unit = {
+      battleMessage = None
+      menuActive = true
+      showTrainerMenu()
     }
 
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(playerMove =>
       moveMenu.appendMenuItem(BasicMenuItem(playerMove.getName, GuiAction(() => {
         menuActive = false
         doMove(playerMove)
-        menuActive = true
-        showTrainerMenu()
       })))
     )
     moveMenu.setTitleDisplayed(false)
@@ -356,6 +359,23 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     }
   }
 
+  /** Draws no battle message in the lower panel of the screen. */
+  def drawEmptyBattleMessage(g2d: Graphics2D): Unit = {
+    g2d.setColor(BasicMenu.DEFAULT_MENU_BACKGROUND_COLOR)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth,
+      getObjectHeight - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.setColor(Color.BLACK)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM, getObjectWidth, getObjectHeight - BattleView.TRAINER_MENU_BOTTOM)
+    g2d.setColor(Color.GRAY)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, BattleView.BORDER_THICKNESS,
+      BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.BATTLE_FOREGROUND_BOTTOM, getObjectWidth, BattleView.BORDER_THICKNESS)
+    g2d.fillRect(getObjectWidth - BattleView.BORDER_THICKNESS, BattleView.BATTLE_FOREGROUND_BOTTOM,
+      BattleView.BORDER_THICKNESS, BattleView.TRAINER_MENU_BOTTOM - BattleView.BATTLE_FOREGROUND_BOTTOM)
+    g2d.fillRect(0, BattleView.TRAINER_MENU_BOTTOM - BattleView.BORDER_THICKNESS, getObjectWidth,
+      BattleView.BORDER_THICKNESS)
+  }
+
   /** Draws the trainer menu in the lower panel of the screen. */
   def drawTrainerMenu(g2d: Graphics2D): Unit = {
     g2d.setColor(Color.GRAY)
@@ -453,6 +473,7 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
     if(battleMessage.nonEmpty) drawBattleMessage(g2d)
     else if(menuActive && currentMenu == trainerMenu) drawTrainerMenu(g2d)
     else if(menuActive && currentMenu == moveMenu) drawMoveMenu(g2d)
+    else if(!menuActive) drawEmptyBattleMessage(g2d)
     if(hpBarAnimation.nonEmpty && !hpBarAnimation.get.isAnimationComplete) drawHPBarAnimation(g2d)
     if(expBarAnimation.nonEmpty && !expBarAnimation.get.isAnimationComplete) drawEXPBarAnimation(g2d)
     if(moveAnimation.nonEmpty && !moveAnimation.get.isAnimationComplete) drawMoveAnimation(g2d)

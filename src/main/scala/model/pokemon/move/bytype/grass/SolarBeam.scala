@@ -5,6 +5,9 @@ import model.pokemon.move._
 import view.views.drawing.Animation
 
 class SolarBeam extends Move {
+  /** Returns true if the "[Pokemon] used [move]!" message should display. Subclasses may override. */
+  override def displayUsedMessage: Boolean = false
+
   /** Returns the name of the move, in all caps. */
   override def getName: String = "SOLARBEAM"
 
@@ -44,8 +47,11 @@ class SolarBeam extends Move {
     List(new SolarBeamCharging, new SolarBeamAttacking(getPower, getAccuracy))))
 
   class SolarBeamCharging extends Move {
+    /** Returns true if the "[Pokemon] used [move]!" message should display. Subclasses may override. */
+    override def displayUsedMessage: Boolean = false
+
     /** Returns the name of the move, in all caps. */
-    override def getName: String = "SOLARBEAM CHARGING"
+    override def getName: String = ""
 
     /** Returns the initial value for the move's max PP. */
     override def getInitialMaxPP: Int = 1

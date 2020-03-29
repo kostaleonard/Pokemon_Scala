@@ -61,11 +61,14 @@ abstract class Move {
   /** Returns the chance of a critical hit. Subclasses may override. */
   def getCriticalHitChance: Double = Move.BASE_CRITICAL_HIT_CHANCE
 
+  /** Returns true if the "[Pokemon] used [move]!" message should display. Subclasses may override. */
+  def displayUsedMessage: Boolean = true
+
   /** Returns the MoveEvents that are the result of thisPokemon using the move on otherPokemon.
     * I just want to say, it was pretty painful figuring out these type annotations. */
   def getEventsFromMove(thisPokemon: Pokemon, otherPokemon: Pokemon): Array[MoveEvent] =
-    DisplayMessage("%s used %s!".format(thisPokemon.getName, getName)) +:
-      getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
+    (if(displayUsedMessage) Array(DisplayMessage("%s used %s!".format(thisPokemon.getName, getName)))
+    else Array.empty) ++ getMoveActions.flatMap(_.getResults(thisPokemon, otherPokemon))
 
   /** Returns the name of the move, in all caps. */
   def getName: String
