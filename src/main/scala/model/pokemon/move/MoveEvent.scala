@@ -167,6 +167,12 @@ case class LowerStatOther(statKey: String, stages: Int) extends MoveEvent {
     otherPokemon.getCurrentStats.incrementStage(statKey, -1 * stages)
 }
 
+case class RaiseStatSelf(statKey: String, stages: Int) extends MoveEvent {
+  /** Raises this Pokemon's given stat by the given number of stages.  */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
+    thisPokemon.getCurrentStats.incrementStage(statKey, stages)
+}
+
 case class SucceedOrFailEvent(successCheck: () => Boolean,
                               eventsIfTrue: List[MoveEvent],
                               eventsIfFalse: List[MoveEvent],

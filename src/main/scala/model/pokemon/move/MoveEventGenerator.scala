@@ -93,6 +93,21 @@ case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option
   }
 }
 
+case class TryRaiseStatSelf(statKey: String, stages: Int, moveToAnimate: Option[Move]) extends MoveEventGenerator {
+  /** Raises this Pokemon's given stat by the given number of stages. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => thisPokemon.getCurrentStats.getStage(statKey) < BattleStats.MAX_STAGE
+    val result = ListBuffer.empty[MoveEvent]
+    if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
+    result.append(RaiseStatSelf(statKey, stages))
+    result.append(MoveEvent.getDisplayMessageStatRose(thisPokemon.getName, statKey))
+    val eventsIfTrue = result.toList
+    val eventsIfFalse = List(MoveEvent.getDisplayMessageStatWillNotGoHigher(thisPokemon.getName, statKey))
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case class TryBurn(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
   extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */

@@ -5,8 +5,8 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.fire.Ember
 import model.pokemon.move.bytype.grass._
-import model.pokemon.move.bytype.normal.{Growl, Tackle}
-import model.pokemon.move.bytype.poison.{PoisonPowder, Toxic}
+import model.pokemon.move.bytype.normal.{Growl, Growth, Tackle}
+import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear, Toxic}
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -56,7 +56,9 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
     10 -> new VineWhip,
     14 -> new PoisonPowder,
     15 -> new SleepPowder,
-    20 -> new RazorLeaf
+    20 -> new RazorLeaf,
+    25 -> new PoisonSpear,
+    32 -> new Growth
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
