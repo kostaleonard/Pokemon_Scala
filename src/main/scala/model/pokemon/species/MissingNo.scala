@@ -5,10 +5,10 @@ import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
 import model.pokemon.move.bytype.fire.Ember
-import model.pokemon.move.bytype.grass.{LeechSeed, SleepPowder, VineWhip}
+import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
-import model.pokemon.move.bytype.normal.{Growl, Scratch, Tackle}
-import model.pokemon.move.bytype.poison.PoisonPowder
+import model.pokemon.move.bytype.normal.{Growl, Growth, Scratch, Tackle}
+import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
 import model.pokemon.stat.PokemonStats
 
 object MissingNo {
@@ -55,10 +55,10 @@ class MissingNo(override protected val levelTracker: LevelTracker)
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete MissingNo's learnset.
-    -1 -> new Tackle,
-    0 -> new LeechSeed,
-    1 -> new AbsoluteZero,
-    2 -> new Scratch
+    -2 -> new Synthesis,
+    -1 -> new PoisonSpear,
+    0 -> new Ember,
+    1 -> new Growth
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

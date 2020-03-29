@@ -58,7 +58,8 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
     15 -> new SleepPowder,
     20 -> new RazorLeaf,
     25 -> new PoisonSpear,
-    32 -> new Growth
+    32 -> new Growth,
+    39 -> new Synthesis
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

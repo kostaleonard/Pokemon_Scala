@@ -108,6 +108,22 @@ case class TryRaiseStatSelf(statKey: String, stages: Int, moveToAnimate: Option[
   }
 }
 
+case class TryHealSelf(percentMaxHP: Double, moveToAnimate: Option[Move]) extends MoveEventGenerator {
+  /** Raises this Pokemon's given stat by the given number of stages. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => thisPokemon.getCurrentStats.getHP < thisPokemon.getStandardStats.getHP
+    val result = ListBuffer.empty[MoveEvent]
+    if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
+    val healAmount = (thisPokemon.getStandardStats.getHP * percentMaxHP).toInt
+    result.append(HealSelf(healAmount))
+    result.append(MoveEvent.getDisplayMessageHPRestored(thisPokemon.getName))
+    val eventsIfTrue = result.toList
+    val eventsIfFalse = List(MoveEvent.DISPLAY_BUT_IT_FAILED)
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case class TryBurn(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
   extends MoveEventGenerator {
   /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */

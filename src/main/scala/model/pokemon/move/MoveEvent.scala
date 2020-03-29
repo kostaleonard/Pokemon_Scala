@@ -94,6 +94,10 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon faints. */
   def getDisplayMessageFainted(pokemonName: String): DisplayMessage =
     DisplayMessage("%s fainted!".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon gains HP through a move. */
+  def getDisplayMessageHPRestored(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s's HP was restored.".format(pokemonName))
 }
 
 sealed trait MoveEvent {
