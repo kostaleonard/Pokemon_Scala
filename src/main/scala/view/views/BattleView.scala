@@ -10,6 +10,7 @@ import model.Model
 import model.battle.{Battle, BattleInfoBox, BattleMessage, MoveSpecification}
 import model.pokemon.Pokemon
 import model.pokemon.move._
+import model.statuseffect.UsingMultiMove
 import view.View
 import view.gui.GuiAction
 import view.gui.menu.{BasicMenu, BasicMenuItem}
@@ -70,27 +71,51 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
 
   /** Sets up the move menu. */
   protected def setupMoveMenu(): Unit = {
+    def doMove(playerMove: Move): Unit = {
+      val opponentMultiMove = battle.getOpponentPokemon.getEffectTracker.getNonPersistentEffects
+        .find(_.isInstanceOf[UsingMultiMove])
+      val opponentMove = opponentMultiMove match {
+        case Some(UsingMultiMove(moves)) => moves.head
+        case None => battle.getRandomOpponentMove
+        case _ => throw new UnsupportedOperationException("Found multi move effect, but it didn't contain multi move.")
+      }
+      opponentMultiMove match {
+        case Some(UsingMultiMove(moves)) =>
+          battle.getOpponentPokemon.getEffectTracker.removeEffect(opponentMultiMove.get)
+          if(moves.tail.nonEmpty) battle.getOpponentPokemon.getEffectTracker.addEffect(UsingMultiMove(moves.tail))
+        case _ => Unit
+      }
+      val battleOrder = battle.getBattleOrder(playerMove, opponentMove)
+      val firstMoveSpecifications =
+        if(battleOrder._1 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
+        else battle.getOpponentMoveSpecifications(opponentMove)
+      processNextMoveEvent(firstMoveSpecifications, () => {
+        val secondMoveSpecifications =
+          if(battleOrder._2 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
+          else battle.getOpponentMoveSpecifications(opponentMove)
+        processNextMoveEvent(secondMoveSpecifications, () => {
+          val afterMoveSpecifications = battle.getAfterMoveSpecifications
+          if(afterMoveSpecifications.nonEmpty) waitingOnUserInput = Some(() => {
+            waitingOnUserInput = None
+            processNextMoveEvent(afterMoveSpecifications, () => doPlayerMultiMove())
+          })
+          else doPlayerMultiMove()
+        })
+      })
+    }
+    def doPlayerMultiMove(): Unit =
+      battle.getPlayerPokemon.getEffectTracker.getNonPersistentEffects.find(_.isInstanceOf[UsingMultiMove]) match {
+        case Some(UsingMultiMove(moves)) =>
+          battle.getPlayerPokemon.getEffectTracker.removeEffect(UsingMultiMove(moves))
+          if(moves.tail.nonEmpty) battle.getPlayerPokemon.getEffectTracker.addEffect(UsingMultiMove(moves.tail))
+          doMove(moves.head)
+        case _ => battleMessage = None
+    }
+
     battle.getPlayerPokemon.getMoveList.getMoves.foreach(playerMove =>
       moveMenu.appendMenuItem(BasicMenuItem(playerMove.getName, GuiAction(() => {
         menuActive = false
-        val opponentMove = battle.getRandomOpponentMove
-        val battleOrder = battle.getBattleOrder(playerMove, opponentMove)
-        val firstMoveSpecifications =
-          if(battleOrder._1 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
-          else battle.getOpponentMoveSpecifications(opponentMove)
-        processNextMoveEvent(firstMoveSpecifications, () => {
-          val secondMoveSpecifications =
-            if(battleOrder._2 == battle.getPlayerPokemon) battle.getPlayerMoveSpecifications(playerMove)
-            else battle.getOpponentMoveSpecifications(opponentMove)
-          processNextMoveEvent(secondMoveSpecifications, () => {
-            val afterMoveSpecifications = battle.getAfterMoveSpecifications
-            if(afterMoveSpecifications.nonEmpty) waitingOnUserInput = Some(() => {
-              waitingOnUserInput = None
-              processNextMoveEvent(afterMoveSpecifications, () => battleMessage = None)
-            })
-            else battleMessage = None
-          })
-        })
+        doMove(playerMove)
         menuActive = true
         showTrainerMenu()
       })))

@@ -33,6 +33,16 @@ case class AccuracyCheck(accuracy: Double) extends MoveEventGenerator {
     else List.empty
 }
 
+case class UseMultiMove(moves: List[Move]) extends MoveEventGenerator {
+  /** Use moves in order over several turns. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val multiMoveEffect = thisPokemon.getEffectTracker.getNonPersistentEffects.find(_.isInstanceOf[UsingMultiMove])
+    if(multiMoveEffect.nonEmpty) thisPokemon.getEffectTracker.removeEffect(multiMoveEffect.get)
+    if(moves.tail.nonEmpty) thisPokemon.getEffectTracker.addEffect(UsingMultiMove(moves.tail))
+    moves.head.getEventsFromMove(thisPokemon, otherPokemon).toList
+  }
+}
+
 case class AnimationGenerator(move: Move) extends MoveEventGenerator {
   /** Returns the animation to be played. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = List(PlayMoveAnimation(move))
@@ -76,6 +86,12 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
       MoveEventGenerator.getKOEvents(otherPokemon, true)
     result.toList
   }
+}
+
+case object TakeInSunlight extends MoveEventGenerator {
+  /** Takes in sunlight. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    List(MoveEvent.getDisplayMessageTookInSunlight(thisPokemon.getName))
 }
 
 case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option[Move]) extends MoveEventGenerator {

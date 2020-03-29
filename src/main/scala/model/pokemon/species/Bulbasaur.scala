@@ -50,7 +50,8 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete learnset.
-    1 -> new Tackle,
+    //1 -> new Tackle,
+    1 -> new SolarBeam,
     4 -> new Growl,
     7 -> new LeechSeed,
     10 -> new VineWhip,
@@ -59,7 +60,8 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
     20 -> new RazorLeaf,
     25 -> new PoisonSpear,
     32 -> new Growth,
-    39 -> new Synthesis
+    39 -> new Synthesis,
+    46 -> new SolarBeam
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

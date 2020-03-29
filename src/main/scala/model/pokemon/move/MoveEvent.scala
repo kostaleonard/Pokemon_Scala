@@ -98,6 +98,10 @@ object MoveEvent {
   /** Returns the DisplayMessage used when a Pokemon gains HP through a move. */
   def getDisplayMessageHPRestored(pokemonName: String): DisplayMessage =
     DisplayMessage("%s's HP was restored.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon takes in sunlight. */
+  def getDisplayMessageTookInSunlight(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s took in sunlight.".format(pokemonName))
 }
 
 sealed trait MoveEvent {
@@ -175,6 +179,11 @@ case class RaiseStatSelf(statKey: String, stages: Int) extends MoveEvent {
   /** Raises this Pokemon's given stat by the given number of stages.  */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit =
     thisPokemon.getCurrentStats.incrementStage(statKey, stages)
+}
+
+case object PlayerChoiceLocked extends MoveEvent {
+  /** Signals that the player's move is already selected. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {}
 }
 
 case class SucceedOrFailEvent(successCheck: () => Boolean,

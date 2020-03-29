@@ -58,7 +58,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     -2 -> new Synthesis,
     -1 -> new PoisonSpear,
     0 -> new Ember,
-    1 -> new Growth
+    1 -> new SolarBeam
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
