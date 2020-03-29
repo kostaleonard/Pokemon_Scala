@@ -4,7 +4,7 @@ import model.elementaltype.{ElementalType, FlyingType, GhostType, NormalType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
-import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember}
 import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
 import model.pokemon.move.bytype.normal.{Growl, Growth, Scratch, Tackle}
@@ -58,7 +58,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     -2 -> new Synthesis,
     -1 -> new PoisonSpear,
     0 -> new Ember,
-    1 -> new SolarBeam
+    1 -> new BlessedImmolation
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
