@@ -3,7 +3,9 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, GrassType, PoisonType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.bytype.normal.Tackle
+import model.pokemon.move.bytype.grass._
+import model.pokemon.move.bytype.normal.{Growl, Growth, Tackle}
+import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -46,8 +48,20 @@ class Venasaur(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete learnset.
-    1 -> new Tackle
+    -2 -> new Tackle,
+    -1 -> new Growl,
+    0 -> new LeechSeed,
+    1 -> new VineWhip,
+    4 -> new Growl,
+    7 -> new LeechSeed,
+    10 -> new VineWhip,
+    14 -> new PoisonPowder,
+    15 -> new SleepPowder,
+    22 -> new RazorLeaf,
+    29 -> new PoisonSpear,
+    41 -> new Growth,
+    53 -> new Synthesis,
+    65 -> new SolarBeam
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

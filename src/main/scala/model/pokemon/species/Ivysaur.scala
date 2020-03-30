@@ -3,7 +3,9 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, GrassType, PoisonType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.bytype.normal.Tackle
+import model.pokemon.move.bytype.grass._
+import model.pokemon.move.bytype.normal.{Growl, Growth, Tackle}
+import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -46,8 +48,19 @@ class Ivysaur(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete learnset.
-    1 -> new Tackle
+    -1 -> new Tackle,
+    0 -> new Growl,
+    1 -> new LeechSeed,
+    4 -> new Growl,
+    7 -> new LeechSeed,
+    10 -> new VineWhip,
+    14 -> new PoisonPowder,
+    15 -> new SleepPowder,
+    22 -> new RazorLeaf,
+    29 -> new PoisonSpear,
+    38 -> new Growth,
+    47 -> new Synthesis,
+    56 -> new SolarBeam
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

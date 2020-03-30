@@ -49,7 +49,6 @@ class Bulbasaur(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete learnset.
     1 -> new Tackle,
     4 -> new Growl,
     7 -> new LeechSeed,
