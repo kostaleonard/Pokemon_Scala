@@ -94,31 +94,39 @@ case object TakeInSunlight extends MoveEventGenerator {
     List(MoveEvent.getDisplayMessageTookInSunlight(thisPokemon.getName))
 }
 
-case class TryLowerStatOther(statKey: String, stages: Int, moveToAnimate: Option[Move]) extends MoveEventGenerator {
+case class TryLowerStatOther(statKey: String, stages: Int, probability: Double, displayFailure: Boolean,
+                             moveToAnimate: Option[Move]) extends MoveEventGenerator {
   /** Lowers the opponent's given stat by the given number of stages. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
-    val successCheck = () => otherPokemon.getCurrentStats.getStage(statKey) > BattleStats.MIN_STAGE
+    val successCheck = () => otherPokemon.getCurrentStats.getStage(statKey) > BattleStats.MIN_STAGE &&
+      Random.nextDouble() < probability
     val result = ListBuffer.empty[MoveEvent]
     if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
     result.append(LowerStatOther(statKey, stages))
     result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
     val eventsIfTrue = result.toList
-    val eventsIfFalse = List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
+    val eventsIfFalse =
+      if(displayFailure) List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
+      else List.empty
     //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
     if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }
 }
 
-case class TryRaiseStatSelf(statKey: String, stages: Int, moveToAnimate: Option[Move]) extends MoveEventGenerator {
+case class TryRaiseStatSelf(statKey: String, stages: Int, probability: Double, displayFailure: Boolean,
+                            moveToAnimate: Option[Move]) extends MoveEventGenerator {
   /** Raises this Pokemon's given stat by the given number of stages. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
-    val successCheck = () => thisPokemon.getCurrentStats.getStage(statKey) < BattleStats.MAX_STAGE
+    val successCheck = () => thisPokemon.getCurrentStats.getStage(statKey) < BattleStats.MAX_STAGE &&
+      Random.nextDouble() < probability
     val result = ListBuffer.empty[MoveEvent]
     if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
     result.append(RaiseStatSelf(statKey, stages))
     result.append(MoveEvent.getDisplayMessageStatRose(thisPokemon.getName, statKey))
     val eventsIfTrue = result.toList
-    val eventsIfFalse = List(MoveEvent.getDisplayMessageStatWillNotGoHigher(thisPokemon.getName, statKey))
+    val eventsIfFalse =
+      if(displayFailure) List(MoveEvent.getDisplayMessageStatWillNotGoHigher(thisPokemon.getName, statKey))
+      else List.empty
     //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
     if(successCheck.apply()) eventsIfTrue else eventsIfFalse
   }

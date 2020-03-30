@@ -9,6 +9,7 @@ import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
 import model.pokemon.move.bytype.normal.{Growl, Growth, Scratch, Tackle}
 import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
+import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
 
 object MissingNo {
@@ -55,9 +56,9 @@ class MissingNo(override protected val levelTracker: LevelTracker)
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete MissingNo's learnset.
-    -2 -> new Synthesis,
-    -1 -> new PoisonSpear,
-    0 -> new Ember,
+    -2 -> new Growth,
+    -1 -> new Growl,
+    0 -> new MetalClaw,
     1 -> new BlessedImmolation
   )
 

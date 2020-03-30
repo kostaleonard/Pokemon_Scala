@@ -6,6 +6,7 @@ import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.move.bytype.normal.{Growl, Scratch}
 import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
 
 object Charmander {
@@ -50,7 +51,8 @@ class Charmander(override protected val levelTracker: LevelTracker)
     //TODO correct/complete Charmander's learnset.
     0 -> new Scratch,
     1 -> new Growl,
-    7 -> new Ember
+    7 -> new Ember,
+    13 -> new MetalClaw
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

@@ -42,5 +42,5 @@ class Growl extends Move {
 
   /** Returns the move's MoveActions in the order that they will be done. */
   override def getMoveActions: Array[MoveEventGenerator] =
-    Array(AccuracyCheck(getAccuracy), TryLowerStatOther(PokemonStats.ATK_KEY, 1, Some(this)))
+    Array(AccuracyCheck(getAccuracy), TryLowerStatOther(PokemonStats.ATK_KEY, 1, 1.0, true, Some(this)))
 }
