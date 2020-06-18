@@ -4,7 +4,7 @@ import model.elementaltype.{ElementalType, FlyingType, GhostType, NormalType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
-import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember}
+import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember, Flamethrower}
 import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
 import model.pokemon.move.bytype.normal._
@@ -59,7 +59,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     -2 -> new Growth,
     -1 -> new Growl,
     0 -> new MetalClaw,
-    1 -> new ScaryFace
+    1 -> new Flamethrower
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
