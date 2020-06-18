@@ -7,7 +7,7 @@ import model.pokemon.move.Move
 import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember}
 import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
-import model.pokemon.move.bytype.normal.{Growl, Growth, Scratch, Tackle}
+import model.pokemon.move.bytype.normal._
 import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
 import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
@@ -59,7 +59,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     -2 -> new Growth,
     -1 -> new Growl,
     0 -> new MetalClaw,
-    1 -> new BlessedImmolation
+    1 -> new Smokescreen
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

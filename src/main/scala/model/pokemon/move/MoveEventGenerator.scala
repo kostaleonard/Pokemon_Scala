@@ -29,7 +29,8 @@ case class AccuracyCheck(accuracy: Double) extends MoveEventGenerator {
   //TODO need to check accuracy stages.
   /** Checks to see if the move hits. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
-    if(Random.nextDouble() > accuracy) List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName), EndMove)
+    if (Random.nextDouble() > accuracy * thisPokemon.getCurrentStats.getAccuracy / 100.0)
+      List(MoveEvent.getDisplayMessageMoveMissed(thisPokemon.getName), EndMove)
     else List.empty
 }
 

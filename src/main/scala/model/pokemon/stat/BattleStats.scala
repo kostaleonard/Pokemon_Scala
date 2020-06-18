@@ -18,6 +18,7 @@ object BattleStats {
     5 -> 7.0 / 2.0,
     6 -> 8.0 / 2.0
   )
+  val ACC_KEY = "ACC"
 }
 
 /** Constructors here are reproduced from the super class because the subclass cannot call super's auxiliary
@@ -28,10 +29,14 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
     PokemonStats.DEF_KEY -> 0,
     PokemonStats.SPATK_KEY -> 0,
     PokemonStats.SPDEF_KEY -> 0,
-    PokemonStats.SPD_KEY -> 0
+    PokemonStats.SPD_KEY -> 0,
+    BattleStats.ACC_KEY -> 0
   )
   private var isParalyzed: Boolean = false
   private var isBurned: Boolean = false
+
+  /** Returns the Pokemon's Attack. */
+  def getAccuracy: Int = getStat(BattleStats.ACC_KEY)
 
   /** Returns true if the Pokemon is KO, false otherwise. */
   def isKO: Boolean = getStat(PokemonStats.HP_KEY) == 0
@@ -54,7 +59,13 @@ class BattleStats(protected val baselineStats: PokemonStats) extends PokemonStat
     val statMultiplier = BattleStats.STAT_STAGE_MULTIPLIERS.getOrElse(newStage,
       throw new UnsupportedOperationException("No stat stage: %d".format(newStage)))
     statStages(statKey) = newStage
-    setStat(statKey, (baselineStats.getStat(statKey) * statMultiplier).toInt)
+    if(statKey != BattleStats.ACC_KEY) setStat(statKey, (baselineStats.getStat(statKey) * statMultiplier).toInt)
+  }
+
+  /** Returns the requested stat. Keys are defined in PokemonStats object. */
+  override def getStat(statKey: String): Int = statKey match {
+    case BattleStats.ACC_KEY => (100 * BattleStats.STAT_STAGE_MULTIPLIERS(getStage(statKey))).toInt
+    case _ => super.getStat(statKey)
   }
 
   /** Increments the stage of the stat. */

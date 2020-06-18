@@ -4,7 +4,7 @@ import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.{Move, MoveList}
-import model.pokemon.move.bytype.normal.{Growl, Scratch}
+import model.pokemon.move.bytype.normal.{Growl, Scratch, Smokescreen}
 import model.pokemon.move.bytype.fire.Ember
 import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
@@ -52,7 +52,8 @@ class Charmander(override protected val levelTracker: LevelTracker)
     0 -> new Scratch,
     1 -> new Growl,
     7 -> new Ember,
-    13 -> new MetalClaw
+    13 -> new MetalClaw,
+    19 -> new Smokescreen
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
