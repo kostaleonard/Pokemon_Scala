@@ -3,6 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.move.bytype.normal._
 import model.pokemon.move.bytype.fire.{Ember, Flamethrower}
@@ -56,7 +57,8 @@ class Charmander(override protected val levelTracker: LevelTracker)
     19 -> new Smokescreen,
     25 -> new ScaryFace,
     31 -> new Flamethrower,
-    37 -> new Slash
+    37 -> new Slash,
+    43 -> new DragonRage
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

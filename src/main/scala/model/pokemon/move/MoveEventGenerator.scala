@@ -76,6 +76,7 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
       ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
       ) * modifier).toInt max 1
 
+    //TODO looks to me like this will not work correctly if typeEffectiveness is 0, but we don't have any types like that implemented yet.
     result.append(PlayMoveAnimation(move))
     result.append(DealDamageToOpponent(damage))
     if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
@@ -84,6 +85,26 @@ case class MoveDamage(move: Move) extends MoveEventGenerator {
     else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
     else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
     if(MoveEventGenerator.willDamageKO(otherPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(otherPokemon, true)
+    result.toList
+  }
+}
+
+case class FixedMoveDamage(move: Move, fixedDamage: Int) extends MoveEventGenerator {
+  /** Deals damage to the other pokemon. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+    val typeEffectiveness = otherPokemon.getTypeArray.foldRight(1.0)((otherType, accum) =>
+      accum * move.getType.getTypeEffectiveness(otherType))
+
+    //TODO looks to me like this will not work correctly if typeEffectiveness is 0, but we don't have any types like that implemented yet.
+    result.append(PlayMoveAnimation(move))
+    result.append(DealDamageToOpponent(fixedDamage))
+    if(typeEffectiveness == 0) result.append(
+      MoveEvent.getDisplayMessageMoveNoEffect(move.getName, otherPokemon.getName))
+    else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
+    else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
+    if(MoveEventGenerator.willDamageKO(otherPokemon, fixedDamage)) result ++=
       MoveEventGenerator.getKOEvents(otherPokemon, true)
     result.toList
   }
