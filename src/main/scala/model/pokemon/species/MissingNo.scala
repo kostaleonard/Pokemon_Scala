@@ -59,7 +59,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     -2 -> new Growth,
     -1 -> new Growl,
     0 -> new MetalClaw,
-    1 -> new Smokescreen
+    1 -> new ScaryFace
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

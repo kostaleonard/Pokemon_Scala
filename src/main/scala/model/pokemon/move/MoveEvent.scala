@@ -87,9 +87,17 @@ object MoveEvent {
   def getDisplayMessageStatFell(pokemonName: String, statName: String): DisplayMessage =
     DisplayMessage("%s's %s fell.".format(pokemonName, statName))
 
+  /** Returns the DisplayMessage used when a Pokemon's stat falls sharply. */
+  def getDisplayMessageStatSharplyFell(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s sharply fell.".format(pokemonName, statName))
+
   /** Returns the DisplayMessage used when a Pokemon's stat rises. */
   def getDisplayMessageStatRose(pokemonName: String, statName: String): DisplayMessage =
     DisplayMessage("%s's %s rose.".format(pokemonName, statName))
+
+  /** Returns the DisplayMessage used when a Pokemon's stat rises. */
+  def getDisplayMessageStatSharplyRose(pokemonName: String, statName: String): DisplayMessage =
+    DisplayMessage("%s's %s sharply rose.".format(pokemonName, statName))
 
   /** Returns the DisplayMessage used when a Pokemon faints. */
   def getDisplayMessageFainted(pokemonName: String): DisplayMessage =

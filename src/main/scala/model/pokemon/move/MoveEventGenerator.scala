@@ -104,7 +104,8 @@ case class TryLowerStatOther(statKey: String, stages: Int, probability: Double, 
     val result = ListBuffer.empty[MoveEvent]
     if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
     result.append(LowerStatOther(statKey, stages))
-    result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
+    if(stages > 1) result.append(MoveEvent.getDisplayMessageStatSharplyFell(otherPokemon.getName, statKey))
+    else result.append(MoveEvent.getDisplayMessageStatFell(otherPokemon.getName, statKey))
     val eventsIfTrue = result.toList
     val eventsIfFalse =
       if(displayFailure) List(MoveEvent.getDisplayMessageStatWillNotGoLower(otherPokemon.getName, statKey))
@@ -123,7 +124,8 @@ case class TryRaiseStatSelf(statKey: String, stages: Int, probability: Double, d
     val result = ListBuffer.empty[MoveEvent]
     if (moveToAnimate.nonEmpty) result.append(PlayMoveAnimation(moveToAnimate.get))
     result.append(RaiseStatSelf(statKey, stages))
-    result.append(MoveEvent.getDisplayMessageStatRose(thisPokemon.getName, statKey))
+    if(stages > 1) result.append(MoveEvent.getDisplayMessageStatSharplyRose(thisPokemon.getName, statKey))
+    else result.append(MoveEvent.getDisplayMessageStatRose(thisPokemon.getName, statKey))
     val eventsIfTrue = result.toList
     val eventsIfFalse =
       if(displayFailure) List(MoveEvent.getDisplayMessageStatWillNotGoHigher(thisPokemon.getName, statKey))
