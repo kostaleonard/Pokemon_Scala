@@ -73,13 +73,11 @@ class Battle(player: PlayerCharacter, opponent: Option[Trainer], wildPokemon: Op
 
   //TODO probably make a MoveChoice trait for this so that you can handle it right. Moves are MoveChoices, but so are using Items and running away.
   /** Returns the first mover (the player or opponent pokemon) based on current speed and any special moves chosen. */
-  def getBattleOrder(playerMove: Move, opponentMove: Move): (Pokemon, Pokemon) = (playerMove, opponentMove) match {
-    case (_, _) =>
-      if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
-        (playerPokemon, opponentPokemon)
-      else
-        (opponentPokemon, playerPokemon)
-  }
+  def getBattleOrder(playerMove: Move, opponentMove: Move): (Pokemon, Pokemon) =
+    if(playerPokemon.getCurrentStats.getSpeed >= opponentPokemon.getCurrentStats.getSpeed)
+      (playerPokemon, opponentPokemon)
+    else
+      (opponentPokemon, playerPokemon)
 
   /** Returns a List of MoveSpecifications that has HP bar animations added for display purposes. */
   protected def addHPBarAnimations(moveSpecifications: List[MoveSpecification]): List[MoveSpecification] =

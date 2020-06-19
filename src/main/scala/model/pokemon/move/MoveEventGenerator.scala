@@ -16,6 +16,47 @@ object MoveEventGenerator {
   /** Returns the list of MoveEvents used when a Pokemon KOs. */
   def getKOEvents(pokemon: Pokemon, isOther: Boolean): List[MoveEvent] = List(PlayAnimationFromSource(FAINT_ANIMATION_PATH),
     MoveEvent.getDisplayMessageFainted(pokemon.getName), if(isOther) FaintOther else FaintSelf)
+
+  /** Returns the events that result from thisPokemon dealing damage to otherPokemon with move. */
+  def getMoveDamageEvents(move: Move, thisPokemon: Pokemon, otherPokemon: Pokemon,
+                          dealDamageToOpponent: Boolean = true): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+
+    val targets = 1 //TODO if multiple targets, this is 0.75.
+    val weather = 1 //TODO 1.5 if water move in rain or fire move in harsh sunlight; 0.5 if water move in harsh sunlight or fire move in rain.
+    val randomFactor = Random.nextDouble() * 0.15 + 0.85
+    val stab = if(thisPokemon.getTypeArray.contains(move.getType)) 1.5 else 1
+    val typeEffectiveness = otherPokemon.getTypeArray.foldRight(1.0)((otherType, accum) =>
+      accum * move.getType.getTypeEffectiveness(otherType))
+    val isCriticalHit = (Random.nextDouble() < move.getCriticalHitChance) && typeEffectiveness > 0
+    var critical = if(isCriticalHit) 2 else 1
+    val burned = if(thisPokemon.getEffectTracker.contains(Burn) && move.isPhysical) 0.5 else 1
+    val other = 1 //TODO used in some moves.
+
+    val modifier = targets * weather * critical * randomFactor * stab * typeEffectiveness * burned
+
+    val A = if(move.isPhysical) thisPokemon.getCurrentStats.getAttack
+    else thisPokemon.getCurrentStats.getSpecialAttack
+    val D = if(move.isPhysical) otherPokemon.getCurrentStats.getDefense
+    else otherPokemon.getCurrentStats.getSpecialDefense
+
+    val damage = ((
+      ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
+      ) * modifier).toInt max 1
+
+    //TODO looks to me like this will not work correctly if typeEffectiveness is 0, but we don't have any types like that implemented yet.
+    result.append(PlayMoveAnimation(move))
+    if(dealDamageToOpponent) result.append(DealDamageToOpponent(damage))
+    else result.append(DealDamageToSelf(damage))
+    if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
+    if(typeEffectiveness == 0) result.append(
+      MoveEvent.getDisplayMessageMoveNoEffect(move.getName, otherPokemon.getName))
+    else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
+    else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
+    if(MoveEventGenerator.willDamageKO(otherPokemon, damage)) result ++=
+      MoveEventGenerator.getKOEvents(otherPokemon, dealDamageToOpponent)
+    result.toList
+  }
 }
 
 sealed trait MoveEventGenerator {
@@ -51,43 +92,15 @@ case class AnimationGenerator(move: Move) extends MoveEventGenerator {
 
 case class MoveDamage(move: Move) extends MoveEventGenerator {
   /** Deals damage to the other pokemon. */
-  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
-    val result = ListBuffer.empty[MoveEvent]
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    MoveEventGenerator.getMoveDamageEvents(move, thisPokemon, otherPokemon)
+}
 
-    val targets = 1 //TODO if multiple targets, this is 0.75.
-    val weather = 1 //TODO 1.5 if water move in rain or fire move in harsh sunlight; 0.5 if water move in harsh sunlight or fire move in rain.
-    val randomFactor = Random.nextDouble() * 0.15 + 0.85
-    val stab = if(thisPokemon.getTypeArray.contains(move.getType)) 1.5 else 1
-    val typeEffectiveness = otherPokemon.getTypeArray.foldRight(1.0)((otherType, accum) =>
-      accum * move.getType.getTypeEffectiveness(otherType))
-    val isCriticalHit = (Random.nextDouble() < move.getCriticalHitChance) && typeEffectiveness > 0
-    var critical = if(isCriticalHit) 2 else 1
-    val burned = if(thisPokemon.getEffectTracker.contains(Burn) && move.isPhysical) 0.5 else 1
-    val other = 1 //TODO used in some moves.
-
-    val modifier = targets * weather * critical * randomFactor * stab * typeEffectiveness * burned
-
-    val A = if(move.isPhysical) thisPokemon.getCurrentStats.getAttack
-      else thisPokemon.getCurrentStats.getSpecialAttack
-    val D = if(move.isPhysical) otherPokemon.getCurrentStats.getDefense
-      else otherPokemon.getCurrentStats.getSpecialDefense
-
-    val damage = ((
-      ((2.0 * thisPokemon.getLevel) / 5.0 * move.getPower.get * (A.toDouble / D.toDouble)) / 50.0 + 2.0
-      ) * modifier).toInt max 1
-
-    //TODO looks to me like this will not work correctly if typeEffectiveness is 0, but we don't have any types like that implemented yet.
-    result.append(PlayMoveAnimation(move))
-    result.append(DealDamageToOpponent(damage))
-    if(isCriticalHit) result.append(MoveEvent.DISPLAY_CRITICAL_HIT)
-    if(typeEffectiveness == 0) result.append(
-      MoveEvent.getDisplayMessageMoveNoEffect(move.getName, otherPokemon.getName))
-    else if(typeEffectiveness < 1) result.append(MoveEvent.DISPLAY_NOT_VERY_EFFECTIVE)
-    else if(typeEffectiveness > 1) result.append(MoveEvent.DISPLAY_SUPER_EFFECTIVE)
-    if(MoveEventGenerator.willDamageKO(otherPokemon, damage)) result ++=
-      MoveEventGenerator.getKOEvents(otherPokemon, true)
-    result.toList
-  }
+//TODO doesn't seem to work properly; remove.
+case class TakeMoveDamage(move: Move) extends MoveEventGenerator {
+  /** Deals damage to this pokemon. Used in effects. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] =
+    MoveEventGenerator.getMoveDamageEvents(move, otherPokemon, thisPokemon, false)
 }
 
 case class FixedMoveDamage(move: Move, fixedDamage: Int) extends MoveEventGenerator {
@@ -262,6 +275,21 @@ case class TrySeeded(probability: Double, displayFailure: Boolean, moveToAnimate
   }
 }
 
+case class TryFireVortex(move: Move, probability: Double, turns: Int, burnChance: Double, displayFailure: Boolean)
+  extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => otherPokemon.getEffectTracker.find(_.isInstanceOf[FireVortex]).isEmpty &&
+      Random.nextDouble() < probability
+    val animationEvents = List(PlayMoveAnimation(move))
+    val eventsIfTrue = animationEvents ++ List(MoveEvent.getDisplayMessageFireVortex(otherPokemon.getName),
+      InflictEffectOnOpponent(FireVortex(move, burnChance, turns)))
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -312,6 +340,26 @@ case class TurnlySleep(turnsRemaining: Int) extends MoveEventGenerator {
   }
 }
 
+case class TurnlyFireVortex(turnsRemaining: Int) extends MoveEventGenerator {
+  /** Decrements the fire vortex counter and sends a message if the Pokemon is trapped, or escapes. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+    if(turnsRemaining == 0){
+      val effect = thisPokemon.getEffectTracker.find(_.isInstanceOf[FireVortex])
+      if(effect.isEmpty) throw new UnsupportedOperationException("No FireVortex effect found.")
+      result.append(MoveEvent.getDisplayMessageEscapedFireVortex(thisPokemon.getName))
+      result.append(RemoveEffectSelf(effect.get))
+    }
+    else{
+      val effect = thisPokemon.getEffectTracker.find(_.isInstanceOf[FireVortex])
+      if(effect.isEmpty) throw new UnsupportedOperationException("No FireVortex effect found.")
+      result.append(DecrementFireVortexCounterSelf)
+      result.append(MoveEvent.getDisplayMessageHurtByFireVortex(thisPokemon.getName))
+    }
+    result.toList
+  }
+}
+
 case object TurnlyParalysisCheck extends MoveEventGenerator {
   /** Checks if the pokemon can move. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -337,6 +385,16 @@ case object ThawFrozenOther extends MoveEventGenerator {
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
     if(otherPokemon.getEffectTracker.getPersistentEffect.contains(Frozen))
       List(MoveEvent.getDisplayMessageThawed(otherPokemon.getName), RemovePersistentEffectOther)
+    else
+      List.empty
+  }
+}
+
+case object ThawFrozenSelf extends MoveEventGenerator {
+  /** Thaws this Pokemon. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    if(thisPokemon.getEffectTracker.getPersistentEffect.contains(Frozen))
+      List(MoveEvent.getDisplayMessageThawed(thisPokemon.getName), RemovePersistentEffectSelf)
     else
       List.empty
   }

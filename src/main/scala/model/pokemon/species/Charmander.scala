@@ -6,7 +6,7 @@ import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.move.bytype.normal._
-import model.pokemon.move.bytype.fire.{Ember, Flamethrower}
+import model.pokemon.move.bytype.fire.{Ember, FireSpin, Flamethrower}
 import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
 
@@ -49,7 +49,6 @@ class Charmander(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete Charmander's learnset.
     0 -> new Scratch,
     1 -> new Growl,
     7 -> new Ember,
@@ -58,7 +57,8 @@ class Charmander(override protected val levelTracker: LevelTracker)
     25 -> new ScaryFace,
     31 -> new Flamethrower,
     37 -> new Slash,
-    43 -> new DragonRage
+    43 -> new DragonRage,
+    49 -> new FireSpin
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

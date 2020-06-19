@@ -71,6 +71,18 @@ object MoveEvent {
   def getDisplayMessageSeeded(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was seeded.".format(pokemonName))
 
+  /** Returns the DisplayMessage used when a Pokemon is hit by Fire Spin. */
+  def getDisplayMessageFireVortex(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s was caught in a fire vortex.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon escapes Fire Spin. */
+  def getDisplayMessageEscapedFireVortex(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s escaped the fire vortex.".format(pokemonName))
+
+  /** Returns the DisplayMessage used when a Pokemon is hurt by Fire Spin. */
+  def getDisplayMessageHurtByFireVortex(pokemonName: String): DisplayMessage =
+    DisplayMessage("%s was hurt by the fire vortex.".format(pokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon is hurt by leech seed. */
   def getDisplayMessageHurtByLeechSeed(pokemonName: String): DisplayMessage =
     DisplayMessage("%s's HP was drained by LEECH SEED.".format(pokemonName))
@@ -246,6 +258,16 @@ case object DecrementSleepCounterSelf extends MoveEvent {
   } 
 }
 
+case object DecrementFireVortexCounterSelf extends MoveEvent {
+  /** Replaces the Pokemon's FireVortex with FireVortex that has progressed one turn. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    val effect = thisPokemon.getEffectTracker.find(_.isInstanceOf[FireVortex]).get.asInstanceOf[FireVortex]
+    thisPokemon.getEffectTracker.removeEffect(effect)
+    if(effect.turnsRemaining == 0) throw new UnsupportedOperationException("FireVortex counter already expired.")
+    thisPokemon.getEffectTracker.addEffect(effect.copy(turnsRemaining = effect.turnsRemaining - 1))
+  }
+}
+
 case object RemovePersistentEffectSelf extends MoveEvent {
   /** Removes the pokemon's persistent effect. */
   override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
@@ -263,5 +285,13 @@ case object RemovePersistentEffectOther extends MoveEvent {
     if(effect.isEmpty) throw new UnsupportedOperationException("Cannot remove empty effect.")
     otherPokemon.getEffectTracker.removePersistentEffect()
     effect.get.onEffectRemove(otherPokemon)
+  }
+}
+
+case class RemoveEffectSelf(effect: StatusEffect) extends MoveEvent {
+  /** Removes the pokemon's effect. */
+  override def doEvent(thisPokemon: Pokemon, otherPokemon: Pokemon): Unit = {
+    thisPokemon.getEffectTracker.removeEffect(effect)
+    effect.onEffectRemove(thisPokemon)
   }
 }

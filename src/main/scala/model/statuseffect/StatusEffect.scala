@@ -13,6 +13,7 @@ sealed trait StatusEffect extends Ordered[StatusEffect] {
   val BURN_ORDER = 1
   val POISON_ORDER = 2
   val SEEDED_ORDER = 11
+  val FIRE_VORTEX_ORDER = 12
 
   /** Defines an ordering on the StatusEffects for processing. */
   override def compare(that: StatusEffect): Int = getOrder.compare(that.getOrder)
@@ -253,6 +254,35 @@ case object Seeded extends NonPersistentEffect {
   /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
   override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
     List(TurnlySeededDamage)
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
+}
+
+case class FireVortex(move: Move, burnChance: Double, turnsRemaining: Int) extends NonPersistentEffect {
+  val MIN_TURNS = 1
+  val MAX_TURNS = 5
+
+  /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
+    * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
+    * after. This is just convention, and is actually controlled by isBeforeMove. */
+  def getOrder: Int = FIRE_VORTEX_ORDER
+
+  /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
+  def isBeforeMove: Boolean = false
+
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = Unit
+
+  /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(TakeMoveDamage(move), TryBurn(burnChance, false, None), ThawFrozenOther, TurnlyFireVortex(turnsRemaining))
 
   /** Returns the move's animation from the player perspective. */
   override def getPlayerAnimation: Option[Animation] = Some(Move.getPlaceholderOpponentAnimation)

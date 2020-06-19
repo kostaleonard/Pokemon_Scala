@@ -43,6 +43,9 @@ class EffectTracker {
   /** Returns true if the effect is in the Set. */
   def contains(effect: StatusEffect): Boolean = effects(effect)
 
+  /** Returns an effect for which the predicate is true, if one exists. */
+  def find(p: StatusEffect => Boolean): Option[StatusEffect] = effects.find(p)
+
   /** Returns the Array of Events that result from the given Effects. */
   protected def getEventsFromSomeEffects(someEffects: Array[StatusEffect], thisPokemon: Pokemon,
                                          otherPokemon: Pokemon): Array[MoveEvent] =
