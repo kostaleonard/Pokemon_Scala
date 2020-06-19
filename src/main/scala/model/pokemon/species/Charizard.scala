@@ -3,9 +3,12 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, FireType, FlyingType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.{Move, MoveList}
-import model.pokemon.move.bytype.normal.Scratch
-import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.normal._
+import model.pokemon.move.bytype.fire.{Ember, FireSpin, Flamethrower}
+import model.pokemon.move.bytype.flying.WingAttack
+import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
 
 object Charizard {
@@ -47,9 +50,19 @@ class Charizard(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete Charizard's learnset.
-    1 -> new Scratch,
-    7 -> new Ember
+    -2 -> new Scratch,
+    -1 -> new Growl,
+    0 -> new Ember,
+    1 -> new MetalClaw,
+    7 -> new Ember,
+    13 -> new MetalClaw,
+    20 -> new Smokescreen,
+    27 -> new ScaryFace,
+    34 -> new Flamethrower,
+    36 -> new WingAttack,
+    44 -> new Slash,
+    54 -> new DragonRage,
+    64 -> new FireSpin
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

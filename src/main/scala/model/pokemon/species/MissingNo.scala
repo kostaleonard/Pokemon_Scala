@@ -6,6 +6,7 @@ import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
 import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember, FireSpin, Flamethrower}
+import model.pokemon.move.bytype.flying.WingAttack
 import model.pokemon.move.bytype.grass._
 import model.pokemon.move.bytype.ice.AbsoluteZero
 import model.pokemon.move.bytype.normal._
@@ -59,8 +60,8 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     //TODO correct/complete MissingNo's learnset.
     -2 -> new Growth,
     -1 -> new Growl,
-    0 -> new MetalClaw,
-    1 -> new FireSpin
+    0 -> new Ember,
+    1 -> new WingAttack
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

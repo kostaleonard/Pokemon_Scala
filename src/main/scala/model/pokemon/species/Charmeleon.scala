@@ -3,9 +3,11 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, FireType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
+import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.{Move, MoveList}
-import model.pokemon.move.bytype.normal.Scratch
-import model.pokemon.move.bytype.fire.Ember
+import model.pokemon.move.bytype.normal._
+import model.pokemon.move.bytype.fire.{Ember, FireSpin, Flamethrower}
+import model.pokemon.move.bytype.steel.MetalClaw
 import model.pokemon.stat.PokemonStats
 
 object Charmeleon {
@@ -47,9 +49,17 @@ class Charmeleon(override protected val levelTracker: LevelTracker)
 
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
-    //TODO correct/complete learnset.
-    1 -> new Scratch,
-    7 -> new Ember
+    -1 -> new Scratch,
+    0 -> new Growl,
+    1 -> new Ember,
+    7 -> new Ember,
+    13 -> new MetalClaw,
+    20 -> new Smokescreen,
+    27 -> new ScaryFace,
+    34 -> new Flamethrower,
+    41 -> new Slash,
+    48 -> new DragonRage,
+    55 -> new FireSpin
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */

@@ -138,11 +138,11 @@ class BattleView(override protected val model: Model, battle: Battle) extends Vi
   /** Attempts to learn the given move, then makes the callback. */
   protected def tryLearnMove(pokemon: Pokemon, move: Move, finalCallback: () => Unit): Unit =
     if(pokemon.getMoveList.isFull) ??? //TODO query user.
-    else {
+    else if(!pokemon.getMoveList.containsInstanceOfMove(move)) {
       pokemon.getMoveList.setNextAvailableMove(move)
       battleMessage = Some(createBattleMessage("%s learned %s!".format(pokemon.getName, move.getName), finalCallback))
     }
-
+    else finalCallback()
 
   /** Tries to level up the given pokemon, then makes the callback. */
   protected def tryLevelUpPokemon(pokemon: Pokemon, finalCallback: () => Unit): Unit =

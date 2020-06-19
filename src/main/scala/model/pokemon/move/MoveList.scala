@@ -38,4 +38,8 @@ class MoveList(protected val initialMoves: Array[Move]) {
 
   /** Returns true if the move list has space for another move. */
   def isFull: Boolean = !moves.contains(None)
+
+  /** Returns true if a move of the same type already exists in the move list (so there will be no duplicate moves in
+    * the move list when trying to learn something that you already know). */
+  def containsInstanceOfMove(move: Move): Boolean = moves.exists(m => m.nonEmpty && m.get.getClass == move.getClass)
 }
