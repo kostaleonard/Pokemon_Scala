@@ -4,7 +4,7 @@ import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.bytype.normal.{Tackle, TailWhip}
-import model.pokemon.move.bytype.water.Bubble
+import model.pokemon.move.bytype.water.{Bubble, Withdraw}
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -50,7 +50,8 @@ class Squirtle(override protected val levelTracker: LevelTracker)
     //TODO correct/complete learnset.
     1 -> new Tackle,
     4 -> new TailWhip,
-    7 -> new Bubble
+    7 -> new Bubble,
+    10 -> new Withdraw
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
