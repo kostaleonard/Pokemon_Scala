@@ -12,6 +12,7 @@ import model.pokemon.move.bytype.ice.AbsoluteZero
 import model.pokemon.move.bytype.normal._
 import model.pokemon.move.bytype.poison.{PoisonPowder, PoisonSpear}
 import model.pokemon.move.bytype.steel.MetalClaw
+import model.pokemon.move.bytype.water.Bubble
 import model.pokemon.stat.PokemonStats
 
 object MissingNo {
@@ -60,7 +61,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     //TODO correct/complete MissingNo's learnset.
     -2 -> new Growth,
     -1 -> new Growl,
-    0 -> new TailWhip,
+    0 -> new Bubble,
     1 -> new WingAttack
   )
 
