@@ -60,7 +60,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     //TODO correct/complete MissingNo's learnset.
     -2 -> new Growth,
     -1 -> new Growl,
-    0 -> new Ember,
+    0 -> new TailWhip,
     1 -> new WingAttack
   )
 

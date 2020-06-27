@@ -3,7 +3,7 @@ package model.pokemon.species
 import model.elementaltype.{ElementalType, WaterType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
-import model.pokemon.move.bytype.normal.Tackle
+import model.pokemon.move.bytype.normal.{Tackle, TailWhip}
 import model.pokemon.move.{Move, MoveList}
 import model.pokemon.stat.PokemonStats
 
@@ -47,7 +47,8 @@ class Squirtle(override protected val levelTracker: LevelTracker)
   /** Returns the Pokemon's learn map. */
   override def getLearnMap: Map[Int, Move] = Map(
     //TODO correct/complete learnset.
-    1 -> new Tackle
+    1 -> new Tackle,
+    4 -> new TailWhip
   )
 
   /** Returns the experience awarded for defeating this Pokemon. */
