@@ -4,6 +4,7 @@ import model.elementaltype.{ElementalType, FlyingType, GhostType, NormalType}
 import model.pokemon.Pokemon
 import model.pokemon.exp.LevelTracker
 import model.pokemon.move.Move
+import model.pokemon.move.bytype.dark.Bite
 import model.pokemon.move.bytype.dragon.DragonRage
 import model.pokemon.move.bytype.fire.{BlessedImmolation, Ember, FireSpin, Flamethrower}
 import model.pokemon.move.bytype.flying.WingAttack
@@ -61,7 +62,7 @@ class MissingNo(override protected val levelTracker: LevelTracker)
     //TODO correct/complete MissingNo's learnset.
     -2 -> new Growth,
     -1 -> new Growl,
-    0 -> new WaterGun,
+    0 -> new Bite,
     1 -> new WingAttack
   )
 

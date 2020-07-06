@@ -290,6 +290,21 @@ case class TryFireVortex(move: Move, probability: Double, turns: Int, burnChance
   }
 }
 
+//TODO all of these moveToAnimate args should just be an AnimateMove MoveEventGenerator, but it's going to take a lot of work to fix that now.
+case class TryFlinch(probability: Double, displayFailure: Boolean, moveToAnimate: Option[Move])
+  extends MoveEventGenerator {
+  /** Returns a List containing an effect infliction event if successful; an empty list otherwise. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val successCheck = () => !otherPokemon.getEffectTracker.contains(Flinch) &&
+      Random.nextDouble() < probability
+    val animationEvents = if (moveToAnimate.isEmpty) List.empty else List(PlayMoveAnimation(moveToAnimate.get))
+    val eventsIfTrue = animationEvents :+ InflictEffectOnOpponent(Flinch)
+    val eventsIfFalse = if(displayFailure) List(MoveEvent.DISPLAY_BUT_IT_FAILED) else List.empty
+    //List(SucceedOrFailEvent(successCheck, eventsIfTrue, eventsIfFalse, thisPokemon, otherPokemon))
+    if(successCheck.apply()) eventsIfTrue else eventsIfFalse
+  }
+}
+
 case object TurnlyBurnDamage extends MoveEventGenerator {
   /** Deals 1/8th the current Pokemon's max HP. */
   override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
@@ -411,6 +426,19 @@ case object TurnlySeededDamage extends MoveEventGenerator {
     result.append(MoveEvent.getDisplayMessageHurtByLeechSeed(thisPokemon.getName))
     if(MoveEventGenerator.willDamageKO(thisPokemon, damage)) result ++=
       MoveEventGenerator.getKOEvents(thisPokemon, false)
+    result.toList
+  }
+}
+
+case object FlinchGenerator extends MoveEventGenerator {
+  /** Creates a message and ends the pokemon's move. */
+  override def getResults(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEvent] = {
+    val result = ListBuffer.empty[MoveEvent]
+    if(!thisPokemon.getEffectTracker.contains(Flinch))
+      throw new UnsupportedOperationException("No Flinch effect found.")
+    result.append(RemoveEffectSelf(Flinch))
+    result.append(MoveEvent.getDisplayMessageFlinched(thisPokemon.getName))
+    result.append(EndMove)
     result.toList
   }
 }

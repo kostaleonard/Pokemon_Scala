@@ -22,6 +22,7 @@ sealed trait ElementalType {
     case DragonType => "Dragon"
     case DarkType => "Dark"
     case SteelType => "Steel"
+    case AbnormalType => "Abnormal"
     case _ => throw new UnsupportedOperationException("Unrecognized type.")
   }
 
@@ -41,8 +42,9 @@ sealed trait ElementalType {
     case RockType => Color.MAGENTA //TODO
     case GhostType => Color.MAGENTA //TODO
     case DragonType => Color.MAGENTA //TODO
-    case DarkType => Color.GRAY.darker()
+    case DarkType => Color.GRAY.darker().darker()
     case SteelType => Color.MAGENTA //TODO
+    case AbnormalType => Color.MAGENTA //TODO
     case _ => throw new UnsupportedOperationException("Unrecognized type.")
   }
 
@@ -207,6 +209,7 @@ sealed trait ElementalType {
       case SteelType => 0.5
       case _ => 1.0
     }
+    case AbnormalType => 2.0
     case _ => throw new UnsupportedOperationException("Unrecognized type.")
   }
 }
@@ -228,4 +231,4 @@ case object GhostType extends ElementalType
 case object DragonType extends ElementalType
 case object DarkType extends ElementalType
 case object SteelType extends ElementalType
-
+case object AbnormalType extends ElementalType

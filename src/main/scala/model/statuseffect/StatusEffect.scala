@@ -6,6 +6,7 @@ import model.statuseffect.Burn.BURN_ORDER
 import view.views.drawing.Animation
 
 sealed trait StatusEffect extends Ordered[StatusEffect] {
+  val FLINCH_ORDER = -21
   val MULTI_MOVE_ORDER = -11
   val SLEEP_ORDER = -3
   val PARALYZE_ORDER = -2
@@ -260,6 +261,32 @@ case object Seeded extends NonPersistentEffect {
 
   /** Returns the move's animation from the opponent perspective. */
   override def getOpponentAnimation: Option[Animation] = Some(Move.getPlaceholderPlayerAnimation)
+}
+
+case object Flinch extends NonPersistentEffect {
+  /** Returns the order in which this StatusEffect will be processed relative to other StatusEffects. By convention, a
+    * negative number indicates that the StatusEffect is processed before the move, and a positive number indicates
+    * after. This is just convention, and is actually controlled by isBeforeMove. */
+  def getOrder: Int = FLINCH_ORDER
+
+  /** Returns true if this StatusEffect is processed before the move happens; returns false if after. */
+  def isBeforeMove: Boolean = true
+
+  /** Code to be executed when the Pokemon receives this StatusEffect. */
+  override def onEffectAdd(pokemon: Pokemon): Unit = Unit
+
+  /** Code to be executed when the Pokemon removes this StatusEffect. */
+  override def onEffectRemove(pokemon: Pokemon): Unit = Unit
+
+  /** Returns the List of MoveActions executed every turn while the Pokemon has this StatusEffect. */
+  override def getTurnlyActions(thisPokemon: Pokemon, otherPokemon: Pokemon): List[MoveEventGenerator] =
+    List(FlinchGenerator)
+
+  /** Returns the move's animation from the player perspective. */
+  override def getPlayerAnimation: Option[Animation] = None
+
+  /** Returns the move's animation from the opponent perspective. */
+  override def getOpponentAnimation: Option[Animation] = None
 }
 
 case class FireVortex(move: Move, burnChance: Double, turnsRemaining: Int) extends NonPersistentEffect {

@@ -18,6 +18,10 @@ object MoveEvent {
   def getDisplayMessageMoveNoEffect(moveName: String, otherPokemonName: String): DisplayMessage =
     DisplayMessage("%s does not affect %s.".format(moveName, otherPokemonName))
 
+  /** Returns the DisplayMessage used when a pokemon flinches. */
+  def getDisplayMessageFlinched(thisPokemonName: String): DisplayMessage =
+    DisplayMessage("%s flinched.".format(thisPokemonName))
+
   /** Returns the DisplayMessage used when a Pokemon is burned. */
   def getDisplayMessageBurned(pokemonName: String): DisplayMessage =
     DisplayMessage("%s was burned.".format(pokemonName))
